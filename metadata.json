@@ -1,0 +1,6 @@
+{
+  "name": "CivicDigest",
+  "description": "Local government intelligence platform for municipal news, meeting summaries, OCD-ID policy updates, and privacy-preserving sentiment analytics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

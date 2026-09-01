@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    background-color: #FDFDFC;
+    color: #1A1A1A;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  }
+
+  h1, h2, h3, .font-serif {
+    font-family: 'Newsreader', 'Playfair Display', Georgia, serif;
+  }
+
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+/* Custom print & editorial borders */
+.editorial-double-border {
+  border-bottom: 3px double #1A1A1A;
+}
+
+.editorial-rule {
+  border-color: rgba(26, 26, 26, 0.15);
+}
