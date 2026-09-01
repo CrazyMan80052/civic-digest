@@ -29,6 +29,7 @@ import { DocketScanner } from './components/DocketScanner';
 import { CivicCopilotDrawer } from './components/CivicCopilotDrawer';
 import { AlertsModal } from './components/AlertsModal';
 import { SocialDispatchModal } from './components/SocialDispatchModal';
+import { DatabaseStatusModal } from './components/DatabaseStatusModal';
 
 import { JURISDICTIONS, BILLS as INITIAL_BILLS } from './data/mockData';
 import { 
@@ -55,6 +56,7 @@ export default function App() {
   const [isCopilotOpen, setIsCopilotOpen] = useState<boolean>(false);
   const [isAlertsOpen, setIsAlertsOpen] = useState<boolean>(false);
   const [isSocialModalOpen, setIsSocialModalOpen] = useState<boolean>(false);
+  const [isDbModalOpen, setIsDbModalOpen] = useState<boolean>(false);
   const [socialModalBill, setSocialModalBill] = useState<OCDBill | null>(null);
 
   // Filter bills based on jurisdiction, ward, category, search, and status
@@ -144,6 +146,7 @@ export default function App() {
           setSocialModalBill(bills[0] || null);
           setIsSocialModalOpen(true);
         }}
+        onOpenDbModal={() => setIsDbModalOpen(true)}
       />
 
       {/* Main Newspaper / Editorial Layout Container */}
@@ -362,6 +365,12 @@ export default function App() {
         onClose={() => setIsSocialModalOpen(false)}
         bill={socialModalBill}
         allBills={bills}
+      />
+
+      {/* PostgreSQL Database Architecture & Connection Modal */}
+      <DatabaseStatusModal
+        isOpen={isDbModalOpen}
+        onClose={() => setIsDbModalOpen(false)}
       />
 
       {/* Editorial Footer */}

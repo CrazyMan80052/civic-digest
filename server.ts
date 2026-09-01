@@ -4,6 +4,9 @@ import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI, Type } from '@google/genai';
 import dotenv from 'dotenv';
 
+import { checkDatabaseHealth } from './src/db/client';
+import { CivicRepository } from './src/db/repository';
+
 dotenv.config();
 
 const app = express();
@@ -29,12 +32,41 @@ function getGeminiClient(): GoogleGenAI | null {
 }
 
 // Health check endpoint
-app.get('/api/health', (req, res) => {
+app.get('/api/health', async (req, res) => {
+  const dbHealth = await checkDatabaseHealth();
   res.json({
     status: 'ok',
     timestamp: new Date().toISOString(),
     geminiConfigured: !!process.env.GEMINI_API_KEY,
+    database: dbHealth,
   });
+});
+
+// Database diagnostics endpoint
+app.get('/api/db/health', async (req, res) => {
+  const dbHealth = await checkDatabaseHealth();
+  res.json(dbHealth);
+});
+
+// Endpoint: Fetch Jurisdictions (DB with In-Memory OCD Fallback)
+app.get('/api/jurisdictions', async (req, res) => {
+  try {
+    const jurisdictions = await CivicRepository.getJurisdictions();
+    res.json(jurisdictions);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to retrieve jurisdictions' });
+  }
+});
+
+// Endpoint: Fetch Bills & Dockets (DB with In-Memory OCD Fallback)
+app.get('/api/bills', async (req, res) => {
+  try {
+    const { jurisdictionId } = req.query;
+    const bills = await CivicRepository.getBills(jurisdictionId as string | undefined);
+    res.json(bills);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to retrieve bills' });
+  }
 });
 
 // Endpoint: AI Docket Summarization & Receipt Extraction

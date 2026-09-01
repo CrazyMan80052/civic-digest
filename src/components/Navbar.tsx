@@ -16,7 +16,8 @@ import {
   ChevronDown,
   Bell,
   Bot,
-  Share2
+  Share2,
+  Database
 } from 'lucide-react';
 import { OCDJurisdiction, ActiveTab } from '../types';
 
@@ -34,6 +35,7 @@ interface NavbarProps {
   isCopilotOpen: boolean;
   onOpenAlerts: () => void;
   onOpenSocialDispatch?: () => void;
+  onOpenDbModal?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -50,6 +52,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   isCopilotOpen,
   onOpenAlerts,
   onOpenSocialDispatch,
+  onOpenDbModal,
 }) => {
   return (
     <header className="bg-[#FDFDFC] text-[#1A1A1A] border-b-2 border-[#1A1A1A] sticky top-0 z-40 transition-colors">
@@ -141,6 +144,18 @@ export const Navbar: React.FC<NavbarProps> = ({
               </select>
               <ChevronDown className="w-3 h-3 text-[#555] absolute right-2 top-2.5 pointer-events-none" />
             </div>
+
+            {/* Database & Architecture Button */}
+            {onOpenDbModal && (
+              <button
+                onClick={onOpenDbModal}
+                title="PostgreSQL Database Architecture & Connection Status"
+                className="p-1.5 text-[#1A1A1A] hover:bg-[#F2F0EA] border border-[#1A1A1A]/30 transition-colors flex items-center gap-1 text-xs font-bold uppercase tracking-wider"
+              >
+                <Database className="w-3.5 h-3.5 text-[#1A1A1A]" />
+                <span className="hidden lg:inline text-[10px] font-mono">DB</span>
+              </button>
+            )}
 
             {/* Proximity Alerts Button */}
             <button
