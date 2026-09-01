@@ -17,7 +17,8 @@ import {
   Bell,
   Bot,
   Share2,
-  Database
+  Database,
+  Radio
 } from 'lucide-react';
 import { OCDJurisdiction, ActiveTab } from '../types';
 
@@ -36,6 +37,7 @@ interface NavbarProps {
   onOpenAlerts: () => void;
   onOpenSocialDispatch?: () => void;
   onOpenDbModal?: () => void;
+  onOpenScraper?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -53,6 +55,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenAlerts,
   onOpenSocialDispatch,
   onOpenDbModal,
+  onOpenScraper,
 }) => {
   return (
     <header className="bg-[#FDFDFC] text-[#1A1A1A] border-b-2 border-[#1A1A1A] sticky top-0 z-40 transition-colors">
@@ -154,6 +157,18 @@ export const Navbar: React.FC<NavbarProps> = ({
               >
                 <Database className="w-3.5 h-3.5 text-[#1A1A1A]" />
                 <span className="hidden lg:inline text-[10px] font-mono">DB</span>
+              </button>
+            )}
+
+            {/* Scraper Pipeline Button */}
+            {onOpenScraper && (
+              <button
+                onClick={onOpenScraper}
+                title="Municipal Scraper & Ingestion Pipeline"
+                className="p-1.5 text-[#1A1A1A] hover:bg-[#F2F0EA] border border-[#1A1A1A]/30 transition-colors flex items-center gap-1 text-xs font-bold uppercase tracking-wider"
+              >
+                <Radio className="w-3.5 h-3.5 text-[#E63946]" />
+                <span className="hidden lg:inline text-[10px] font-mono">Scraper</span>
               </button>
             )}
 

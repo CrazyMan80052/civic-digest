@@ -30,6 +30,7 @@ import { CivicCopilotDrawer } from './components/CivicCopilotDrawer';
 import { AlertsModal } from './components/AlertsModal';
 import { SocialDispatchModal } from './components/SocialDispatchModal';
 import { DatabaseStatusModal } from './components/DatabaseStatusModal';
+import { ScraperControlModal } from './components/ScraperControlModal';
 
 import { JURISDICTIONS, BILLS as INITIAL_BILLS } from './data/mockData';
 import { 
@@ -57,6 +58,7 @@ export default function App() {
   const [isAlertsOpen, setIsAlertsOpen] = useState<boolean>(false);
   const [isSocialModalOpen, setIsSocialModalOpen] = useState<boolean>(false);
   const [isDbModalOpen, setIsDbModalOpen] = useState<boolean>(false);
+  const [isScraperModalOpen, setIsScraperModalOpen] = useState<boolean>(false);
   const [socialModalBill, setSocialModalBill] = useState<OCDBill | null>(null);
 
   // Filter bills based on jurisdiction, ward, category, search, and status
@@ -147,6 +149,7 @@ export default function App() {
           setIsSocialModalOpen(true);
         }}
         onOpenDbModal={() => setIsDbModalOpen(true)}
+        onOpenScraper={() => setIsScraperModalOpen(true)}
       />
 
       {/* Main Newspaper / Editorial Layout Container */}
@@ -371,6 +374,20 @@ export default function App() {
       <DatabaseStatusModal
         isOpen={isDbModalOpen}
         onClose={() => setIsDbModalOpen(false)}
+      />
+
+      {/* Municipal Scraper & Ingestion Pipeline Control Modal */}
+      <ScraperControlModal
+        isOpen={isScraperModalOpen}
+        onClose={() => setIsScraperModalOpen(false)}
+        onImportDockets={(newDockets) => {
+          setBills((prev) => {
+            // Deduplicate by ID
+            const existingIds = new Set(prev.map((b) => b.id));
+            const fresh = newDockets.filter((b) => !existingIds.has(b.id));
+            return [...fresh, ...prev];
+          });
+        }}
       />
 
       {/* Editorial Footer */}
