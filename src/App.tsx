@@ -31,6 +31,10 @@ import { AlertsModal } from './components/AlertsModal';
 import { SocialDispatchModal } from './components/SocialDispatchModal';
 import { DatabaseStatusModal } from './components/DatabaseStatusModal';
 import { ScraperControlModal } from './components/ScraperControlModal';
+import { ResidentMicroSurveyModal } from './components/ResidentMicroSurveyModal';
+import { PolicyIntelPlatform } from './components/PolicyIntelPlatform';
+import { UserProfileModal } from './components/UserProfileModal';
+import { PersonalizedRecommendationsBanner } from './components/PersonalizedRecommendationsBanner';
 
 import { JURISDICTIONS, BILLS as INITIAL_BILLS } from './data/mockData';
 import { 
@@ -38,7 +42,8 @@ import {
   OCDBill, 
   ActiveTab, 
   PolicyCategory, 
-  ReceiptCitation 
+  ReceiptCitation,
+  UserProfile
 } from './types';
 
 export default function App() {
@@ -50,6 +55,44 @@ export default function App() {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [selectedStatus, setSelectedStatus] = useState<string>('All');
   
+  // User Profile & Recommendation State
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(() => {
+    try {
+      const saved = localStorage.getItem('civicdigest_user_profile');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.warn(e);
+    }
+    // Default initial profile for immediate preview
+    return {
+      id: 'default-user',
+      fullName: 'Maria Gonzalez',
+      email: 'maria.gonzalez@example.org',
+      address: {
+        rawInput: '5600 Fleet Ave, Cleveland, OH 44105',
+        streetAddress: '5600 Fleet Ave',
+        city: 'Cleveland',
+        state: 'OH',
+        zipCode: '44105',
+        neighborhood: 'Slavic Village',
+        matchedJurisdictionId: 'ocd-jurisdiction/country:us/state:oh/place:cleveland/government',
+        matchedDivisionId: 'ocd-division/country:us/state:oh/place:cleveland/ward:12',
+        matchedWardNumber: 12,
+        councilMemberName: 'Rebecca Maurer',
+        councilMemberEmail: 'rmaurer@clevelandcitycouncil.org',
+      },
+      residentRole: 'homeowner',
+      policyPriorities: ['Infrastructure & Public Works', 'Zoning & Housing', 'Public Safety'],
+      digestFrequency: 'weekly',
+      notifyOnWardHearings: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+  });
+
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState<boolean>(false);
+  const [isPersonalizedOnly, setIsPersonalizedOnly] = useState<boolean>(false);
+  
   const [bills, setBills] = useState<OCDBill[]>(INITIAL_BILLS);
   const [activeReceipt, setActiveReceipt] = useState<{ receipt: ReceiptCitation; title: string } | null>(null);
   const [perspectiveBillId, setPerspectiveBillId] = useState<string>(INITIAL_BILLS[0]?.id);
@@ -59,11 +102,73 @@ export default function App() {
   const [isSocialModalOpen, setIsSocialModalOpen] = useState<boolean>(false);
   const [isDbModalOpen, setIsDbModalOpen] = useState<boolean>(false);
   const [isScraperModalOpen, setIsScraperModalOpen] = useState<boolean>(false);
+  const [isMicroSurveyOpen, setIsMicroSurveyOpen] = useState<boolean>(false);
+  const [surveyTargetBill, setSurveyTargetBill] = useState<OCDBill | null>(null);
   const [socialModalBill, setSocialModalBill] = useState<OCDBill | null>(null);
 
-  // Filter bills based on jurisdiction, ward, category, search, and status
+  // Personalized Bill Recommendation Mapping
+  const billRecommendationMap = useMemo(() => {
+    if (!userProfile) return new Map<string, { score: number; reason: string }>();
+    const map = new Map<string, { score: number; reason: string }>();
+
+    bills.forEach((b) => {
+      let score = 45;
+      const reasons: string[] = [];
+
+      // 1. Direct Ward Match
+      if (userProfile.address.matchedDivisionId && b.divisionId === userProfile.address.matchedDivisionId) {
+        score += 35;
+        reasons.push(`Directly affects your ${userProfile.address.neighborhood || 'Ward'} home`);
+      }
+
+      // 2. Policy Priority Match
+      if (userProfile.policyPriorities.some((p) => p.toLowerCase() === (b.category || '').toLowerCase())) {
+        score += 25;
+        reasons.push(`Matches your priority in ${b.category}`);
+      }
+
+      // 3. Resident Role Match
+      if (userProfile.residentRole === 'renter' && (b.category === 'Zoning & Housing' || b.whoItAffects.toLowerCase().includes('tenant') || b.whoItAffects.toLowerCase().includes('renter'))) {
+        score += 20;
+        reasons.push('High impact for tenant rights & rent stabilization');
+      } else if (userProfile.residentRole === 'homeowner' && (b.category === 'Infrastructure & Public Works' || b.whoItAffects.toLowerCase().includes('property') || b.whoItAffects.toLowerCase().includes('homeowner'))) {
+        score += 20;
+        reasons.push('Direct impact for homeowner infrastructure & assessments');
+      } else if (userProfile.residentRole === 'small_business' && (b.category === 'Small Business & Commerce' || b.whoItAffects.toLowerCase().includes('business') || b.whoItAffects.toLowerCase().includes('commercial'))) {
+        score += 25;
+        reasons.push('Direct small business corridor & permitting impact');
+      } else if (userProfile.residentRole === 'commuter' && (b.category === 'Transportation & Transit' || b.category === 'Infrastructure & Public Works')) {
+        score += 20;
+        reasons.push('Impacts transit corridors and street paving');
+      }
+
+      // 4. Large Fiscal Outlay
+      if (b.fiscalImpact && b.fiscalImpact.amount > 1000000) {
+        score += 10;
+      }
+
+      const finalScore = Math.min(99, score);
+      map.set(b.id, {
+        score: finalScore,
+        reason: reasons[0] || `Relevant municipal matter for ${userProfile.address.city}`,
+      });
+    });
+
+    return map;
+  }, [userProfile, bills]);
+
+  // Recommended count for banner badge
+  const recommendedCount = useMemo(() => {
+    let count = 0;
+    billRecommendationMap.forEach((val) => {
+      if (val.score >= 70) count++;
+    });
+    return count;
+  }, [billRecommendationMap]);
+
+  // Filter bills based on jurisdiction, ward, category, search, status, and personal recommendation
   const filteredBills = useMemo(() => {
-    return bills.filter((b) => {
+    let list = bills.filter((b) => {
       // Jurisdiction match
       if (b.jurisdictionId && b.jurisdictionId !== selectedJurisdiction.id) {
         // if user changed jurisdiction, keep or filter appropriately
@@ -84,6 +189,14 @@ export default function App() {
         return false;
       }
 
+      // Personalized Only filter
+      if (isPersonalizedOnly) {
+        const match = billRecommendationMap.get(b.id);
+        if (!match || match.score < 70) {
+          return false;
+        }
+      }
+
       // Search query
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
@@ -99,7 +212,19 @@ export default function App() {
 
       return true;
     });
-  }, [bills, selectedJurisdiction, selectedWardId, selectedCategory, selectedStatus, searchQuery]);
+
+    // If personalized filter is active or user has a profile, sort highly relevant items higher
+    if (isPersonalizedOnly) {
+      list = [...list].sort((a, b) => {
+        const scoreA = billRecommendationMap.get(a.id)?.score || 0;
+        const scoreB = billRecommendationMap.get(b.id)?.score || 0;
+        return scoreB - scoreA;
+      });
+    }
+
+    return list;
+  }, [bills, selectedJurisdiction, selectedWardId, selectedCategory, selectedStatus, searchQuery, isPersonalizedOnly, billRecommendationMap]);
+
 
   const categories: string[] = [
     'All',
@@ -150,6 +275,12 @@ export default function App() {
         }}
         onOpenDbModal={() => setIsDbModalOpen(true)}
         onOpenScraper={() => setIsScraperModalOpen(true)}
+        onOpenMicroSurvey={() => {
+          setSurveyTargetBill(null);
+          setIsMicroSurveyOpen(true);
+        }}
+        userProfile={userProfile}
+        onOpenProfile={() => setIsProfileModalOpen(true)}
       />
 
       {/* Main Newspaper / Editorial Layout Container */}
@@ -159,6 +290,16 @@ export default function App() {
         {activeTab === 'digest' && (
           <div className="space-y-6">
             
+            {/* Resident Profile & Personalized Docket Recommendation Bar */}
+            <PersonalizedRecommendationsBanner
+              profile={userProfile}
+              onOpenProfileModal={() => setIsProfileModalOpen(true)}
+              isPersonalizedOnly={isPersonalizedOnly}
+              onTogglePersonalizedOnly={setIsPersonalizedOnly}
+              recommendedCount={recommendedCount}
+              jurisdiction={selectedJurisdiction}
+            />
+
             {/* Editorial Front-Page Feature Banner */}
             <section className="border-b-2 border-[#1A1A1A] pb-6">
               <div className="flex flex-col lg:flex-row gap-6 justify-between items-start">
@@ -255,19 +396,28 @@ export default function App() {
             {/* Editorial Bills Grid */}
             {filteredBills.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-                {filteredBills.map((bill) => (
-                  <DocketCard
-                    key={bill.id}
-                    bill={bill}
-                    onViewReceipt={handleOpenReceipt}
-                    onViewPerspectives={handleOpenPerspectives}
-                    onShareBill={(b) => {
-                      setSocialModalBill(b);
-                      setIsSocialModalOpen(true);
-                    }}
-                    onSelectTag={(tag) => setSearchQuery(tag)}
-                  />
-                ))}
+                {filteredBills.map((bill) => {
+                  const rec = billRecommendationMap.get(bill.id);
+                  return (
+                    <DocketCard
+                      key={bill.id}
+                      bill={bill}
+                      onViewReceipt={handleOpenReceipt}
+                      onViewPerspectives={handleOpenPerspectives}
+                      onShareBill={(b) => {
+                        setSocialModalBill(b);
+                        setIsSocialModalOpen(true);
+                      }}
+                      onOpenMicroSurvey={(b) => {
+                        setSurveyTargetBill(b);
+                        setIsMicroSurveyOpen(true);
+                      }}
+                      onSelectTag={(tag) => setSearchQuery(tag)}
+                      personalMatchReason={rec?.reason}
+                      personalMatchScore={rec?.score}
+                    />
+                  );
+                })}
               </div>
             ) : (
               <div className="bg-[#F2F0EA] border border-[#1A1A1A]/15 p-12 text-center space-y-3">
@@ -282,6 +432,7 @@ export default function App() {
                     setSelectedCategory('All');
                     setSelectedStatus('All');
                     setSelectedWardId('all');
+                    setIsPersonalizedOnly(false);
                   }}
                   className="inline-flex items-center text-xs font-bold uppercase tracking-wider text-[#1A1A1A] bg-[#FDFDFC] border border-[#1A1A1A] px-3.5 py-2 hover:bg-[#1A1A1A] hover:text-[#FDFDFC] transition-colors"
                 >
@@ -292,6 +443,7 @@ export default function App() {
 
           </div>
         )}
+
 
         {/* Meeting Summaries & Agendas Tab */}
         {activeTab === 'meetings' && (
@@ -333,6 +485,18 @@ export default function App() {
         {activeTab === 'scanner' && (
           <DocketScanner
             onAddParsedBill={handleAddParsedBill}
+          />
+        )}
+
+        {/* Council Briefs & Policy Intelligence Tab */}
+        {activeTab === 'policy_intel' && (
+          <PolicyIntelPlatform
+            jurisdiction={selectedJurisdiction}
+            bills={bills}
+            onOpenMicroSurvey={(b) => {
+              setSurveyTargetBill(b);
+              setIsMicroSurveyOpen(true);
+            }}
           />
         )}
 
@@ -390,7 +554,39 @@ export default function App() {
         }}
       />
 
+      {/* Resident Zero-Party Micro-Survey Modal */}
+      <ResidentMicroSurveyModal
+        isOpen={isMicroSurveyOpen}
+        onClose={() => {
+          setIsMicroSurveyOpen(false);
+          setSurveyTargetBill(null);
+        }}
+        targetBill={surveyTargetBill}
+        jurisdiction={selectedJurisdiction}
+      />
+
+      {/* Resident Profile & Address Geocoding Modal */}
+      <UserProfileModal
+        isOpen={isProfileModalOpen}
+        onClose={() => setIsProfileModalOpen(false)}
+        currentProfile={userProfile}
+        jurisdictions={jurisdictions}
+        onSaveProfile={(updatedProfile, autoSwitch) => {
+          setUserProfile(updatedProfile);
+          if (autoSwitch) {
+            const matchedJur = jurisdictions.find((j) => j.id === updatedProfile.address.matchedJurisdictionId);
+            if (matchedJur) {
+              setSelectedJurisdiction(matchedJur);
+              if (updatedProfile.address.matchedDivisionId) {
+                setSelectedWardId(updatedProfile.address.matchedDivisionId);
+              }
+            }
+          }
+        }}
+      />
+
       {/* Editorial Footer */}
+
       <footer className="border-t-2 border-[#1A1A1A] bg-[#FDFDFC] text-[#1A1A1A] py-6 mt-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">

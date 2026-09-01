@@ -227,10 +227,87 @@ export interface PolicyOutcomeCorrelation {
   measuredImpactSummary: string;
 }
 
+// Zero-Party Resident Micro-Survey Submission & Aggregation with Differential Privacy
+export interface ResidentMicroSurveySubmission {
+  id?: string;
+  billId?: string;
+  billTitle?: string;
+  divisionId: string;
+  wardNumber: number;
+  residentRole: 'homeowner' | 'renter' | 'small_business' | 'commuter' | 'student' | 'general';
+  stance: 'support' | 'oppose' | 'amend' | 'neutral';
+  perceivedCostImpactUSD: number; // e.g. -50 for savings, +25 for cost
+  priorityRating: number; // 1 to 10
+  anonymizedFeedback?: string;
+  epsilon: number;
+  submittedAt: string;
+}
+
+export interface MicroSurveyAggregatedResult {
+  billId?: string;
+  totalVotes: number;
+  supportPct: number;
+  opposePct: number;
+  amendPct: number;
+  neutralPct: number;
+  rawAvgCostImpactUSD: number;
+  dpAvgCostImpactUSD: number;
+  rawAvgPriority: number;
+  dpAvgPriority: number;
+  roleBreakdown: { [role: string]: number };
+  sampleStatements: string[];
+  privacyGuarantee: string;
+}
+
+export interface UserProfile {
+  id: string;
+  fullName: string;
+  email?: string;
+  address: {
+    rawInput: string;
+    streetAddress: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    neighborhood?: string;
+    matchedJurisdictionId: string;
+    matchedDivisionId: string; // ward or district OCD-ID
+    matchedWardNumber?: number;
+    councilMemberName?: string;
+    councilMemberId?: string;
+    councilMemberEmail?: string;
+  };
+  residentRole: 'homeowner' | 'renter' | 'small_business' | 'commuter' | 'student' | 'parent' | 'senior' | 'general';
+  policyPriorities: string[]; // Policy categories the resident cares most about
+  householdSize?: number;
+  yearsInCommunity?: number;
+  digestFrequency: 'daily' | 'weekly' | 'breaking_only';
+  notifyOnWardHearings: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AddressLookupResult {
+  matched: boolean;
+  rawInput: string;
+  formattedAddress: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  neighborhood: string;
+  jurisdiction: OCDJurisdiction;
+  division: OCDDivision;
+  councilMember?: OCDPerson;
+  confidence: number;
+  explanation: string;
+}
+
 export type ActiveTab = 
   | 'digest' 
   | 'meetings' 
   | 'perspectives' 
   | 'sentiment' 
   | 'accountability' 
-  | 'scanner';
+  | 'scanner'
+  | 'policy_intel';
+

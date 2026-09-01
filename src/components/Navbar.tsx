@@ -18,9 +18,13 @@ import {
   Bot,
   Share2,
   Database,
-  Radio
+  Radio,
+  Vote,
+  FileText,
+  User,
+  MapPin
 } from 'lucide-react';
-import { OCDJurisdiction, ActiveTab } from '../types';
+import { OCDJurisdiction, ActiveTab, UserProfile } from '../types';
 
 interface NavbarProps {
   jurisdictions: OCDJurisdiction[];
@@ -38,6 +42,9 @@ interface NavbarProps {
   onOpenSocialDispatch?: () => void;
   onOpenDbModal?: () => void;
   onOpenScraper?: () => void;
+  onOpenMicroSurvey?: () => void;
+  userProfile?: UserProfile | null;
+  onOpenProfile?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -56,7 +63,11 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenSocialDispatch,
   onOpenDbModal,
   onOpenScraper,
+  onOpenMicroSurvey,
+  userProfile,
+  onOpenProfile,
 }) => {
+
   return (
     <header className="bg-[#FDFDFC] text-[#1A1A1A] border-b-2 border-[#1A1A1A] sticky top-0 z-40 transition-colors">
       {/* Top Utility & Masthead Bar */}
@@ -182,6 +193,18 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span className="absolute -top-1 -right-1 w-2 h-2 bg-[#E63946] rounded-full" />
             </button>
 
+            {/* Resident Voice / Micro-Survey Button */}
+            {onOpenMicroSurvey && (
+              <button
+                onClick={onOpenMicroSurvey}
+                title="Cast Resident Vote / Zero-Party Micro-Survey"
+                className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider px-2 sm:px-2.5 py-1.5 border border-[#2D6A4F]/40 bg-[#2D6A4F]/10 hover:bg-[#2D6A4F] text-[#2D6A4F] hover:text-white transition-colors"
+              >
+                <Vote className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Resident Voice</span>
+              </button>
+            )}
+
             {/* Social Media Dispatch Button */}
             {onOpenSocialDispatch && (
               <button
@@ -206,8 +229,28 @@ export const Navbar: React.FC<NavbarProps> = ({
               <Bot className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Co-Pilot</span>
             </button>
+
+            {/* Resident Profile & Address Location Trigger */}
+            {onOpenProfile && (
+              <button
+                onClick={onOpenProfile}
+                title="Manage Resident Profile & Home Address"
+                className={`flex items-center gap-1.5 text-xs font-semibold px-2.5 sm:px-3 py-1.5 border transition-all ${
+                  userProfile
+                    ? 'bg-[#2D6A4F]/10 border-[#2D6A4F]/40 text-[#2D6A4F] hover:bg-[#2D6A4F] hover:text-white'
+                    : 'bg-[#F2F0EA] border-[#1A1A1A]/30 text-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-white'
+                }`}
+              >
+                <MapPin className="w-3.5 h-3.5 shrink-0" />
+                <span className="hidden sm:inline">
+                  {userProfile ? `${userProfile.address.neighborhood || userProfile.address.city} (Ward ${userProfile.address.matchedWardNumber || 'Dist.'})` : 'Find My Ward'}
+                </span>
+                <span className="sm:hidden">Profile</span>
+              </button>
+            )}
           </div>
         </div>
+
 
         {/* Editorial Navigation Bar */}
         <nav className="flex items-center gap-4 sm:gap-8 pt-2.5 overflow-x-auto scrollbar-none text-xs font-bold uppercase tracking-widest">
@@ -280,7 +323,20 @@ export const Navbar: React.FC<NavbarProps> = ({
             <Sparkles className="w-3 h-3 text-[#E63946]" />
             <span>Docket Scanner</span>
           </button>
+
+          <button
+            onClick={() => onSelectTab('policy_intel')}
+            className={`pb-1.5 whitespace-nowrap transition-all border-b-2 flex items-center gap-1.5 ${
+              activeTab === 'policy_intel'
+                ? 'border-[#2D6A4F] text-[#2D6A4F] opacity-100'
+                : 'border-transparent text-[#1A1A1A] opacity-50 hover:opacity-100 hover:border-[#2D6A4F]/30'
+            }`}
+          >
+            <FileText className="w-3 h-3 text-[#2D6A4F]" />
+            <span>Council Briefs &amp; Intel</span>
+          </button>
         </nav>
+
 
       </div>
     </header>

@@ -87,10 +87,33 @@ export const SentimentHub: React.FC<SentimentHubProps> = ({
     }
   };
 
-  const handleSurveySubmit = (e: React.FormEvent) => {
+  const handleSurveySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    try {
+      const wardNumberMatch = formWard.match(/ward:(\d+)/);
+      const wardNumber = wardNumberMatch ? parseInt(wardNumberMatch[1], 10) : 12;
+
+      await fetch('/api/sentiment/submit-microsurvey', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          billId: 'ward-general-pulse',
+          billTitle: `${currentWardData.wardName} Periodic Economic Pulse`,
+          divisionId: formWard,
+          wardNumber,
+          residentRole: 'general',
+          stance: costOfLiving > 6 ? 'oppose' : 'support',
+          perceivedCostImpactUSD: savingsDelta,
+          priorityRating: costOfLiving,
+          anonymizedFeedback: `Priority focus: ${primaryConcern}`,
+          epsilon: activeEpsilon,
+        }),
+      });
+    } catch (err) {
+      console.warn('Micro-survey submission fallback:', err);
+    }
     setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 4000);
+    setTimeout(() => setSubmitted(false), 5000);
   };
 
   return (

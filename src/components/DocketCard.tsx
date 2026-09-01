@@ -15,7 +15,8 @@ import {
   Tag, 
   ArrowRight,
   Layers,
-  Share2
+  Share2,
+  Vote
 } from 'lucide-react';
 import { OCDBill } from '../types';
 import { formatCurrency, formatDate } from '../lib/utils';
@@ -25,7 +26,10 @@ interface DocketCardProps {
   onViewReceipt: (bill: OCDBill) => void;
   onViewPerspectives: (bill: OCDBill) => void;
   onShareBill?: (bill: OCDBill) => void;
+  onOpenMicroSurvey?: (bill: OCDBill) => void;
   onSelectTag?: (tag: string) => void;
+  personalMatchReason?: string;
+  personalMatchScore?: number;
 }
 
 export const DocketCard: React.FC<DocketCardProps> = ({
@@ -33,8 +37,12 @@ export const DocketCard: React.FC<DocketCardProps> = ({
   onViewReceipt,
   onViewPerspectives,
   onShareBill,
+  onOpenMicroSurvey,
   onSelectTag,
+  personalMatchReason,
+  personalMatchScore,
 }) => {
+
   const getCategoryBadge = (cat: string) => {
     switch (cat) {
       case 'Zoning & Housing':
@@ -100,10 +108,26 @@ export const DocketCard: React.FC<DocketCardProps> = ({
           <div>{getStatusBadge(bill.status)}</div>
         </div>
 
+        {/* Personalized Match Callout if active */}
+        {personalMatchReason && (
+          <div className="mb-3 px-2.5 py-1.5 bg-[#2D6A4F]/10 border border-[#2D6A4F]/25 rounded text-xs flex items-center justify-between gap-2 text-[#2D6A4F]">
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs">🎯</span>
+              <span className="font-semibold">{personalMatchReason}</span>
+            </div>
+            {personalMatchScore && (
+              <span className="text-[11px] font-bold font-mono px-1.5 py-0.5 bg-[#2D6A4F] text-white rounded">
+                {personalMatchScore}% Match
+              </span>
+            )}
+          </div>
+        )}
+
         {/* Plain Language Headline */}
         <h3 className="text-xl sm:text-2xl font-serif leading-snug font-medium text-[#1A1A1A] group-hover:italic transition-all">
           {bill.plainTitle}
         </h3>
+
 
         {/* Raw Legalese Subtitle */}
         <div className="text-[11px] font-mono text-[#777] mt-1 mb-3 line-clamp-1 border-b border-[#1A1A1A]/10 pb-2">
@@ -179,6 +203,18 @@ export const DocketCard: React.FC<DocketCardProps> = ({
             <ShieldCheck className="w-3.5 h-3.5 text-[#1A1A1A]" />
             <span>Receipt Check</span>
           </button>
+
+          {/* Micro-Survey / Resident Vote Trigger */}
+          {onOpenMicroSurvey && (
+            <button
+              onClick={() => onOpenMicroSurvey(bill)}
+              title="Cast Resident Vote / Submit Zero-Party Feedback"
+              className="inline-flex items-center gap-1 font-bold uppercase tracking-wider text-[#2D6A4F] hover:bg-[#2D6A4F]/10 border border-[#2D6A4F]/40 px-2 sm:px-2.5 py-1.5 transition-colors text-[11px]"
+            >
+              <Vote className="w-3.5 h-3.5 text-[#2D6A4F]" />
+              <span className="hidden sm:inline">Voice / Vote</span>
+            </button>
+          )}
 
           {/* Social Broadcast Trigger */}
           {onShareBill && (
