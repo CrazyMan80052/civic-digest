@@ -1,5 +1,6 @@
 import { NextResponse, NextRequest } from 'next/server';
 import { MICRO_SURVEY_STORE } from '@/lib/store';
+import { getSecureRandom } from '@/lib/crypto';
 
 export async function POST(req: NextRequest) {
   try {
@@ -19,12 +20,12 @@ export async function POST(req: NextRequest) {
     const eps = Math.max(0.1, Number(epsilon) || 1.0);
     const costSensitivity = 50.0;
     const costScale = costSensitivity / eps;
-    const u1 = Math.random() - 0.5;
+    const u1 = getSecureRandom() - 0.5;
     const costNoise = -costScale * Math.sign(u1) * Math.log(1 - 2 * Math.abs(u1));
 
     const ratingSensitivity = 1.0;
     const ratingScale = ratingSensitivity / eps;
-    const u2 = Math.random() - 0.5;
+    const u2 = getSecureRandom() - 0.5;
     const ratingNoise = -ratingScale * Math.sign(u2) * Math.log(1 - 2 * Math.abs(u2));
 
     const clampedCost = Math.max(-500, Math.min(500, Number(perceivedCostImpactUSD) || 0));
@@ -33,7 +34,7 @@ export async function POST(req: NextRequest) {
     const dpPriority = Number(Math.max(1, Math.min(10, clampedPriority + ratingNoise)).toFixed(1));
 
     const submissionRecord = {
-      id: `ms-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      id: `ms-${Date.now()}-${Math.floor(getSecureRandom() * 1000)}`,
       billId: billId || 'general-municipal',
       billTitle: billTitle || 'Municipal Policy Review',
       divisionId,

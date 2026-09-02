@@ -1,6 +1,7 @@
 import { NextResponse, NextRequest } from 'next/server';
 import { SCRAPER_TARGETS } from '../targets/route';
 import { getGeminiClient } from '@/lib/gemini';
+import { getSecureRandom } from '@/lib/crypto';
 
 export async function POST(req: NextRequest) {
   const startTime = Date.now();
@@ -33,7 +34,7 @@ export async function POST(req: NextRequest) {
       rawMatters = [
         {
           MatterId: 48921,
-          MatterFile: `Ord. ${Math.floor(800 + Math.random() * 200)}-2026`,
+          MatterFile: `Ord. ${Math.floor(800 + getSecureRandom() * 200)}-2026`,
           MatterName: 'Urban Canopy & Green Infrastructure Corridor Grant',
           MatterTitle: `An emergency ordinance authorizing the Director of Capital Projects to expend grant funds for tree canopy expansion, permeable bioswales, and urban cooling along priority high-heat transit corridors in ${target.city}.`,
           MatterIntroDate: new Date().toISOString(),
@@ -43,7 +44,7 @@ export async function POST(req: NextRequest) {
         },
         {
           MatterId: 48922,
-          MatterFile: `Res. ${Math.floor(400 + Math.random() * 200)}-2026`,
+          MatterFile: `Res. ${Math.floor(400 + getSecureRandom() * 200)}-2026`,
           MatterName: 'Small Business Commercial Façade & Energy Efficiency Subsidy',
           MatterTitle: `A resolution declaring municipal intent to establish a micro-grant program subsidizing storefront energy-efficient retrofits, heat pump installations, and accessibility ramps for independent retail businesses in ${target.city}.`,
           MatterIntroDate: new Date(Date.now() - 86400000 * 3).toISOString(),
