@@ -213,6 +213,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
           </div>
           <button
             onClick={onClose}
+            aria-label="Close"
             className="p-1 rounded text-white/60 hover:text-white hover:bg-white/10 transition-colors"
           >
             <X className="w-5 h-5" />
