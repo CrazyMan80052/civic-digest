@@ -50,6 +50,7 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({ receipt, billTitle, 
           </div>
           <button
             onClick={onClose}
+            aria-label="Close"
             className="text-[#aaa] hover:text-white p-1 hover:bg-[#333] transition-colors"
           >
             <X className="w-5 h-5" />
