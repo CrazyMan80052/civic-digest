@@ -1,4 +1,5 @@
 import { NextResponse, NextRequest } from 'next/server';
+import { getSecureRandom } from '@/lib/crypto';
 
 export async function POST(req: NextRequest) {
   try {
@@ -8,7 +9,7 @@ export async function POST(req: NextRequest) {
 
     const scale = sensitivity / Math.max(0.1, Number(epsilon));
 
-    const u = Math.random() - 0.5;
+    const u = getSecureRandom() - 0.5;
     const noise = -scale * Math.sign(u) * Math.log(1 - 2 * Math.abs(u));
 
     const dpValue = Number((clampedRaw + noise).toFixed(2));

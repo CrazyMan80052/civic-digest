@@ -25,6 +25,7 @@ import {
 } from 'recharts';
 import { WARD_METRICS, INITIAL_DP_CONFIG } from '../data/mockData';
 import { DifferentialPrivacyConfig } from '../types';
+import { getSecureRandom } from '../lib/crypto';
 
 interface SentimentHubProps {
   selectedWardId: string;
@@ -58,7 +59,7 @@ export const SentimentHub: React.FC<SentimentHubProps> = ({
       name: w.wardName.split('(')[0].trim(),
       fullWard: w.wardName,
       'Raw Cost of Living (1-10)': Number(w.rawCostOfLivingIndex.toFixed(2)),
-      'DP Private Estimate (ε)': Number((w.rawCostOfLivingIndex + (Math.random() - 0.5) * noiseFactor * 2).toFixed(2)),
+      'DP Private Estimate (ε)': Number((w.rawCostOfLivingIndex + (getSecureRandom() - 0.5) * noiseFactor * 2).toFixed(2)),
       'Housing Burden (%)': Number(w.rawHousingBurdenPct.toFixed(1)),
       'Business Confidence (1-10)': Number(w.rawBusinessConfidence.toFixed(2)),
     };
