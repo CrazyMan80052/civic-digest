@@ -102,17 +102,19 @@ export const Navbar: React.FC<NavbarProps> = ({
             
             {/* Search Input */}
             <div className="relative w-44 sm:w-60">
-              <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-[#777]" />
+              <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-[#777]" aria-hidden="true" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => onSearchChange(e.target.value)}
                 placeholder="Search dockets, votes..."
+                aria-label="Search"
                 className="w-full bg-[#F2F0EA] text-xs text-[#1A1A1A] pl-8 pr-6 py-1.5 border border-[#1A1A1A]/20 focus:outline-none focus:border-[#1A1A1A] placeholder-[#777] font-medium"
               />
               {searchQuery && (
                 <button
                   onClick={() => onSearchChange('')}
+                  aria-label="Clear search"
                   className="absolute right-2 top-2 text-[10px] text-[#777] hover:text-[#1A1A1A] font-bold"
                 >
                   ✕
@@ -124,6 +126,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div className="relative">
               <select
                 value={selectedJurisdiction.id}
+                aria-label="Select jurisdiction"
                 onChange={(e) => {
                   const found = jurisdictions.find((j) => j.id === e.target.value);
                   if (found) {
@@ -146,6 +149,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div className="relative hidden sm:block">
               <select
                 value={selectedWardId}
+                aria-label="Select ward or district"
                 onChange={(e) => onSelectWardId(e.target.value)}
                 className="appearance-none bg-[#F2F0EA] border border-[#1A1A1A]/30 text-xs text-[#1A1A1A] font-medium py-1.5 pl-2.5 pr-7 focus:outline-none cursor-pointer"
               >
