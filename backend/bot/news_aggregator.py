@@ -68,25 +68,34 @@ def parse_rss_xml(xml_content: str, source_name: str) -> list[NewsArticleContext
         return articles
 
     # Case 2: Atom feed (<feed><entry>...)
-    entries = root.findall(".//{http://www.w3.org/2005/Atom}entry") or root.findall(".//entry")
+    entries = root.findall(".//{http://www.w3.org/2005/Atom}entry")
+    if not entries:
+        entries = root.findall(".//entry")
+
     for entry in entries:
-        title_el = entry.find("{http://www.w3.org/2005/Atom}title") or entry.find("title")
+        title_el = entry.find("{http://www.w3.org/2005/Atom}title")
+        if title_el is None:
+            title_el = entry.find("title")
         title = (title_el.text if title_el is not None and title_el.text else "").strip()
 
-        link_el = entry.find("{http://www.w3.org/2005/Atom}link") or entry.find("link")
+        link_el = entry.find("{http://www.w3.org/2005/Atom}link")
+        if link_el is None:
+            link_el = entry.find("link")
         link = ""
         if link_el is not None:
             link = link_el.attrib.get("href") or link_el.text or ""
 
-        summary_el = (
-            entry.find("{http://www.w3.org/2005/Atom}summary")
-            or entry.find("{http://www.w3.org/2005/Atom}content")
-            or entry.find("summary")
-        )
+        summary_el = entry.find("{http://www.w3.org/2005/Atom}summary")
+        if summary_el is None:
+            summary_el = entry.find("{http://www.w3.org/2005/Atom}content")
+        if summary_el is None:
+            summary_el = entry.find("summary")
         summary = (summary_el.text if summary_el is not None and summary_el.text else "").strip()
         clean_summary = re.sub(r"<[^>]+>", " ", summary).strip()
 
-        pub_el = entry.find("{http://www.w3.org/2005/Atom}updated") or entry.find("updated")
+        pub_el = entry.find("{http://www.w3.org/2005/Atom}updated")
+        if pub_el is None:
+            pub_el = entry.find("updated")
         pub_date = pub_el.text if pub_el is not None else None
 
         if title and link:
