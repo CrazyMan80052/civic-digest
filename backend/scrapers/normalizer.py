@@ -6,7 +6,7 @@ OCD-compliant entities and creates primary source receipt citations.
 """
 
 import re
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Any
 
 
@@ -33,7 +33,7 @@ def normalize_legistar_matter(
     place_name: str,
 ) -> dict[str, Any]:
     """
-    Normalizes a Legistar Matter OData record into CivicDigest OCD format.
+    Normalizes a Legistar or municipal Matter record into CivicDigest OCD format.
     """
     matter_id = raw.get("MatterId")
     file_number = raw.get("MatterFile") or f"Leg-{matter_id}"
@@ -42,16 +42,17 @@ def normalize_legistar_matter(
 
     # Parse year and date
     intro_date = None
-    year = datetime.utcnow().year
+    now_utc = datetime.now(UTC)
+    year = now_utc.year
     if intro_date_raw:
         try:
             dt = datetime.fromisoformat(intro_date_raw.replace("Z", "+00:00"))
             intro_date = dt.strftime("%Y-%m-%d")
             year = dt.year
         except Exception:
-            intro_date = datetime.utcnow().strftime("%Y-%m-%d")
+            intro_date = now_utc.strftime("%Y-%m-%d")
     else:
-        intro_date = datetime.utcnow().strftime("%Y-%m-%d")
+        intro_date = now_utc.strftime("%Y-%m-%d")
 
     ocd_id = generate_ocd_bill_id(state_code, place_name, year, file_number)
 
@@ -67,17 +68,23 @@ def normalize_legistar_matter(
 
     # Preliminary classification
     category = "General Municipal Policy"
-    title_lower = official_title.lower()
-    if any(k in title_lower for k in ["zoning", "variance", "parcel", "land use", "subdivision", "parking"]):
+    matter_name = raw.get("MatterName") or ""
+    search_text = f"{official_title} {matter_name}".lower()
+    if any(k in search_text for k in ["zoning", "variance", "parcel", "land use", "subdivision", "parking", "district"]):
         category = "Zoning & Land Use"
-    elif any(k in title_lower for k in ["storm", "sewer", "water", "park", "emission", "clean", "climate", "solar"]):
+    elif any(k in search_text for k in ["storm", "sewer", "water", "park", "emission", "clean", "climate", "solar"]):
         category = "Environment & Infrastructure"
-    elif any(k in title_lower for k in ["budget", "appropriation", "tax", "bond", "fund", "grant", "fiscal", "$"]):
+    elif any(k in search_text for k in ["budget", "appropriation", "tax", "bond", "fund", "grant", "fiscal", "$", "incentive"]):
         category = "Budget & Appropriations"
-    elif any(k in title_lower for k in ["police", "fire", "ems", "safety", "curfew", "surveillance"]):
+    elif any(k in search_text for k in ["police", "fire", "ems", "safety", "curfew", "surveillance", "noise", "decibel", "offense", "peace", "braking"]):
         category = "Public Safety & Justice"
-    elif any(k in title_lower for k in ["transit", "bus", "bike", "street", "paving", "traffic", "signal"]):
+    elif any(k in search_text for k in ["transit", "bus", "bike", "street", "paving", "traffic", "signal", "crosswalk", "path"]):
         category = "Transit & Mobility"
+
+    fiscal_amount = float(raw.get("fiscal_amount", 0.0))
+    fiscal_type = raw.get("fiscal_type") or ("Regulatory / To Be Assessed" if fiscal_amount == 0 else "Capital / Municipal Fund")
+    official_url = raw.get("official_url") or f"https://{place_name.lower()}.legistar.com/LegislationDetail.aspx?ID={matter_id}"
+    verification_badge = "Verified Municipal Portal" if raw.get("official_url") else "Verified Legistar OData"
 
     return {
         "id": ocd_id,
@@ -89,27 +96,27 @@ def normalize_legistar_matter(
         "status": status_name,
         "introductionDate": intro_date,
         "sponsors": sponsors,
-        "affectedWards": ["All Wards"],
-        "whoItAffects": "Municipal residents and affected local property owners.",
-        "summary": official_title, # Will be enriched by Gemini NLP
+        "affectedWards": raw.get("affected_wards") or ["All Wards"],
+        "whoItAffects": raw.get("who_it_affects") or "Municipal residents and affected local property owners.",
+        "summary": official_title,
         "fiscalImpact": {
-            "amount": 0.0,
-            "type": "Regulatory / To Be Assessed",
-            "description": "Fiscal impact review pending clerk documentation.",
+            "amount": fiscal_amount,
+            "type": fiscal_type,
+            "description": raw.get("fiscal_description") or f"{fiscal_type} as recorded in municipal journal.",
         },
         "receipt": {
             "documentTitle": f"{place_name.capitalize()} Clerk Record - Matter #{file_number}",
             "fileNumber": file_number,
             "clerkMatterId": f"LEG-{matter_id}",
-            "officialUrl": f"https://{place_name.lower()}.legistar.com/LegislationDetail.aspx?ID={matter_id}",
+            "officialUrl": official_url,
             "paragraphSnippet": official_title,
             "pageNumber": 1,
-            "verificationBadge": "Verified Legistar OData",
-            "verifiedAt": datetime.utcnow().isoformat(),
+            "verificationBadge": verification_badge,
+            "verifiedAt": now_utc.isoformat(),
         },
         "hearing": {
             "committee": body_name,
-            "dateTime": datetime.utcnow().isoformat(),
+            "dateTime": now_utc.isoformat(),
             "location": "City Hall Council Chambers",
             "publicCommentAllowed": True,
         },
