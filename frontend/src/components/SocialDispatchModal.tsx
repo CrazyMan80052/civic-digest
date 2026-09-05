@@ -74,20 +74,6 @@ export const SocialDispatchModal: React.FC<SocialDispatchModalProps> = ({
   const [isDispatchingWebhook, setIsDispatchingWebhook] = useState<boolean>(false);
   const [webhookStatus, setWebhookStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
-  // Update selectedBill when initialBill changes
-  useEffect(() => {
-    if (initialBill) {
-      setSelectedBill(initialBill);
-    }
-  }, [initialBill]);
-
-  // Generate initial social content whenever selectedBill changes
-  useEffect(() => {
-    if (selectedBill && isOpen) {
-      generateSocialPosts(selectedBill, tone);
-    }
-  }, [selectedBill, isOpen]);
-
   const generateSocialPosts = async (bill: OCDBill, selectedTone: ToneSetting) => {
     setIsGenerating(true);
     setWebhookStatus('idle');
@@ -147,6 +133,20 @@ export const SocialDispatchModal: React.FC<SocialDispatchModalProps> = ({
       setIsGenerating(false);
     }
   };
+
+  // Update selectedBill when initialBill changes
+  useEffect(() => {
+    if (initialBill) {
+      setSelectedBill(initialBill);
+    }
+  }, [initialBill]);
+
+  // Generate initial social content whenever selectedBill changes
+  useEffect(() => {
+    if (selectedBill && isOpen) {
+      generateSocialPosts(selectedBill, tone);
+    }
+  }, [selectedBill, isOpen, tone]);
 
   if (!isOpen) return null;
 
