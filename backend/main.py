@@ -4,17 +4,22 @@ FastAPI Entry Point for CivicDigest Backend Service
 Exposes endpoints for Scrapers, OCR Pipeline, NLP Enrichment, and Differential Privacy.
 """
 
-from fastapi import FastAPI, Depends, HTTPException, Query, BackgroundTasks
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
-from typing import List, Dict, Any, Optional
-import asyncio
 from datetime import datetime
 
-from .database import get_db, Base, engine
-from .models import Jurisdiction, Bill, PrimarySourceReceipt
-from .scrapers.pipeline import IngestionPipeline
-from .scrapers.legistar import LegistarClient
+from fastapi import FastAPI, Query
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, Field
+
+try:
+    from .bot.routes import router as bot_router
+    from .database import Base, engine
+    from .scrapers.legistar import LegistarClient
+    from .scrapers.pipeline import IngestionPipeline
+except ImportError:
+    from bot.routes import router as bot_router
+    from database import Base, engine
+    from scrapers.legistar import LegistarClient
+    from scrapers.pipeline import IngestionPipeline
 
 # Initialize DB tables if PostgreSQL is available
 try:
@@ -35,6 +40,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(bot_router)
 
 class ScrapeTriggerRequest(BaseModel):
     client_name: str = Field(..., example="cleveland", description="Municipal Legistar identifier")
@@ -59,14 +66,14 @@ async def trigger_scraper(request: ScrapeTriggerRequest):
     and returns ingestion stats.
     """
     jurisdiction_id = f"ocd-jurisdiction/country:us/state:{request.state_code.lower()}/place:{request.place_name.lower()}/government"
-    
+
     pipeline = IngestionPipeline(
         jurisdiction_id=jurisdiction_id,
         client_name=request.client_name,
         state_code=request.state_code,
         place_name=request.place_name,
     )
-    
+
     results = await pipeline.run(top=request.top, days_back=request.days_back)
     return results
 

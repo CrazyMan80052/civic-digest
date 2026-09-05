@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
   let councilMemberName = 'Rebecca Maurer';
   let councilMemberEmail = 'rmaurer@clevelandcitycouncil.org';
   let councilMemberPhone = '(216) 664-4235';
-  let formattedAddress = address.trim();
+  const formattedAddress = address.trim();
   let explanation = 'Matched to City of Cleveland Ward 12 based on Slavic Village/Fleet corridor geographic boundaries.';
 
   if (raw.includes('sacramento') || raw.includes(', ca') || raw.includes('california') || raw.includes('95814') || raw.includes('natomas') || raw.includes('land park')) {

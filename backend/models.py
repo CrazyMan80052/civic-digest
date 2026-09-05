@@ -1,9 +1,14 @@
-# backend/models.py
-from sqlalchemy import Column, String, Integer, Numeric, Text, Date, DateTime, JSON, ForeignKey, Boolean
-from sqlalchemy.dialects.postgresql import UUID, JSONB
-from sqlalchemy.sql import func
 import uuid
-from .database import Base
+from enum import StrEnum
+
+from sqlalchemy import Column, Date, DateTime, ForeignKey, Integer, Numeric, String, Text
+from sqlalchemy.dialects.postgresql import JSONB, UUID
+from sqlalchemy.sql import func
+
+try:
+    from .database import Base
+except ImportError:
+    from database import Base
 
 class Jurisdiction(Base):
     __tablename__ = "jurisdictions"
@@ -66,4 +71,32 @@ class ResidentSentiment(Base):
     sentiment_score = Column(Numeric(3, 2), nullable=False)
     burden_level = Column(String(32))
     demographic_group = Column(String(64))
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class PostStatus(StrEnum):
+    PENDING_MODERATION = "PENDING_MODERATION"
+    QUEUED = "QUEUED"
+    PUBLISHED = "PUBLISHED"
+    REJECTED = "REJECTED"
+    FAILED = "FAILED"
+
+
+class SocialPost(Base):
+    __tablename__ = "social_posts"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    bill_id = Column(String(128), ForeignKey("bills.id", ondelete="CASCADE"), nullable=False)
+    platform = Column(String(32), nullable=False)
+    status = Column(String(32), default=PostStatus.PENDING_MODERATION.value)
+    priority = Column(String(32), default="MODERATE")
+    thread_content = Column(JSONB, nullable=False)
+    card_image_url = Column(Text, nullable=True)
+    published_post_url = Column(Text, nullable=True)
+    moderation_notes = Column(Text, nullable=True)
+    moderated_by = Column(String(128), nullable=True)
+    scheduled_for = Column(DateTime(timezone=True), nullable=True)
+    published_at = Column(DateTime(timezone=True), nullable=True)
+    retry_count = Column(Integer, default=0)
+    error_log = Column(Text, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())

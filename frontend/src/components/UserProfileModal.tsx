@@ -15,13 +15,11 @@ import {
   GraduationCap, 
   Heart,
   Sliders,
-  ChevronRight,
   Loader2,
-  Phone,
   Mail,
   Compass
 } from 'lucide-react';
-import { UserProfile, AddressLookupResult, OCDJurisdiction, OCDDivision, PolicyCategory } from '../types';
+import { UserProfile, AddressLookupResult, OCDJurisdiction, PolicyCategory } from '../types';
 
 interface UserProfileModalProps {
   isOpen: boolean;
@@ -58,8 +56,6 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
   onSaveProfile,
   jurisdictions,
 }) => {
-  if (!isOpen) return null;
-
   const [fullName, setFullName] = useState<string>(currentProfile?.fullName || 'Resident Citizen');
   const [email, setEmail] = useState<string>(currentProfile?.email || '');
   const [addressInput, setAddressInput] = useState<string>(currentProfile?.address?.rawInput || '');
@@ -95,7 +91,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
   const [selectedPriorities, setSelectedPriorities] = useState<string[]>(
     currentProfile?.policyPriorities || ['Zoning & Housing', 'Infrastructure & Public Works']
   );
-  const [digestFreq, setDigestFreq] = useState<UserProfile['digestFrequency']>(currentProfile?.digestFrequency || 'weekly');
+  const [digestFreq] = useState<UserProfile['digestFrequency']>(currentProfile?.digestFrequency || 'weekly');
   const [notifyWard, setNotifyWard] = useState<boolean>(currentProfile?.notifyOnWardHearings ?? true);
   const [autoSwitchCity, setAutoSwitchCity] = useState<boolean>(true);
   const [addressError, setAddressError] = useState<string | null>(null);
@@ -129,7 +125,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
         division: matchedDiv,
       });
       if (presetAddr) setAddressInput(presetAddr);
-    } catch (err: any) {
+    } catch {
       setAddressError('Could not verify exact address. Defaulting to municipal core.');
     } finally {
       setIsGeocoding(false);
@@ -193,6 +189,8 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
     onSaveProfile(profile, autoSwitchCity);
     onClose();
   };
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto">

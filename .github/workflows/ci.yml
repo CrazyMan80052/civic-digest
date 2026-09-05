@@ -1,0 +1,102 @@
+name: CI — Monorepo PR Verification
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # -------------------------------------------------------------
+  # Job 1: Frontend Verification (Next.js 16 + React 19 + Bun)
+  # -------------------------------------------------------------
+  frontend:
+    name: Frontend (Bun, Lint, TypeCheck, Build, Test)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: TypeScript Type Check
+        run: bun x tsc --noEmit
+
+      - name: ESLint Check
+        run: bun run lint
+
+      - name: Next.js Production Build
+        run: bun run build
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
+
+      - name: Bun Unit & Smoke Tests
+        run: bun test
+
+  # -------------------------------------------------------------
+  # Job 2: Backend Verification (FastAPI + Python 3.12 + Pytest)
+  # -------------------------------------------------------------
+  backend:
+    name: Backend (Python 3.12, Ruff, Pytest)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Ruff Linter & Formatter Check
+        run: ruff check .
+
+      - name: Run Pytest Test Suite
+        run: pytest tests/ -v
+        env:
+          PYTHONPATH: .
+
+  # -------------------------------------------------------------
+  # Job 3: Documentation Verification (MkDocs Strict Build)
+  # -------------------------------------------------------------
+  docs:
+    name: Documentation (MkDocs Strict Build)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install MkDocs and Material Theme
+        run: pip install mkdocs mkdocs-material
+
+      - name: MkDocs Strict Build Check
+        run: mkdocs build --strict

@@ -1,0 +1,101 @@
+name: Jules — Batch Task Runner (Up to 15 Concurrent)
+
+on:
+  workflow_dispatch:
+    inputs:
+      batch_tag:
+        description: 'Filter tasks by tag (e.g. "scrapers", "frontend", "tests", "all")'
+        required: false
+        default: 'all'
+        type: string
+      max_concurrent:
+        description: 'Maximum parallel tasks (Jules Pro supports up to 15)'
+        required: false
+        default: '5'
+        type: string
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  prepare-batch:
+    name: Prepare Task Batch
+    runs-on: ubuntu-latest
+    outputs:
+      task_matrix: ${{ steps.select-tasks.outputs.tasks }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Select and Filter Tasks
+        id: select-tasks
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = '.github/jules-tasks.json';
+            if (!fs.existsSync(path)) {
+              core.setFailed("Backlog file .github/jules-tasks.json does not exist.");
+              return;
+            }
+
+            const raw = fs.readFileSync(path, 'utf8');
+            const backlog = JSON.parse(raw);
+            const tag = "${{ github.event.inputs.batch_tag }}";
+            const maxTasks = parseInt("${{ github.event.inputs.max_concurrent }}", 10) || 5;
+
+            let filtered = backlog.filter(t => t.status === 'pending');
+            if (tag && tag !== 'all') {
+              filtered = filtered.filter(t => t.tags && t.tags.includes(tag));
+            }
+
+            const selected = filtered.slice(0, maxTasks);
+            console.log(`Selected ${selected.length} tasks for batch execution.`);
+            core.setOutput('tasks', JSON.stringify(selected));
+
+  execute-task:
+    name: "Jules: ${{ matrix.task.title }}"
+    needs: prepare-batch
+    if: ${{ needs.prepare-batch.outputs.task_matrix != '[]' }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        task: ${{ fromJSON(needs.prepare-batch.outputs.task_matrix) }}
+      max-parallel: 15
+      fail-fast: false
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Format Prompt
+        id: prompt
+        run: |
+          PROMPT="Task: ${{ matrix.task.title }}
+
+Goal & Scope:
+${{ matrix.task.prompt }}
+
+Acceptance Criteria:
+${{ matrix.task.acceptance_criteria }}
+
+---
+### MANDATORY RULES (AGENTS.md):
+- Frontend: Bun only ('bun run build', 'bun test', 'bun run lint').
+- Backend: Python 3.12 ('pytest tests/ -v', 'ruff check .').
+- Ensure all tests pass before opening PR."
+
+          {
+            echo 'AGENT_PROMPT<<EOF'
+            echo "$PROMPT"
+            echo 'EOF'
+          } >> "$GITHUB_ENV"
+
+      - name: Invoke Jules for Task
+        uses: google-labs-code/jules-invoke@v1
+        with:
+          prompt: ${{ env.AGENT_PROMPT }}
+          jules_api_key: ${{ secrets.JULES_API_KEY }}
+          starting_branch: 'main'
+          include_last_commit: true

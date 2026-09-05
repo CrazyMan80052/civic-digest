@@ -4,15 +4,20 @@ Scraper & Ingestion Pipeline Orchestrator
 Coordinates fetching, OCD normalization, AI enrichment, and database persistence.
 """
 
-import asyncio
-from typing import List, Dict, Any, Optional
 import logging
 from datetime import datetime
+from typing import Any
 
-from .legistar import LegistarClient
-from .normalizer import normalize_legistar_matter
-from ..database import SessionLocal
-from ..models import Bill, PrimarySourceReceipt, Jurisdiction
+try:
+    from ..database import SessionLocal
+    from ..models import Bill, PrimarySourceReceipt
+    from .legistar import LegistarClient
+    from .normalizer import normalize_legistar_matter
+except (ImportError, ValueError):
+    from database import SessionLocal
+    from models import Bill, PrimarySourceReceipt
+    from scrapers.legistar import LegistarClient
+    from scrapers.normalizer import normalize_legistar_matter
 
 logger = logging.getLogger("civicdigest.pipeline")
 
@@ -24,7 +29,7 @@ class IngestionPipeline:
         self.place_name = place_name
         self.legistar = LegistarClient(client_name=client_name)
 
-    async def run(self, top: int = 15, days_back: int = 30) -> Dict[str, Any]:
+    async def run(self, top: int = 15, days_back: int = 30) -> dict[str, Any]:
         """
         Executes a complete scrape, normalization, and ingestion run.
         """
