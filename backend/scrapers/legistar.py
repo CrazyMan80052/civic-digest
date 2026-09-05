@@ -5,11 +5,11 @@ Handles querying official Granicus/Legistar Web APIs for public municipal docket
 legislation (Matters), and committee agendas (Events).
 """
 
-import httpx
-import asyncio
-from typing import List, Dict, Any, Optional
-from datetime import datetime, timedelta
 import logging
+from datetime import datetime, timedelta
+from typing import Any
+
+import httpx
 
 logger = logging.getLogger("civicdigest.legistar")
 
@@ -27,7 +27,7 @@ class LegistarClient:
             "User-Agent": "CivicDigest-OCD-Scraper/1.0 (+https://civicdigest.org)",
         }
 
-    async def fetch_recent_matters(self, days_back: int = 30, top: int = 50) -> List[Dict[str, Any]]:
+    async def fetch_recent_matters(self, days_back: int = 30, top: int = 50) -> list[dict[str, Any]]:
         """
         Queries Legistar OData endpoint for recently introduced or modified legislative matters.
         OData Filter: MatterIntroDate or MatterLastModifiedUtc
@@ -57,7 +57,7 @@ class LegistarClient:
                 logger.error(f"Network error querying Legistar for {self.client_name}: {str(e)}")
                 return []
 
-    async def fetch_matter_attachments(self, matter_id: int) -> List[Dict[str, Any]]:
+    async def fetch_matter_attachments(self, matter_id: int) -> list[dict[str, Any]]:
         """
         Fetches official PDF attachments, fiscal notes, and committee reports for a specific matter.
         """
@@ -72,7 +72,7 @@ class LegistarClient:
                 logger.warning(f"Failed to fetch attachments for matter {matter_id}: {e}")
                 return []
 
-    async def fetch_upcoming_events(self, days_ahead: int = 14) -> List[Dict[str, Any]]:
+    async def fetch_upcoming_events(self, days_ahead: int = 14) -> list[dict[str, Any]]:
         """
         Queries upcoming City Council and Committee hearings.
         """

@@ -1,9 +1,14 @@
 # backend/models.py
-from sqlalchemy import Column, String, Integer, Numeric, Text, Date, DateTime, JSON, ForeignKey, Boolean
-from sqlalchemy.dialects.postgresql import UUID, JSONB
-from sqlalchemy.sql import func
 import uuid
-from .database import Base
+
+from sqlalchemy import Column, Date, DateTime, ForeignKey, Integer, Numeric, String, Text
+from sqlalchemy.dialects.postgresql import JSONB, UUID
+from sqlalchemy.sql import func
+
+try:
+    from .database import Base
+except ImportError:
+    from database import Base
 
 class Jurisdiction(Base):
     __tablename__ = "jurisdictions"

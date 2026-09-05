@@ -5,11 +5,12 @@ Standardizes vendor-specific legislative feeds (Legistar, CivicPlus, RSS) into
 OCD-compliant entities and creates primary source receipt citations.
 """
 
-from typing import Dict, Any, List, Optional
 import re
 from datetime import datetime
+from typing import Any
 
-def clean_html_text(raw_html: Optional[str]) -> str:
+
+def clean_html_text(raw_html: str | None) -> str:
     """Removes HTML tags and normalizes whitespace."""
     if not raw_html:
         return ""
@@ -22,15 +23,15 @@ def generate_ocd_bill_id(jurisdiction_state: str, place: str, year: int, file_nu
     Generates standard Open Civic Data identifier:
     e.g. ocd-bill/2026-oh-cleveland-ord-882
     """
-    clean_fn = re.sub(r'[^a-zA-Z0-9]', '-', file_number).strip('-').lower()
+    clean_fn = re.sub(r'[^a-zA-Z0-9]+', '-', file_number).strip('-').lower()
     return f"ocd-bill/{year}-{jurisdiction_state.lower()}-{place.lower()}-{clean_fn}"
 
 def normalize_legistar_matter(
-    raw: Dict[str, Any],
+    raw: dict[str, Any],
     jurisdiction_id: str,
     state_code: str,
     place_name: str,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Normalizes a Legistar Matter OData record into CivicDigest OCD format.
     """
@@ -38,7 +39,7 @@ def normalize_legistar_matter(
     file_number = raw.get("MatterFile") or f"Leg-{matter_id}"
     official_title = clean_html_text(raw.get("MatterTitle") or raw.get("MatterName") or "")
     intro_date_raw = raw.get("MatterIntroDate")
-    
+
     # Parse year and date
     intro_date = None
     year = datetime.utcnow().year
@@ -53,7 +54,7 @@ def normalize_legistar_matter(
         intro_date = datetime.utcnow().strftime("%Y-%m-%d")
 
     ocd_id = generate_ocd_bill_id(state_code, place_name, year, file_number)
-    
+
     # Sponsors normalization
     sponsors = []
     primary_sponsor = raw.get("MatterRequester") or raw.get("MatterSponsorName")
