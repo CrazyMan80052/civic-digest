@@ -125,13 +125,17 @@ class SocialFormatter:
         matter = thread.enriched_matter
         fiscal = format_fiscal_str(matter)
         wards = ", ".join(matter.affected_wards)
+        title = _truncate(matter.plain_title, 70)
+        action = _truncate(matter.the_what, 70)
+        who = _truncate(matter.the_who, 50)
+        snippet = _truncate(matter.receipt_snippet, 50)
 
         post = (
-            f"🏛️ Municipal Council Alert: {matter.plain_title}\n\n"
-            f"• Action: {matter.the_what}\n"
-            f"• Affected: {matter.the_who} (Wards: {wards})\n"
+            f"🏛️ Municipal Council Alert: {title}\n\n"
+            f"• Action: {action}\n"
+            f"• Affected: {who} (Wards: {wards})\n"
             f"• Financial Impact: {fiscal}\n\n"
-            f'📜 Receipt Citation (#{matter.file_number}): "{_truncate(matter.receipt_snippet, 80)}"\n'
+            f'📜 Receipt Citation (#{matter.file_number}): "{snippet}"\n'
             f"🔗 Primary Source: {matter.official_source_url}\n\n"
             f"#CivicTech #OpenGov #LocalDemocracy"
         )
