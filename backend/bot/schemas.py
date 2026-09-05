@@ -55,3 +55,21 @@ class EnrichedCivicMatter(BaseModel):
     receipt_snippet: str = Field(..., description="Verbatim quote from source PDF proving accuracy")
     receipt_page_number: int = Field(default=1)
     neutrality_score: float = Field(default=1.0, ge=0.0, le=1.0, description="Factual neutrality score")
+
+
+class NewsArticleContext(BaseModel):
+    source_name: str
+    source_domain: str
+    title: str
+    url: str
+    published_date: str | None = None
+    summary_snippet: str
+    relevance_score: float = Field(default=0.5, ge=0.0, le=1.0)
+    matched_keywords: list[str] = Field(default_factory=list)
+
+
+class DocketContextThread(BaseModel):
+    enriched_matter: EnrichedCivicMatter
+    official_docket_url: str
+    matched_articles: list[NewsArticleContext] = Field(default_factory=list)
+    has_multi_perspective: bool = False
