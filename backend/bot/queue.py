@@ -10,8 +10,12 @@ from datetime import UTC, datetime
 
 from sqlalchemy.orm import Session
 
-from ..models import PostStatus, SocialPost
-from .schemas import EnrichedCivicMatter, ImpactPriority
+try:
+    from ..models import PostStatus, SocialPost
+    from .schemas import EnrichedCivicMatter, ImpactPriority
+except ImportError:
+    from bot.schemas import EnrichedCivicMatter, ImpactPriority
+    from models import PostStatus, SocialPost
 
 logger = logging.getLogger("civicdigest.bot.queue")
 
