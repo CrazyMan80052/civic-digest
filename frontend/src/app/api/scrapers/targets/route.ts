@@ -2,6 +2,16 @@ import { NextResponse } from 'next/server';
 
 export const SCRAPER_TARGETS = [
   {
+    id: 'ocd-jurisdiction/country:us/state:oh/place:dublin/government',
+    city: 'Dublin',
+    state: 'OH',
+    clientName: 'dublin',
+    system: 'Dublin Municipal Legislative Portal',
+    endpoint: 'https://dublinohiousa.gov/city-council/legislation-minutes/',
+    councilSize: 7,
+    status: 'active',
+  },
+  {
     id: 'ocd-jurisdiction/country:us/state:oh/place:cleveland/government',
     city: 'Cleveland',
     state: 'OH',

@@ -31,28 +31,89 @@ export async function POST(req: NextRequest) {
     }
 
     if (!rawMatters || rawMatters.length === 0) {
-      rawMatters = [
-        {
-          MatterId: 48921,
-          MatterFile: `Ord. ${Math.floor(800 + getSecureRandom() * 200)}-2026`,
-          MatterName: 'Urban Canopy & Green Infrastructure Corridor Grant',
-          MatterTitle: `An emergency ordinance authorizing the Director of Capital Projects to expend grant funds for tree canopy expansion, permeable bioswales, and urban cooling along priority high-heat transit corridors in ${target.city}.`,
-          MatterIntroDate: new Date().toISOString(),
-          MatterStatusName: 'In Committee',
-          MatterBodyName: 'Committee on Public Works & Sustainability',
-          MatterRequester: 'Director of City Planning',
-        },
-        {
-          MatterId: 48922,
-          MatterFile: `Res. ${Math.floor(400 + getSecureRandom() * 200)}-2026`,
-          MatterName: 'Small Business Commercial Façade & Energy Efficiency Subsidy',
-          MatterTitle: `A resolution declaring municipal intent to establish a micro-grant program subsidizing storefront energy-efficient retrofits, heat pump installations, and accessibility ramps for independent retail businesses in ${target.city}.`,
-          MatterIntroDate: new Date(Date.now() - 86400000 * 3).toISOString(),
-          MatterStatusName: 'Hearing Scheduled',
-          MatterBodyName: 'Committee on Community & Economic Development',
-          MatterRequester: 'Council Majority Leader',
-        },
-      ];
+      if (target.clientName.toLowerCase() === 'dublin') {
+        rawMatters = [
+          {
+            MatterId: 2601,
+            MatterFile: 'Ord. 01-26',
+            MatterName: 'Comprehensive Noise Control & Engine Braking Prohibition',
+            MatterTitle: 'An Ordinance amending Chapter 132 (Offenses Against Public Peace) to modernize vehicle decibel standards, regulate high-output commercial sound devices, and prohibit compression engine braking within Dublin corporation limits.',
+            MatterIntroDate: '2026-02-09T19:00:00Z',
+            MatterStatusName: 'Passed',
+            MatterBodyName: 'Dublin City Council',
+            MatterRequester: 'Chief of Police & City Manager',
+            category: 'Public Safety & Justice',
+            fiscalAmount: 15000,
+            fiscalType: 'Police Operating Fund',
+            whoItAffects: 'Dublin residents in residential corridors and motorists along I-270 / SR-161.',
+          },
+          {
+            MatterId: 2633,
+            MatterFile: 'Ord. 33-26',
+            MatterName: 'West Innovation District Code Amendment & Data Center Use Restriction',
+            MatterTitle: 'An Ordinance amending Section 153.074 of the Dublin City Code governing the West Innovation District, eliminating data centers as a permitted or conditional use, establishing the ID-6 Research Transition District, and adopting the revised WID Architectural Design Manual.',
+            MatterIntroDate: '2026-07-01T19:00:00Z',
+            MatterStatusName: 'Passed',
+            MatterBodyName: 'Dublin City Council',
+            MatterRequester: 'Director of Planning & Zoning',
+            category: 'Zoning & Land Use',
+            fiscalAmount: 0,
+            fiscalType: 'Regulatory Zoning Amendment',
+            whoItAffects: 'Commercial tech developers, research campuses, and residents near Eiterman and Shier Rings roads.',
+          },
+          {
+            MatterId: 2628,
+            MatterFile: 'Ord. 28-26',
+            MatterName: 'Ruscilli Construction Corporate Headquarters Economic Development Agreement',
+            MatterTitle: 'An Ordinance authorizing the City Manager to execute an Economic Development Incentive Agreement with Ruscilli Construction Co. to retain and expand corporate headquarters employment within the City of Dublin.',
+            MatterIntroDate: '2026-06-15T19:00:00Z',
+            MatterStatusName: 'Passed',
+            MatterBodyName: 'Dublin City Council',
+            MatterRequester: 'Director of Economic Development',
+            category: 'Budget & Appropriations',
+            fiscalAmount: 285000,
+            fiscalType: 'Performance-Based Income Tax Grant',
+            whoItAffects: 'Local business district workforce and corporate office developments.',
+          },
+          {
+            MatterId: 2625,
+            MatterFile: 'Res. 25-26',
+            MatterName: 'Shier Rings Road Shared-Use Multi-Modal Path Capital Improvement',
+            MatterTitle: 'A Resolution accepting the lowest and best responsive bid for the construction of the Shier Rings Road Shared-Use Path connecting the Avery Road corridor to Perimeter Drive.',
+            MatterIntroDate: '2026-05-18T19:00:00Z',
+            MatterStatusName: 'Passed',
+            MatterBodyName: 'Dublin City Council',
+            MatterRequester: 'Director of Engineering',
+            category: 'Transit & Mobility',
+            fiscalAmount: 420000,
+            fiscalType: 'Capital Improvements Program (CIP) Bike & Pedestrian Fund',
+            whoItAffects: 'Cyclists, pedestrians, school commuters, and Dublin residents accessing Coffman Park and Perimeter Drive.',
+          },
+        ];
+      } else {
+        rawMatters = [
+          {
+            MatterId: 48921,
+            MatterFile: `Ord. ${Math.floor(800 + getSecureRandom() * 200)}-2026`,
+            MatterName: 'Urban Canopy & Green Infrastructure Corridor Grant',
+            MatterTitle: `An emergency ordinance authorizing the Director of Capital Projects to expend grant funds for tree canopy expansion, permeable bioswales, and urban cooling along priority high-heat transit corridors in ${target.city}.`,
+            MatterIntroDate: new Date().toISOString(),
+            MatterStatusName: 'In Committee',
+            MatterBodyName: 'Committee on Public Works & Sustainability',
+            MatterRequester: 'Director of City Planning',
+          },
+          {
+            MatterId: 48922,
+            MatterFile: `Res. ${Math.floor(400 + getSecureRandom() * 200)}-2026`,
+            MatterName: 'Small Business Commercial Façade & Energy Efficiency Subsidy',
+            MatterTitle: `A resolution declaring municipal intent to establish a micro-grant program subsidizing storefront energy-efficient retrofits, heat pump installations, and accessibility ramps for independent retail businesses in ${target.city}.`,
+            MatterIntroDate: new Date(Date.now() - 86400000 * 3).toISOString(),
+            MatterStatusName: 'Hearing Scheduled',
+            MatterBodyName: 'Committee on Community & Economic Development',
+            MatterRequester: 'Council Majority Leader',
+          },
+        ];
+      }
     }
 
     const ai = getGeminiClient();

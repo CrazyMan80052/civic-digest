@@ -22,7 +22,18 @@ export async function POST(req: NextRequest) {
   const formattedAddress = address.trim();
   let explanation = 'Matched to City of Cleveland Ward 12 based on Slavic Village/Fleet corridor geographic boundaries.';
 
-  if (raw.includes('sacramento') || raw.includes(', ca') || raw.includes('california') || raw.includes('95814') || raw.includes('natomas') || raw.includes('land park')) {
+  if (raw.includes('43016') || raw.includes('dublin') || raw.includes('perimeter') || raw.includes('shier rings')) {
+    matchedJurisdictionId = 'ocd-jurisdiction/country:us/state:oh/place:dublin/government';
+    city = 'Dublin';
+    state = 'OH';
+    zipCode = '43016';
+    matchedDivisionId = 'ocd-division/country:us/state:oh/place:dublin/ward:1';
+    neighborhood = 'Northwest Dublin / Perimeter Corridor';
+    councilMemberName = 'Cathy De Rosa';
+    councilMemberEmail = 'cderosa@dublin.oh.us';
+    councilMemberPhone = '(614) 410-4400';
+    explanation = 'Matched to City of Dublin Ward 1 based on 43016 postal code & Perimeter Drive municipal center.';
+  } else if (raw.includes('sacramento') || raw.includes(', ca') || raw.includes('california') || raw.includes('95814') || raw.includes('natomas') || raw.includes('land park')) {
     matchedJurisdictionId = 'ocd-jurisdiction/country:us/state:ca/place:sacramento/government';
     city = 'Sacramento';
     state = 'CA';
