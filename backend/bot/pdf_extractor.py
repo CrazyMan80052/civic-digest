@@ -103,9 +103,9 @@ class MunicipalPDFExtractor:
 
             full_text = "\n\n".join(extracted_pages).strip()
 
-            # Scanned PDF check: if average characters per page is under 40
-            if len(full_text) < (page_count * 40):
-                status = "ocr_required" if len(full_text) < 50 else "success"
+            # Scanned PDF check: if extracted text is virtually empty (< 15 characters for the document)
+            if len(full_text) < 15:
+                status = "ocr_required"
             else:
                 status = "success"
 
