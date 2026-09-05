@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: "CivicDigest Docs & Agent Guidelines"
+    url: "https://github.com/CrazyMan80052/civic-digest/blob/main/AGENTS.md"
+    about: "Read AGENTS.md before dispatching AI agent tasks."

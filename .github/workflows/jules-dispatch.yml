@@ -1,0 +1,113 @@
+name: Jules — Autonomous Task Dispatcher
+
+on:
+  # 1. Trigger when an issue is labeled 'jules'
+  issues:
+    types: [labeled]
+
+  # 2. Trigger on comment starting with '/jules' or '@jules' on issues or PRs
+  issue_comment:
+    types: [created]
+
+  # 3. Manual trigger via GitHub UI or API
+  workflow_dispatch:
+    inputs:
+      prompt:
+        description: 'Instruction for Jules agent'
+        required: true
+        type: string
+      starting_branch:
+        description: 'Branch for Jules to start from'
+        required: false
+        default: 'main'
+        type: string
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  dispatch-jules:
+    name: Dispatch Google Jules Agent
+    runs-on: ubuntu-latest
+    # Security Guardrail: Only allow repository owner or collaborators to consume the daily quota
+    if: >-
+      (github.event_name == 'workflow_dispatch') ||
+      (github.event_name == 'issues' && github.event.label.name == 'jules' && (github.actor == github.repository_owner || contains(fromJSON('["CrazyMan80052"]'), github.actor))) ||
+      (github.event_name == 'issue_comment' && (startsWith(github.event.comment.body, '/jules') || startsWith(github.event.comment.body, '@jules')) && (github.actor == github.repository_owner || contains(fromJSON('["CrazyMan80052"]'), github.actor)))
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Resolve Prompt and Context
+        id: prepare-prompt
+        run: |
+          EVENT_NAME="${{ github.event_name }}"
+          STARTING_BRANCH="main"
+
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            RAW_PROMPT="${{ github.event.inputs.prompt }}"
+            STARTING_BRANCH="${{ github.event.inputs.starting_branch }}"
+            ISSUE_NUMBER=""
+          elif [ "$EVENT_NAME" = "issues" ]; then
+            ISSUE_NUMBER="${{ github.event.issue.number }}"
+            RAW_PROMPT="Resolve GitHub Issue #${ISSUE_NUMBER}: ${{ github.event.issue.title }}
+
+Description and Acceptance Criteria:
+${{ github.event.issue.body }}"
+          elif [ "$EVENT_NAME" = "issue_comment" ]; then
+            ISSUE_NUMBER="${{ github.event.issue.number }}"
+            # Strip /jules or @jules prefix
+            COMMENT_BODY="${{ github.event.comment.body }}"
+            CLEANED_COMMENT=$(echo "$COMMENT_BODY" | sed -E 's/^(\/jules|@jules)[[:space:]]*//I')
+            RAW_PROMPT="Task requested on Issue/PR #${ISSUE_NUMBER}:
+$CLEANED_COMMENT
+
+Context from Issue #${ISSUE_NUMBER}:
+${{ github.event.issue.title }}
+${{ github.event.issue.body }}"
+          fi
+
+          # Wrap with agent grounding reminders from AGENTS.md
+          FULL_PROMPT="$RAW_PROMPT
+
+---
+### MANDATORY EXECUTION RULES (from AGENTS.md):
+1. Review AGENTS.md and .Jules/palette.md before modifying code.
+2. Frontend uses Bun (NEVER run npm/yarn/pnpm). Run 'bun run lint', 'bun run build', and 'bun test' in frontend/.
+3. Backend uses Python 3.12. Run 'ruff check .' and 'pytest tests/ -v' in backend/.
+4. Keep all changes focused and minimal to the issue scope.
+5. All verification commands must pass before opening the Pull Request."
+
+          # Save to multiline env for GitHub Actions
+          {
+            echo 'AGENT_PROMPT<<EOF'
+            echo "$FULL_PROMPT"
+            echo 'EOF'
+          } >> "$GITHUB_ENV"
+
+          echo "ISSUE_NUMBER=$ISSUE_NUMBER" >> "$GITHUB_OUTPUT"
+          echo "STARTING_BRANCH=$STARTING_BRANCH" >> "$GITHUB_OUTPUT"
+
+      - name: Post Dispatch Confirmation Comment
+        if: steps.prepare-prompt.outputs.ISSUE_NUMBER != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issueNumber = ${{ steps.prepare-prompt.outputs.ISSUE_NUMBER }};
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              body: `🚀 **Jules Agent Dispatched!**\n\nGoogle Jules has been triggered for this task and is working in a Cloud VM.\n- **Guidelines:** Follows [\`AGENTS.md\`](../blob/main/AGENTS.md) and [\`.Jules/palette.md\`](../blob/main/.Jules/palette.md)\n- **Verification:** Will verify frontend builds (\`bun run build\`) and backend tests (\`pytest\`) before opening a PR.`
+            });
+
+      - name: Invoke Jules Agent
+        uses: google-labs-code/jules-invoke@v1
+        with:
+          prompt: ${{ env.AGENT_PROMPT }}
+          jules_api_key: ${{ secrets.JULES_API_KEY }}
+          starting_branch: ${{ steps.prepare-prompt.outputs.STARTING_BRANCH }}
+          include_last_commit: true

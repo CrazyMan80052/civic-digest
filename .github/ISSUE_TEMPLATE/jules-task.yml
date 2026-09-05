@@ -1,0 +1,65 @@
+name: "🤖 Jules AI Task"
+description: "Dispatch an autonomous task to Google Jules (Gemini 3 Pro) via GitHub Actions"
+title: "[Jules]: "
+labels: ["jules"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### 🤖 Autonomous Agent Task Dispatcher
+        Submitting this issue will automatically trigger **Google Jules** to execute this task in an isolated cloud VM, run the local verification suite, and open a Pull Request.
+
+  - type: dropdown
+    id: task_type
+    attributes:
+      label: Task Type
+      description: What category of work is this?
+      options:
+        - "Feature (New capability)"
+        - "Bug Fix (Resolve issue / error)"
+        - "Refactoring & Architecture"
+        - "Test Suite Expansion"
+        - "Performance & Accessibility"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: target_system
+    attributes:
+      label: Target Subsystem
+      description: Which part of the monorepo does this task modify?
+      options:
+        - "Frontend (Next.js 16 / Bun / React 19)"
+        - "Backend (FastAPI / Python 3.12)"
+        - "Scrapers (Legistar OData Ingestion)"
+        - "Documentation (MkDocs)"
+        - "Full Stack (Frontend + Backend)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: objective
+    attributes:
+      label: Objective & Context
+      description: Describe what needs to be accomplished and any relevant context or edge cases.
+      placeholder: "e.g. Implement an endpoint in backend/main.py that returns committee agendas, and display them in a new tab on frontend."
+    validations:
+      required: true
+
+  - type: textarea
+    id: target_files
+    attributes:
+      label: Target Files / Directories
+      description: Specify exact files that should be modified or created (optional but recommended).
+      placeholder: "frontend/src/components/MeetingsView.tsx\nbackend/scrapers/legistar.py"
+    validations:
+      required: false
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria & Definition of Done
+      description: Bulleted list of conditions that must be met for this PR to be accepted.
+      placeholder: "- [ ] Must pass bun run build in frontend/\n- [ ] Must pass pytest in backend/\n- [ ] Follows OCD-ID v3 identifier format"
+    validations:
+      required: true

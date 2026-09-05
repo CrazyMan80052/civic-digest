@@ -1,0 +1,42 @@
+[
+  {
+    "id": "task-001",
+    "title": "Add Legistar HTTP Client unit tests with mock responses",
+    "tags": ["backend", "tests", "scrapers"],
+    "status": "pending",
+    "prompt": "Create unit tests in backend/tests/test_legistar.py for LegistarClient in backend/scrapers/legistar.py. Use pytest and mock httpx.AsyncClient responses so no live network calls are made. Test fetch_recent_matters and fetch_upcoming_events, including error handling when the Legistar endpoint returns a 500 error.",
+    "acceptance_criteria": "- [ ] backend/tests/test_legistar.py exists with at least 3 test cases\n- [ ] Uses unittest.mock or pytest-mock to mock httpx\n- [ ] pytest tests/ passes with 100% success\n- [ ] ruff check . passes with 0 errors"
+  },
+  {
+    "id": "task-002",
+    "title": "Add Austin and Seattle municipal presets to backend scrapers",
+    "tags": ["backend", "scrapers"],
+    "status": "pending",
+    "prompt": "Expand backend/scrapers/legistar.py and backend/main.py to support Austin (client_name: 'austin', state: 'TX') and Seattle (client_name: 'seattle', state: 'WA') as recognized scraper targets alongside Cleveland. Update /api/scrapers/targets endpoint to return all supported cities.",
+    "acceptance_criteria": "- [ ] /api/scrapers/targets endpoint returns Cleveland, Austin, and Seattle\n- [ ] Normalizer correctly formats OCD IDs for all three cities\n- [ ] pytest tests/ passes\n- [ ] ruff check . passes"
+  },
+  {
+    "id": "task-003",
+    "title": "Implement CSV Export endpoint for municipal dockets",
+    "tags": ["backend", "feature"],
+    "status": "pending",
+    "prompt": "Add a new endpoint GET /api/bills/export-csv in backend/main.py that streams or returns municipal bills as a downloadable CSV formatted according to Open Civic Data standards. Include columns: ocd_id, jurisdiction_id, file_number, official_title, category, status, introduction_date.",
+    "acceptance_criteria": "- [ ] GET /api/bills/export-csv returns text/csv with proper headers\n- [ ] Includes unit test in backend/tests/test_api.py verifying CSV output format\n- [ ] pytest tests/ passes\n- [ ] ruff check . passes"
+  },
+  {
+    "id": "task-004",
+    "title": "Enhance accessibility and keyboard navigation in CivicCopilotDrawer",
+    "tags": ["frontend", "accessibility"],
+    "status": "pending",
+    "prompt": "Audit frontend/src/components/CivicCopilotDrawer.tsx for accessibility. Ensure all interactive buttons (close button, prompt pills, send button) have explicit aria-labels, manage focus when drawer opens/closes, and support Escape key to close.",
+    "acceptance_criteria": "- [ ] All buttons have aria-label attributes\n- [ ] Escape key listener closes drawer when open\n- [ ] bun run lint passes with 0 errors\n- [ ] bun run build succeeds"
+  },
+  {
+    "id": "task-005",
+    "title": "Add in-memory TTL caching for Legistar OData requests",
+    "tags": ["backend", "performance"],
+    "status": "pending",
+    "prompt": "Add an asynchronous in-memory TTL cache utility in backend/scrapers/cache.py (with default 15-minute TTL) and wrap LegistarClient calls so repeated requests for the same municipality within 15 minutes return cached records without querying the external Legistar API.",
+    "acceptance_criteria": "- [ ] backend/scrapers/cache.py created with TTL expiration logic\n- [ ] LegistarClient uses cache for fetch_recent_matters\n- [ ] Unit test verifies cache hits and cache expiration\n- [ ] pytest tests/ and ruff check . pass"
+  }
+]
