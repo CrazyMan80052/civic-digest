@@ -104,6 +104,18 @@ class MultiChannelPublisher:
     def register_adapter(self, platform: str, adapter: SocialChannelAdapter) -> None:
         self.adapters[platform.lower()] = adapter
 
+    async def broadcast_posts(
+        self,
+        platform_name: str,
+        posts: list[str],
+        media_bytes: bytes | None = None,
+    ) -> dict[str, Any]:
+        """Broadcasts pre-formatted post strings directly to a specific platform adapter."""
+        adapter = self.adapters.get(platform_name.lower())
+        if not adapter:
+            return {"status": "failed", "error": f"No adapter registered for platform: {platform_name}"}
+        return await adapter.publish_thread(posts=posts, media_bytes=media_bytes)
+
     async def broadcast_thread(
         self,
         thread: DocketContextThread,

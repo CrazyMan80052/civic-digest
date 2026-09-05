@@ -89,13 +89,12 @@ class CivicBotScheduler:
             due_posts = self.queue.get_due_posts(db, limit=20)
             for post in due_posts:
                 thread_posts = post.thread_content if isinstance(post.thread_content, list) else [str(post.thread_content)]
-                res = await self.publisher.broadcast_thread(
+                res = await self.publisher.broadcast_posts(
                     platform_name=post.platform,
-                    thread_posts=thread_posts,
-                    card_image_url=post.card_image_url,
+                    posts=thread_posts,
                 )
-                if res.get("success"):
-                    self.queue.mark_published(db, str(post.id), published_url=res.get("post_url", ""))
+                if res.get("status") == "success":
+                    self.queue.mark_published(db, str(post.id), published_url=res.get("url", ""))
                 else:
                     self.queue.mark_failed(db, str(post.id), error_message=res.get("error", "Broadcast failed"))
                 dispatched_results.append({

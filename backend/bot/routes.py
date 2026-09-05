@@ -20,14 +20,14 @@ try:
     from .formatters import SocialFormatter
     from .publisher import MultiChannelPublisher
     from .queue import BotQueueManager
-    from .schemas import EnrichedCivicMatter, ImpactPriority
+    from .schemas import DocketContextThread, EnrichedCivicMatter, ImpactPriority
 except ImportError:
     from bot.card_generator import CivicCardGenerator
     from bot.enricher import CivicLLMEnricher
     from bot.formatters import SocialFormatter
     from bot.publisher import MultiChannelPublisher
     from bot.queue import BotQueueManager
-    from bot.schemas import EnrichedCivicMatter, ImpactPriority
+    from bot.schemas import DocketContextThread, EnrichedCivicMatter, ImpactPriority
     from database import SessionLocal
 
 logger = logging.getLogger("civicdigest.bot.routes")
@@ -47,9 +47,11 @@ def get_db_optional():
     db = None
     try:
         db = SessionLocal()
-        yield db
     except Exception:
-        yield None
+        db = None
+
+    try:
+        yield db
     finally:
         if db is not None:
             try:
@@ -113,10 +115,17 @@ async def trigger_bot_pipeline(
         receipt_page_number=1,
     )
 
+    context_thread = DocketContextThread(
+        enriched_matter=sample_matter,
+        official_docket_url=sample_matter.official_source_url,
+        matched_articles=[],
+        has_multi_perspective=False,
+    )
+
     threads = {
-        "twitter": bot_formatter.format_twitter_thread(sample_matter),
-        "bluesky": [bot_formatter.format_bluesky_post(sample_matter)],
-        "mastodon": [bot_formatter.format_mastodon_post(sample_matter)],
+        "twitter": bot_formatter.format_twitter_thread(context_thread),
+        "bluesky": [bot_formatter.format_bluesky_post(context_thread)],
+        "mastodon": [bot_formatter.format_mastodon_post(context_thread)],
     }
 
     card_svg = bot_card_gen.generate_card_svg(sample_matter, jurisdiction_name=req.place_name)
