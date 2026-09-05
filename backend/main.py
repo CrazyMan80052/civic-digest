@@ -11,10 +11,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 try:
+    from .bot.routes import router as bot_router
     from .database import Base, engine
     from .scrapers.legistar import LegistarClient
     from .scrapers.pipeline import IngestionPipeline
 except ImportError:
+    from bot.routes import router as bot_router
     from database import Base, engine
     from scrapers.legistar import LegistarClient
     from scrapers.pipeline import IngestionPipeline
@@ -38,6 +40,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(bot_router)
 
 class ScrapeTriggerRequest(BaseModel):
     client_name: str = Field(..., example="cleveland", description="Municipal Legistar identifier")
