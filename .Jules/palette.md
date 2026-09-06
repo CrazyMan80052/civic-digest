@@ -16,3 +16,6 @@
 ## 2024-05-14 - Accessible Form Controls in Next.js Components
 **Learning:** Found that custom dropdowns (`<select>`) and utility buttons (like a search clear "✕" button) in `Navbar.tsx` were missing accessible names. Screen readers rely on `aria-label` when visual labels are omitted or placed via icons without text alternatives.
 **Action:** Always add explicit `aria-label` attributes to `<input>`, `<select>`, and icon-only `<button>` elements in interactive components.
+## 2026-09-06 - Input Accessibility in Chat Interfaces
+**Learning:** Found that the query input field and submit button in the CivicCopilotDrawer component lacked accessible names (aria-label). When building chat/search interfaces without explicit visual `<label>` elements, screen readers need aria-labels on both the input and the submit button to understand their purpose.
+**Action:** Always add explicit `aria-label` attributes to `<input>` fields and icon-only submit `<button>` elements in form controls that lack visible labels.

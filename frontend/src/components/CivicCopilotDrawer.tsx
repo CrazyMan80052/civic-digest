@@ -231,11 +231,13 @@ export const CivicCopilotDrawer: React.FC<CivicCopilotDrawerProps> = ({
             value={inputQuery}
             onChange={(e) => setInputQuery(e.target.value)}
             placeholder="Inquire regarding ordinances, zoning, fiscal notes..."
+            aria-label="Ask a question"
             className="flex-1 bg-[#FDFDFC] border border-[#1A1A1A]/30 px-3.5 py-2 text-xs text-[#1A1A1A] focus:outline-none"
           />
           <button
             type="submit"
             disabled={!inputQuery.trim() || isLoading}
+            aria-label="Send message"
             className="bg-[#1A1A1A] hover:bg-[#333] text-[#FDFDFC] px-4 py-2 flex items-center justify-center transition-colors disabled:opacity-50"
           >
             <Send className="w-3.5 h-3.5" />
