@@ -120,7 +120,7 @@ export const MultiPerspectiveView: React.FC<MultiPerspectiveViewProps> = ({
                 setCustomPerspectives(null);
                 onSelectBill(e.target.value);
               }}
-              className="bg-[#F2F0EA] border border-[#1A1A1A]/30 text-[#1A1A1A] text-xs font-bold py-2 px-3 focus:outline-none max-w-xs truncate cursor-pointer"
+              className="bg-[#F2F0EA] border border-[#1A1A1A]/30 text-[#1A1A1A] text-xs font-bold py-2 px-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A] max-w-xs truncate cursor-pointer"
             >
               {bills.map((b) => (
                 <option key={b.id} value={b.id}>

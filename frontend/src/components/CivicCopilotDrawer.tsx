@@ -231,7 +231,7 @@ export const CivicCopilotDrawer: React.FC<CivicCopilotDrawerProps> = ({
             value={inputQuery}
             onChange={(e) => setInputQuery(e.target.value)}
             placeholder="Inquire regarding ordinances, zoning, fiscal notes..."
-            className="flex-1 bg-[#FDFDFC] border border-[#1A1A1A]/30 px-3.5 py-2 text-xs text-[#1A1A1A] focus:outline-none"
+            className="flex-1 bg-[#FDFDFC] border border-[#1A1A1A]/30 px-3.5 py-2 text-xs text-[#1A1A1A] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
           />
           <button
             type="submit"

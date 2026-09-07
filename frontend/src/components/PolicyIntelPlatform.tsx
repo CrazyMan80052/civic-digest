@@ -157,7 +157,7 @@ export const PolicyIntelPlatform: React.FC<PolicyIntelPlatformProps> = ({
               <select
                 value={filterCategory}
                 onChange={(e) => setFilterCategory(e.target.value)}
-                className="w-full bg-[#F2F0EA] border border-[#1A1A1A] p-2 text-xs font-mono font-bold focus:outline-none"
+                className="w-full bg-[#F2F0EA] border border-[#1A1A1A] p-2 text-xs font-mono font-bold focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
               >
                 <option value="all">All Policy Domains</option>
                 <option value="housing">Housing &amp; Zoning</option>

@@ -197,7 +197,7 @@ export const ScraperControlModal: React.FC<ScraperControlModalProps> = ({
               value={selectedCity}
               onChange={(e) => setSelectedCity(e.target.value)}
               disabled={isRunning}
-              className="bg-[#FDFDFC] border border-[#1A1A1A] px-3 py-1.5 text-xs font-serif font-bold text-[#1A1A1A] focus:outline-none"
+              className="bg-[#FDFDFC] border border-[#1A1A1A] px-3 py-1.5 text-xs font-serif font-bold text-[#1A1A1A] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
             >
               {targets.map((t) => (
                 <option key={t.clientName} value={t.clientName}>

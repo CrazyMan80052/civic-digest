@@ -16,3 +16,7 @@
 ## 2024-05-14 - Accessible Form Controls in Next.js Components
 **Learning:** Found that custom dropdowns (`<select>`) and utility buttons (like a search clear "✕" button) in `Navbar.tsx` were missing accessible names. Screen readers rely on `aria-label` when visual labels are omitted or placed via icons without text alternatives.
 **Action:** Always add explicit `aria-label` attributes to `<input>`, `<select>`, and icon-only `<button>` elements in interactive components.
+
+## 2024-05-15 - Focus Visibility Accessibility Issue
+**Learning:** Found several input and select fields using Tailwind's `focus:outline-none` which removed visual focus states entirely, causing keyboard accessibility issues.
+**Action:** Add `focus-visible:ring-2 focus-visible:ring-[#1A1A1A]` alongside `focus:outline-none` to ensure focus is visible when navigating via keyboard but remains clean on mouse clicks.

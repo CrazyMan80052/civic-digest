@@ -303,7 +303,7 @@ export const SocialDispatchModal: React.FC<SocialDispatchModalProps> = ({
                     const b = allBills.find((x) => x.id === e.target.value);
                     if (b) setSelectedBill(b);
                   }}
-                  className="w-full bg-[#FDFDFC] border border-[#1A1A1A]/30 text-xs font-serif font-bold p-1.5 mt-1 focus:outline-none"
+                  className="w-full bg-[#FDFDFC] border border-[#1A1A1A]/30 text-xs font-serif font-bold p-1.5 mt-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
                 >
                   {allBills.map((b) => (
                     <option key={b.id} value={b.id}>
@@ -329,7 +329,7 @@ export const SocialDispatchModal: React.FC<SocialDispatchModalProps> = ({
                     setTone(newTone);
                     if (selectedBill) generateSocialPosts(selectedBill, newTone);
                   }}
-                  className="bg-[#FDFDFC] border border-[#1A1A1A]/30 text-[11px] font-bold uppercase p-1.5 focus:outline-none"
+                  className="bg-[#FDFDFC] border border-[#1A1A1A]/30 text-[11px] font-bold uppercase p-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
                 >
                   <option value="standard">Objective Civic</option>
                   <option value="urgent">Urgent Notice</option>
@@ -441,7 +441,7 @@ export const SocialDispatchModal: React.FC<SocialDispatchModalProps> = ({
                   }));
                 }}
                 rows={5}
-                className="w-full bg-[#F2F0EA] border border-[#1A1A1A]/30 p-3 text-xs sm:text-sm font-sans text-[#1A1A1A] focus:outline-none leading-relaxed"
+                className="w-full bg-[#F2F0EA] border border-[#1A1A1A]/30 p-3 text-xs sm:text-sm font-sans text-[#1A1A1A] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A] leading-relaxed"
               />
 
               {/* Hashtag Suggestions */}
@@ -534,7 +534,7 @@ export const SocialDispatchModal: React.FC<SocialDispatchModalProps> = ({
                         });
                       }}
                       rows={6}
-                      className="w-full bg-[#F2F0EA] border border-[#1A1A1A]/30 p-2.5 text-xs font-sans text-[#1A1A1A] focus:outline-none"
+                      className="w-full bg-[#F2F0EA] border border-[#1A1A1A]/30 p-2.5 text-xs font-sans text-[#1A1A1A] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
                     />
                   </div>
 

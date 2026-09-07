@@ -255,7 +255,7 @@ export const ResidentMicroSurveyModal: React.FC<ResidentMicroSurveyModalProps> =
                   <select
                     value={selectedWard}
                     onChange={(e) => setSelectedWard(e.target.value)}
-                    className="w-full bg-[#FDFDFC] border border-[#1A1A1A] p-2 text-xs font-serif font-bold text-[#1A1A1A] focus:outline-none"
+                    className="w-full bg-[#FDFDFC] border border-[#1A1A1A] p-2 text-xs font-serif font-bold text-[#1A1A1A] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
                   >
                     {jurisdiction.divisions.map((div) => (
                       <option key={div.id} value={div.id}>
@@ -272,7 +272,7 @@ export const ResidentMicroSurveyModal: React.FC<ResidentMicroSurveyModalProps> =
                   <select
                     value={residentRole}
                     onChange={(e) => setResidentRole(e.target.value as any)}
-                    className="w-full bg-[#FDFDFC] border border-[#1A1A1A] p-2 text-xs font-serif font-bold text-[#1A1A1A] focus:outline-none"
+                    className="w-full bg-[#FDFDFC] border border-[#1A1A1A] p-2 text-xs font-serif font-bold text-[#1A1A1A] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
                   >
                     <option value="homeowner">Homeowner / Property Owner</option>
                     <option value="renter">Renter / Tenant</option>
@@ -341,7 +341,7 @@ export const ResidentMicroSurveyModal: React.FC<ResidentMicroSurveyModalProps> =
                   onChange={(e) => setFeedbackText(e.target.value.slice(0, 180))}
                   placeholder="e.g. Flooding has damaged Fleet Ave basements every spring. We need storm basin expansion now."
                   rows={2}
-                  className="w-full bg-[#FDFDFC] border border-[#1A1A1A] p-2.5 text-xs font-sans text-[#1A1A1A] focus:outline-none placeholder:text-[#888]"
+                  className="w-full bg-[#FDFDFC] border border-[#1A1A1A] p-2.5 text-xs font-sans text-[#1A1A1A] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A] placeholder:text-[#888]"
                 />
                 <div className="flex justify-between text-[10px] font-mono text-[#777] mt-1">
                   <span>Anonymized and stripped of IP/identifying metadata</span>

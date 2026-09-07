@@ -257,7 +257,7 @@ export const DocketScanner: React.FC<DocketScannerProps> = ({ onAddParsedBill })
                 onChange={(e) => setInputText(e.target.value)}
                 rows={11}
                 placeholder="Paste municipal docket text, committee resolutions, or council agenda notes here..."
-                className="w-full bg-[#F2F0EA] border border-[#1A1A1A]/30 p-3 text-xs font-mono text-[#1A1A1A] focus:outline-none leading-relaxed"
+                className="w-full bg-[#F2F0EA] border border-[#1A1A1A]/30 p-3 text-xs font-mono text-[#1A1A1A] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A] leading-relaxed"
               />
             </div>
           </div>
