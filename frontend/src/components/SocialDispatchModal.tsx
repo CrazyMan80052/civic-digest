@@ -11,19 +11,12 @@ import {
   CheckCircle2, 
   Sparkles, 
   X, 
-  ExternalLink, 
-  MessageSquare, 
-  Download, 
-  RefreshCw, 
-  Globe, 
-  Radio, 
-  FileText, 
-  Layers, 
   Hash,
-  ArrowRight,
   Sliders,
-  Check,
-  ShieldCheck
+  ShieldCheck,
+  ExternalLink,
+  RefreshCw,
+  Radio
 } from 'lucide-react';
 import { OCDBill } from '../types';
 import { formatCurrency } from '../lib/utils';
@@ -128,7 +121,7 @@ export const SocialDispatchModal: React.FC<SocialDispatchModalProps> = ({
             `🏛️ Municipal Update: ${bill.plainTitle} (${bill.fileNumber})`,
             `📋 Plain Language: ${bill.summary}`,
             `👥 Community Impact: ${bill.whoItAffects}`,
-            `🔍 Verified Primary Source: Legistar Clerk Archive`,
+            `💰 Fiscal Note: ${bill.fiscalImpact?.amount > 0 ? formatCurrency(bill.fiscalImpact.amount) : 'Regulatory'}`,
           ],
           hashtags: ['#LocalGov', '#CityCouncil', '#CivicDigest', '#OpenData'],
         });
@@ -141,14 +134,20 @@ export const SocialDispatchModal: React.FC<SocialDispatchModalProps> = ({
   // Update selectedBill when initialBill changes
   useEffect(() => {
     if (initialBill) {
-      setSelectedBill(initialBill);
+      const timer = setTimeout(() => {
+        setSelectedBill(initialBill);
+      }, 0);
+      return () => clearTimeout(timer);
     }
   }, [initialBill]);
 
   // Generate initial social content whenever selectedBill changes
   useEffect(() => {
     if (selectedBill && isOpen) {
-      generateSocialPosts(selectedBill, tone);
+      const timer = setTimeout(() => {
+        generateSocialPosts(selectedBill, tone);
+      }, 0);
+      return () => clearTimeout(timer);
     }
   }, [selectedBill, isOpen, tone]);
 
