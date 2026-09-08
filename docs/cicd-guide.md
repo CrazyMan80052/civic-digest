@@ -85,6 +85,13 @@ To execute multiple tasks simultaneously:
 3. Click **Run workflow**, set `max_concurrent` (up to 15), and click **Run**.
 4. Up to 15 tasks will execute in parallel across independent Jules cloud VMs!
 
+### Option D: Automated Post-Merge Documentation Sync
+Whenever any Pull Request is merged into `main`, GitHub Actions automatically dispatches Jules via `.github/workflows/jules-docs-sync.yml`.
+- **Scope Analysis:** Jules examines the PR's code diff across `frontend/`, `backend/`, and configuration files.
+- **Documentation Audit:** Jules compares the merged changes against `docs/` and `mkdocs.yml` to identify new endpoints, updated schemas, new UI components, or modified workflows.
+- **Self-Healing PR:** If updates are warranted, Jules commits the updated markdown files, verifies `mkdocs build --strict`, and opens a targeted documentation PR.
+- **Loop Prevention & Guardrails:** Automatically skips PRs authored by Jules (`google-labs-jules[bot]`), PRs that only touched `docs/`, or PRs tagged with the `skip-docs` label.
+
 ---
 
 ## 4. Pull Request CI Gates
@@ -109,4 +116,8 @@ Every PR must pass the following verification checks in `.github/workflows/ci.ym
 ### Backend: Containerization & Cloud Run / PaaS
 - **Dockerfile:** A production-ready multi-stage container is available at `backend/Dockerfile`.
 - **Health Check:** `/api/health` validates API responsiveness and standards compliance.
-- Can be deployed to Google Cloud Run, Render, Fly.io, or Railway with a single command or GitHub Actions hook.
+- **Deploy:** Can be deployed to Google Cloud Run, Render, Fly.io, or Railway with a single command or GitHub Actions hook.
+
+### Documentation: GitHub Pages & Jules Auto-Sync
+- **Automatic Deployment:** `deploy-docs.yml` automatically builds and deploys documentation to GitHub Pages whenever changes land in `docs/**` or `mkdocs.yml` on `main`.
+- **Autonomous Synchronization:** `jules-docs-sync.yml` dispatches Jules to review merged code changes and keep documentation continuously up-to-date.
