@@ -193,7 +193,6 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
 
   // Accessible keyboard Escape handling and focus return
   useModalKeyboard(isOpen, onClose);
-
   if (!isOpen) return null;
 
   return (

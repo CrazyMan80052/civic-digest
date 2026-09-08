@@ -190,7 +190,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </option>
                 ))}
               </select>
-              <ChevronDown className="w-3 h-3 text-[#555] absolute right-2 top-2.5 pointer-events-none" aria-hidden="true" />
+              <ChevronDown className="w-3 h-3 text-[#525252] absolute right-2 top-2.5 pointer-events-none" aria-hidden="true" />
             </div>
 
             {/* Database & Architecture Button */}

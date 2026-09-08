@@ -11,28 +11,36 @@ from typing import Any
 try:
     from ..database import SessionLocal
     from ..models import Bill, PrimarySourceReceipt
-    from .dublin import DublinMunicipalClient
-    from .legistar import LegistarClient
     from .normalizer import normalize_legistar_matter
+    from .registry import get_scraper_client
 except (ImportError, ValueError):
     from database import SessionLocal
     from models import Bill, PrimarySourceReceipt
-    from scrapers.dublin import DublinMunicipalClient
-    from scrapers.legistar import LegistarClient
     from scrapers.normalizer import normalize_legistar_matter
+    from scrapers.registry import get_scraper_client
 
 logger = logging.getLogger("civicdigest.pipeline")
 
 class IngestionPipeline:
-    def __init__(self, jurisdiction_id: str, client_name: str, state_code: str, place_name: str):
+    def __init__(
+        self,
+        jurisdiction_id: str,
+        client_name: str,
+        state_code: str,
+        place_name: str,
+        provider: str | None = None,
+    ):
         self.jurisdiction_id = jurisdiction_id
         self.client_name = client_name
         self.state_code = state_code
         self.place_name = place_name
-        if client_name.lower() == "dublin" or place_name.lower() == "dublin":
-            self.client = DublinMunicipalClient()
-        else:
-            self.client = LegistarClient(client_name=client_name)
+        self.provider = provider
+        self.client = get_scraper_client(
+            client_name=client_name,
+            provider=provider,
+            place_name=place_name,
+            state_code=state_code,
+        )
 
     async def run(self, top: int = 15, days_back: int = 30) -> dict[str, Any]:
         """

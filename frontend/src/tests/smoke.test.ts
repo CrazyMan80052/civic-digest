@@ -16,6 +16,7 @@ describe("Frontend Core Datasets & OCD Models", () => {
     expect(firstBill.id).toBeDefined();
     expect(firstBill.id.startsWith("ocd-bill/")).toBe(true);
     expect(firstBill.plainTitle).toBeDefined();
+    expect(firstBill.category).toBeDefined();
     expect(firstBill.status).toBeDefined();
   });
 
