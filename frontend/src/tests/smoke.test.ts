@@ -19,4 +19,16 @@ describe("Frontend Core Datasets & OCD Models", () => {
     expect(firstBill.category).toBeDefined();
     expect(firstBill.status).toBeDefined();
   });
+
+  it("should provide valid Dublin, OH (43016) jurisdiction and bills", () => {
+    const dublin = JURISDICTIONS.find((j) => j.name.toLowerCase().includes("dublin"));
+    expect(dublin).toBeDefined();
+    expect(dublin?.state).toBe("OH");
+    expect(dublin?.divisions.some((d) => d.id.includes("ward:1"))).toBe(true);
+
+    const dublinBill = BILLS.find((b) => b.id.includes("dublin"));
+    expect(dublinBill).toBeDefined();
+    expect(dublinBill?.fileNumber).toBe("Ord. 01-26");
+    expect(dublinBill?.receipt.officialUrl).toContain("dublinohiousa.gov");
+  });
 });

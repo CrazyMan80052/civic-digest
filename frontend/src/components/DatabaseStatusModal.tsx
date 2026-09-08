@@ -23,6 +23,7 @@ interface DatabaseStatusModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
+import { useModalKeyboard } from '../lib/useModalKeyboard';
 
 interface DbHealthResponse {
   connected: boolean;
@@ -40,6 +41,9 @@ export const DatabaseStatusModal: React.FC<DatabaseStatusModalProps> = ({
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [copiedSection, setCopiedSection] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'status' | 'schema' | 'fastapi'>('status');
+
+  // Accessible keyboard Escape handling and focus return
+  useModalKeyboard(isOpen, onClose);
 
   const fetchHealth = async () => {
     setIsLoading(true);
@@ -75,17 +79,25 @@ export const DatabaseStatusModal: React.FC<DatabaseStatusModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1A1A1A]/80 backdrop-blur-xs animate-in fade-in duration-150">
-      <div className="bg-[#FDFDFC] max-w-2xl w-full border-2 border-[#1A1A1A] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+    <div 
+      role="presentation"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1A1A1A]/80 backdrop-blur-xs animate-in fade-in duration-150"
+    >
+      <div 
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="db-status-title"
+        className="bg-[#FDFDFC] max-w-2xl w-full border-2 border-[#1A1A1A] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+      >
         
         {/* Masthead Header */}
         <div className="bg-[#1A1A1A] text-[#FDFDFC] px-6 py-4 flex items-center justify-between border-b border-[#1A1A1A]">
           <div className="flex items-center gap-3">
             <div className="p-1.5 bg-[#FDFDFC] text-[#1A1A1A]">
-              <Database className="w-5 h-5" />
+              <Database className="w-5 h-5" aria-hidden="true" />
             </div>
             <div>
-              <h3 className="font-serif font-medium text-lg text-white flex items-center gap-2">
+              <h3 id="db-status-title" className="font-serif font-medium text-lg text-white flex items-center gap-2">
                 PostgreSQL Database Architecture
                 <span className={`text-[10px] text-white font-mono font-bold uppercase tracking-wider px-2 py-0.5 ${
                   dbHealth?.connected ? 'bg-[#2D6A4F]' : 'bg-[#E63946]'
@@ -93,42 +105,56 @@ export const DatabaseStatusModal: React.FC<DatabaseStatusModalProps> = ({
                   {dbHealth?.connected ? 'Live PostgreSQL' : 'In-Memory Mode (Ready)'}
                 </span>
               </h3>
-              <p className="text-[11px] text-[#aaa] font-sans">
+              <p className="text-[11px] text-[#D1D5DB] font-sans">
                 Open Civic Data (OCD-ID) schema, PostgreSQL repository layer, and migration setup
               </p>
             </div>
           </div>
           <button
+            type="button"
             onClick={onClose}
-            aria-label="Close"
-            className="text-[#aaa] hover:text-white p-1 hover:bg-[#333] transition-colors"
+            aria-label="Close database status dialog"
+            className="text-[#D1D5DB] hover:text-white p-1 hover:bg-[#333] transition-colors focus-visible:ring-2 focus-visible:ring-white"
           >
-            <X className="w-5 h-5" />
+            <X className="w-5 h-5" aria-hidden="true" />
           </button>
         </div>
 
         {/* Modal Navigation Tabs */}
-        <div className="bg-[#F2F0EA] border-b border-[#1A1A1A]/20 px-6 pt-3 flex gap-2 text-xs font-bold uppercase tracking-wider font-mono">
+        <div 
+          role="tablist" 
+          aria-label="Database Status Sections"
+          className="bg-[#F2F0EA] border-b border-[#1A1A1A]/20 px-6 pt-3 flex gap-2 text-xs font-bold uppercase tracking-wider font-mono"
+        >
           <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === 'status'}
             onClick={() => setActiveTab('status')}
-            className={`px-3 py-1.5 border-t border-x border-[#1A1A1A] transition-colors ${
-              activeTab === 'status' ? 'bg-[#FDFDFC] text-[#1A1A1A]' : 'bg-[#E5E2D9] text-[#777]'
+            className={`px-3 py-1.5 border-t border-x border-[#1A1A1A] transition-colors focus-visible:ring-2 focus-visible:ring-[#1A1A1A] ${
+              activeTab === 'status' ? 'bg-[#FDFDFC] text-[#1A1A1A]' : 'bg-[#E5E2D9] text-[#525252] hover:text-[#1A1A1A]'
             }`}
           >
             Connection Status
           </button>
           <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === 'schema'}
             onClick={() => setActiveTab('schema')}
-            className={`px-3 py-1.5 border-t border-x border-[#1A1A1A] transition-colors ${
-              activeTab === 'schema' ? 'bg-[#FDFDFC] text-[#1A1A1A]' : 'bg-[#E5E2D9] text-[#777]'
+            className={`px-3 py-1.5 border-t border-x border-[#1A1A1A] transition-colors focus-visible:ring-2 focus-visible:ring-[#1A1A1A] ${
+              activeTab === 'schema' ? 'bg-[#FDFDFC] text-[#1A1A1A]' : 'bg-[#E5E2D9] text-[#525252] hover:text-[#1A1A1A]'
             }`}
           >
             Postgres DDL Schema
           </button>
           <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === 'fastapi'}
             onClick={() => setActiveTab('fastapi')}
-            className={`px-3 py-1.5 border-t border-x border-[#1A1A1A] transition-colors ${
-              activeTab === 'fastapi' ? 'bg-[#FDFDFC] text-[#1A1A1A]' : 'bg-[#E5E2D9] text-[#777]'
+            className={`px-3 py-1.5 border-t border-x border-[#1A1A1A] transition-colors focus-visible:ring-2 focus-visible:ring-[#1A1A1A] ${
+              activeTab === 'fastapi' ? 'bg-[#FDFDFC] text-[#1A1A1A]' : 'bg-[#E5E2D9] text-[#525252] hover:text-[#1A1A1A]'
             }`}
           >
             FastAPI / Python Models

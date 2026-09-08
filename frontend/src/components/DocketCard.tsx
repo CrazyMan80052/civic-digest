@@ -95,12 +95,12 @@ export const DocketCard: React.FC<DocketCardProps> = ({
             <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 font-mono ${getCategoryBadge(bill.category)}`}>
               {bill.category}
             </span>
-            <span className="text-xs font-mono font-bold text-[#777]">
+            <span className="text-xs font-mono font-bold text-[#525252]">
               {bill.fileNumber}
             </span>
             {bill.isConsentCalendar && (
               <span className="text-[10px] font-bold uppercase tracking-wider bg-[#F2F0EA] text-[#1A1A1A] border border-[#1A1A1A]/30 px-1.5 py-0.2 flex items-center gap-1" title="Approved on bulk consent calendar without standalone debate">
-                <Layers className="w-2.5 h-2.5" />
+                <Layers className="w-2.5 h-2.5" aria-hidden="true" />
                 Consent Agenda
               </span>
             )}
@@ -112,7 +112,7 @@ export const DocketCard: React.FC<DocketCardProps> = ({
         {personalMatchReason && (
           <div className="mb-3 px-2.5 py-1.5 bg-[#2D6A4F]/10 border border-[#2D6A4F]/25 rounded text-xs flex items-center justify-between gap-2 text-[#2D6A4F]">
             <div className="flex items-center gap-1.5">
-              <span className="text-xs">🎯</span>
+              <span className="text-xs" aria-hidden="true">🎯</span>
               <span className="font-semibold">{personalMatchReason}</span>
             </div>
             {personalMatchScore && (
@@ -130,12 +130,12 @@ export const DocketCard: React.FC<DocketCardProps> = ({
 
 
         {/* Raw Legalese Subtitle */}
-        <div className="text-[11px] font-mono text-[#777] mt-1 mb-3 line-clamp-1 border-b border-[#1A1A1A]/10 pb-2">
+        <div className="text-[11px] font-mono text-[#525252] mt-1 mb-3 line-clamp-1 border-b border-[#1A1A1A]/10 pb-2">
           {bill.title}
         </div>
 
         {/* What it does in plain language */}
-        <p className="text-xs sm:text-sm text-[#444] leading-relaxed mb-4 font-sans">
+        <p className="text-xs sm:text-sm text-[#374151] leading-relaxed mb-4 font-sans">
           {bill.summary}
         </p>
 
@@ -143,7 +143,7 @@ export const DocketCard: React.FC<DocketCardProps> = ({
         <div className="space-y-2 bg-[#F2F0EA] p-3.5 border border-[#1A1A1A]/10 text-xs mb-4">
           {/* Who it affects */}
           <div className="flex items-start gap-2 text-[#333]">
-            <Users className="w-3.5 h-3.5 text-[#1A1A1A] shrink-0 mt-0.5" />
+            <Users className="w-3.5 h-3.5 text-[#1A1A1A] shrink-0 mt-0.5" aria-hidden="true" />
             <div>
               <span className="font-bold text-[#1A1A1A]">Who it affects: </span>
               <span>{bill.whoItAffects}</span>
@@ -152,7 +152,7 @@ export const DocketCard: React.FC<DocketCardProps> = ({
 
           {/* Fiscal Impact */}
           <div className="flex items-start gap-2 text-[#333]">
-            <DollarSign className="w-3.5 h-3.5 text-[#1A1A1A] shrink-0 mt-0.5" />
+            <DollarSign className="w-3.5 h-3.5 text-[#1A1A1A] shrink-0 mt-0.5" aria-hidden="true" />
             <div>
               <span className="font-bold text-[#1A1A1A]">Fiscal Impact: </span>
               {bill.fiscalImpact.amount > 0 ? (
@@ -160,9 +160,9 @@ export const DocketCard: React.FC<DocketCardProps> = ({
                   {formatCurrency(bill.fiscalImpact.amount)}
                 </span>
               ) : (
-                <span className="text-[#555]">Regulatory / $0 Direct Outlay</span>
+                <span className="text-[#4B5563]">Regulatory / $0 Direct Outlay</span>
               )}
-              <span className="text-[#777] ml-1">({bill.fiscalImpact.fundingSource})</span>
+              <span className="text-[#525252] ml-1">({bill.fiscalImpact.fundingSource})</span>
             </div>
           </div>
         </div>
@@ -173,7 +173,7 @@ export const DocketCard: React.FC<DocketCardProps> = ({
             <span className="font-bold">
               Roll Call: {bill.votes.yesCount} Aye / {bill.votes.noCount} Nay
             </span>
-            <span className="text-[#777]">{formatDate(bill.votes.date)}</span>
+            <span className="text-[#525252]">{formatDate(bill.votes.date)}</span>
           </div>
         )}
 
@@ -181,11 +181,13 @@ export const DocketCard: React.FC<DocketCardProps> = ({
         <div className="flex flex-wrap gap-1.5 mb-4">
           {bill.tags.map((t) => (
             <button
+              type="button"
               key={t}
               onClick={() => onSelectTag?.(t)}
-              className="text-[10px] uppercase font-bold tracking-wider text-[#555] bg-[#F2F0EA] hover:bg-[#1A1A1A] hover:text-[#FDFDFC] border border-[#1A1A1A]/15 px-2 py-0.5 transition-colors flex items-center gap-1"
+              aria-label={`Filter dockets by tag ${t}`}
+              className="text-[10px] uppercase font-bold tracking-wider text-[#4B5563] bg-[#F2F0EA] hover:bg-[#1A1A1A] hover:text-[#FDFDFC] border border-[#1A1A1A]/15 px-2 py-0.5 transition-colors flex items-center gap-1 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
             >
-              <Tag className="w-2.5 h-2.5" />
+              <Tag className="w-2.5 h-2.5" aria-hidden="true" />
               {t}
             </button>
           ))}
@@ -197,21 +199,25 @@ export const DocketCard: React.FC<DocketCardProps> = ({
         <div className="flex items-center gap-2">
           {/* Receipt Check Trigger */}
           <button
+            type="button"
             onClick={() => onViewReceipt(bill)}
-            className="inline-flex items-center gap-1.5 font-bold uppercase tracking-wider text-[#1A1A1A] hover:bg-[#F2F0EA] border border-[#1A1A1A]/30 px-2.5 sm:px-3 py-1.5 transition-colors text-[11px]"
+            aria-label={`Open verification receipt for ${bill.fileNumber}`}
+            className="inline-flex items-center gap-1.5 font-bold uppercase tracking-wider text-[#1A1A1A] hover:bg-[#F2F0EA] border border-[#1A1A1A]/30 px-2.5 sm:px-3 py-1.5 transition-colors text-[11px] focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
           >
-            <ShieldCheck className="w-3.5 h-3.5 text-[#1A1A1A]" />
+            <ShieldCheck className="w-3.5 h-3.5 text-[#1A1A1A]" aria-hidden="true" />
             <span>Receipt Check</span>
           </button>
 
           {/* Micro-Survey / Resident Vote Trigger */}
           {onOpenMicroSurvey && (
             <button
+              type="button"
               onClick={() => onOpenMicroSurvey(bill)}
+              aria-label={`Cast resident vote or feedback on ${bill.fileNumber}`}
               title="Cast Resident Vote / Submit Zero-Party Feedback"
-              className="inline-flex items-center gap-1 font-bold uppercase tracking-wider text-[#2D6A4F] hover:bg-[#2D6A4F]/10 border border-[#2D6A4F]/40 px-2 sm:px-2.5 py-1.5 transition-colors text-[11px]"
+              className="inline-flex items-center gap-1 font-bold uppercase tracking-wider text-[#2D6A4F] hover:bg-[#2D6A4F]/10 border border-[#2D6A4F]/40 px-2 sm:px-2.5 py-1.5 transition-colors text-[11px] focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#2D6A4F]"
             >
-              <Vote className="w-3.5 h-3.5 text-[#2D6A4F]" />
+              <Vote className="w-3.5 h-3.5 text-[#2D6A4F]" aria-hidden="true" />
               <span className="hidden sm:inline">Voice / Vote</span>
             </button>
           )}
@@ -219,11 +225,13 @@ export const DocketCard: React.FC<DocketCardProps> = ({
           {/* Social Broadcast Trigger */}
           {onShareBill && (
             <button
+              type="button"
               onClick={() => onShareBill(bill)}
+              aria-label={`Broadcast docket ${bill.fileNumber} to social media`}
               title="Broadcast to Social Media (X, Bluesky, Threads, LinkedIn, Instagram)"
-              className="inline-flex items-center gap-1 font-bold uppercase tracking-wider text-[#1A1A1A] hover:bg-[#F2F0EA] border border-[#1A1A1A]/30 px-2 sm:px-2.5 py-1.5 transition-colors text-[11px]"
+              className="inline-flex items-center gap-1 font-bold uppercase tracking-wider text-[#1A1A1A] hover:bg-[#F2F0EA] border border-[#1A1A1A]/30 px-2 sm:px-2.5 py-1.5 transition-colors text-[11px] focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
             >
-              <Share2 className="w-3.5 h-3.5 text-[#E63946]" />
+              <Share2 className="w-3.5 h-3.5 text-[#E63946]" aria-hidden="true" />
               <span className="hidden sm:inline">Broadcast</span>
             </button>
           )}
@@ -231,12 +239,14 @@ export const DocketCard: React.FC<DocketCardProps> = ({
 
         {/* Multi-Perspective Analysis Trigger */}
         <button
+          type="button"
           onClick={() => onViewPerspectives(bill)}
-          className="inline-flex items-center gap-1 font-bold uppercase tracking-wider text-[#FDFDFC] bg-[#1A1A1A] hover:bg-[#333] px-3 py-1.5 transition-colors text-[11px]"
+          aria-label={`View multi-perspective analysis for ${bill.fileNumber}`}
+          className="inline-flex items-center gap-1 font-bold uppercase tracking-wider text-[#FDFDFC] bg-[#1A1A1A] hover:bg-[#333] px-3 py-1.5 transition-colors text-[11px] focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
         >
-          <Scale className="w-3 h-3 text-[#FDFDFC]" />
+          <Scale className="w-3 h-3 text-[#FDFDFC]" aria-hidden="true" />
           <span>Perspectives</span>
-          <ArrowRight className="w-3 h-3" />
+          <ArrowRight className="w-3 h-3" aria-hidden="true" />
         </button>
       </div>
     </article>

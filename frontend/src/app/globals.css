@@ -24,3 +24,21 @@
 .editorial-rule {
   border-color: rgba(26, 26, 26, 0.15);
 }
+
+/* Accessibility (ADA / WCAG 2.1 AA): Focus rings and screen reader utilities */
+:focus-visible {
+  outline: 2px solid #1A1A1A;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+

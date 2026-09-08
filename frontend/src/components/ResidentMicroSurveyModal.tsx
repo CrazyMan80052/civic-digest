@@ -23,6 +23,7 @@ import {
   Info
 } from 'lucide-react';
 import { OCDBill, OCDJurisdiction } from '../types';
+import { useModalKeyboard } from '../lib/useModalKeyboard';
 
 interface ResidentMicroSurveyModalProps {
   isOpen: boolean;
@@ -49,10 +50,11 @@ export const ResidentMicroSurveyModal: React.FC<ResidentMicroSurveyModalProps> =
   const [priorityRating, setPriorityRating] = useState<number>(8);
   const [feedbackText, setFeedbackText] = useState<string>('');
   const [epsilon, setEpsilon] = useState<number>(1.0);
-
-  // States
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [submittedResult, setSubmittedResult] = useState<any | null>(null);
+
+  // Accessible keyboard Escape handling and focus return
+  useModalKeyboard(isOpen, onClose);
   const [aggregates, setAggregates] = useState<any | null>(null);
   const [activeTab, setActiveTab] = useState<'vote' | 'community_pulse'>('vote');
   const [showPrivacyDetail, setShowPrivacyDetail] = useState<boolean>(false);
@@ -114,33 +116,42 @@ export const ResidentMicroSurveyModal: React.FC<ResidentMicroSurveyModalProps> =
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1A1A1A]/80 backdrop-blur-xs animate-in fade-in duration-150">
-      <div className="bg-[#FDFDFC] max-w-2xl w-full border-2 border-[#1A1A1A] shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+    <div 
+      role="presentation"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1A1A1A]/80 backdrop-blur-xs animate-in fade-in duration-150"
+    >
+      <div 
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="micro-survey-title"
+        className="bg-[#FDFDFC] max-w-2xl w-full border-2 border-[#1A1A1A] shadow-2xl overflow-hidden flex flex-col max-h-[92vh]"
+      >
         
         {/* Masthead */}
         <div className="bg-[#1A1A1A] text-[#FDFDFC] px-6 py-4 flex items-center justify-between border-b border-[#1A1A1A]">
           <div className="flex items-center gap-3">
             <div className="p-1.5 bg-[#2D6A4F] text-white">
-              <Vote className="w-5 h-5" />
+              <Vote className="w-5 h-5" aria-hidden="true" />
             </div>
             <div>
-              <h3 className="font-serif font-medium text-lg text-white flex items-center gap-2">
+              <h3 id="micro-survey-title" className="font-serif font-medium text-lg text-white flex items-center gap-2">
                 Resident Voice &amp; Micro-Survey
                 <span className="text-[10px] text-white font-mono font-bold uppercase tracking-wider px-2 py-0.5 bg-[#E63946]">
                   Zero-Party Input
                 </span>
               </h3>
-              <p className="text-[11px] text-[#aaa] font-sans">
+              <p className="text-[11px] text-[#D1D5DB] font-sans">
                 Non-partisan constituent pulse protected with ε-Differential Privacy
               </p>
             </div>
           </div>
           <button
+            type="button"
             onClick={onClose}
-            aria-label="Close"
-            className="text-[#aaa] hover:text-white p-1 hover:bg-[#333] transition-colors"
+            aria-label="Close resident voice micro-survey dialog"
+            className="text-[#D1D5DB] hover:text-white p-1 hover:bg-[#333] transition-colors focus-visible:ring-2 focus-visible:ring-white"
           >
-            <X className="w-5 h-5" />
+            <X className="w-5 h-5" aria-hidden="true" />
           </button>
         </div>
 

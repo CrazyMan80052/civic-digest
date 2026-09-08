@@ -98,7 +98,7 @@ export const MultiPerspectiveView: React.FC<MultiPerspectiveViewProps> = ({
           <div>
             <div className="flex items-center gap-2 mb-2">
               <span className="p-1 bg-[#1A1A1A] text-[#FDFDFC]">
-                <Scale className="w-4 h-4" />
+                <Scale className="w-4 h-4" aria-hidden="true" />
               </span>
               <h2 className="text-2xl sm:text-3xl font-serif font-medium text-[#1A1A1A]">
                 The Policy Spectrum &amp; 360° Perspectives
@@ -107,7 +107,7 @@ export const MultiPerspectiveView: React.FC<MultiPerspectiveViewProps> = ({
                 {currentBill.fileNumber}
               </span>
             </div>
-            <p className="text-xs sm:text-sm text-[#555] max-w-3xl font-sans leading-relaxed">
+            <p className="text-xs sm:text-sm text-[#4B5563] max-w-3xl font-sans leading-relaxed">
               Triangulating municipal policy across three distinct pillars of record: official sponsor filings, local investigative media reporting, and grassroots citizen testimonies.
             </p>
           </div>
@@ -115,12 +115,14 @@ export const MultiPerspectiveView: React.FC<MultiPerspectiveViewProps> = ({
           {/* Bill Picker Dropdown & Re-analyze trigger */}
           <div className="flex items-center gap-2.5">
             <select
+              id="multi-perspective-bill-selector"
+              aria-label="Select municipal docket for multi-perspective analysis"
               value={currentBill.id}
               onChange={(e) => {
                 setCustomPerspectives(null);
                 onSelectBill(e.target.value);
               }}
-              className="bg-[#F2F0EA] border border-[#1A1A1A]/30 text-[#1A1A1A] text-xs font-bold py-2 px-3 focus:outline-none max-w-xs truncate cursor-pointer"
+              className="bg-[#F2F0EA] border border-[#1A1A1A]/30 text-[#1A1A1A] text-xs font-bold py-2 px-3 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#1A1A1A] max-w-xs truncate cursor-pointer"
             >
               {bills.map((b) => (
                 <option key={b.id} value={b.id}>
@@ -130,18 +132,20 @@ export const MultiPerspectiveView: React.FC<MultiPerspectiveViewProps> = ({
             </select>
 
             <button
+              type="button"
               onClick={handleGenerateFreshAnalysis}
               disabled={isGenerating}
-              className="inline-flex items-center gap-1.5 bg-[#1A1A1A] hover:bg-[#333] text-[#FDFDFC] text-xs font-bold uppercase tracking-wider px-3.5 py-2 transition-colors disabled:opacity-50"
+              aria-label="Generate fresh multi-perspective analysis with Gemini AI"
+              className="inline-flex items-center gap-1.5 bg-[#1A1A1A] hover:bg-[#333] text-[#FDFDFC] text-xs font-bold uppercase tracking-wider px-3.5 py-2 transition-colors disabled:opacity-50 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
             >
               {isGenerating ? (
                 <>
-                  <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                  <RefreshCw className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />
                   <span>Synthesizing...</span>
                 </>
               ) : (
                 <>
-                  <Sparkles className="w-3.5 h-3.5 text-[#E63946]" />
+                  <Sparkles className="w-3.5 h-3.5 text-[#E63946]" aria-hidden="true" />
                   <span>AI Re-Analyze</span>
                 </>
               )}
@@ -152,7 +156,7 @@ export const MultiPerspectiveView: React.FC<MultiPerspectiveViewProps> = ({
         {/* Selected Policy Banner */}
         <div className="mt-4 pt-4 border-t border-[#1A1A1A]/15 flex flex-wrap items-center justify-between gap-2">
           <div>
-            <span className="text-[10px] font-bold text-[#777] uppercase tracking-widest block font-mono">
+            <span className="text-[10px] font-bold text-[#525252] uppercase tracking-widest block font-mono">
               Active Matter Under Review
             </span>
             <span className="text-lg sm:text-xl font-serif text-[#1A1A1A] font-medium">
@@ -160,10 +164,12 @@ export const MultiPerspectiveView: React.FC<MultiPerspectiveViewProps> = ({
             </span>
           </div>
           <button
+            type="button"
             onClick={() => onOpenReceipt(currentBill)}
-            className="text-xs font-bold uppercase tracking-wider text-[#1A1A1A] hover:bg-[#F2F0EA] border border-[#1A1A1A]/30 px-3 py-1.5 flex items-center gap-1 transition-colors"
+            aria-label={`Open primary source receipt for ${currentBill.fileNumber}`}
+            className="text-xs font-bold uppercase tracking-wider text-[#1A1A1A] hover:bg-[#F2F0EA] border border-[#1A1A1A]/30 px-3 py-1.5 flex items-center gap-1 transition-colors focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
           >
-            <CheckCircle2 className="w-3.5 h-3.5 text-[#2D6A4F]" />
+            <CheckCircle2 className="w-3.5 h-3.5 text-[#2D6A4F]" aria-hidden="true" />
             <span>Primary Source Receipt</span>
           </button>
         </div>
@@ -176,10 +182,10 @@ export const MultiPerspectiveView: React.FC<MultiPerspectiveViewProps> = ({
         <div className="bg-[#FDFDFC] border border-[#1A1A1A]/20 p-5 shadow-xs flex flex-col justify-between">
           <div>
             <h3 className="text-xs font-bold uppercase tracking-wider text-[#1A1A1A] border-b border-[#1A1A1A]/20 pb-2 mb-2 flex items-center gap-1.5">
-              <Newspaper className="w-3.5 h-3.5 text-[#1A1A1A]" />
+              <Newspaper className="w-3.5 h-3.5 text-[#1A1A1A]" aria-hidden="true" />
               Media Coverage Diversity
             </h3>
-            <p className="text-xs text-[#555] mb-3">
+            <p className="text-xs text-[#4B5563] mb-3">
               Spectrum of journalism outlets reporting on this council docket
             </p>
 
@@ -202,7 +208,7 @@ export const MultiPerspectiveView: React.FC<MultiPerspectiveViewProps> = ({
               />
             </div>
 
-            <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-[#555]">
+            <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-[#4B5563]">
               <span className="flex items-center gap-1">
                 <span className="w-2 h-2 bg-[#2B4162] inline-block" />
                 Grassroots (35%)
@@ -218,7 +224,7 @@ export const MultiPerspectiveView: React.FC<MultiPerspectiveViewProps> = ({
             </div>
           </div>
 
-          <div className="mt-4 pt-3 border-t border-[#1A1A1A]/10 text-[11px] text-[#777] font-mono">
+          <div className="mt-4 pt-3 border-t border-[#1A1A1A]/10 text-[11px] text-[#525252] font-mono">
             <span className="font-bold text-[#1A1A1A]">Sources:</span> Signal Cleveland, The Plain Dealer, Cleveland Scene, Crain's.
           </div>
         </div>
@@ -227,10 +233,10 @@ export const MultiPerspectiveView: React.FC<MultiPerspectiveViewProps> = ({
         <div className="bg-[#FDFDFC] border border-[#1A1A1A]/20 p-5 shadow-xs flex flex-col justify-between">
           <div>
             <h3 className="text-xs font-bold uppercase tracking-wider text-[#1A1A1A] border-b border-[#1A1A1A]/20 pb-2 mb-2 flex items-center gap-1.5">
-              <MessageSquare className="w-3.5 h-3.5 text-[#1A1A1A]" />
+              <MessageSquare className="w-3.5 h-3.5 text-[#1A1A1A]" aria-hidden="true" />
               Public Testimony Sentiment
             </h3>
-            <p className="text-xs text-[#555] mb-3">
+            <p className="text-xs text-[#4B5563] mb-3">
               Synthesized from {perspectives.publicCommentBreakdown.totalComments} verified public hearing records
             </p>
 
@@ -243,7 +249,7 @@ export const MultiPerspectiveView: React.FC<MultiPerspectiveViewProps> = ({
               />
               <div
                 style={{ width: `${neutralPercentage}%` }}
-                className="bg-[#777777] h-full"
+                className="bg-[#525252] h-full"
                 title={`Neutral (${neutralPercentage}%)`}
               />
               <div
@@ -255,21 +261,21 @@ export const MultiPerspectiveView: React.FC<MultiPerspectiveViewProps> = ({
 
             <div className="flex items-center justify-between text-xs font-bold">
               <span className="text-[#2D6A4F] flex items-center gap-1 font-mono">
-                <ThumbsUp className="w-3 h-3" />
+                <ThumbsUp className="w-3 h-3" aria-hidden="true" />
                 {supportPercentage}% Support
               </span>
-              <span className="text-[#777] flex items-center gap-1 font-mono">
-                <Minus className="w-3 h-3" />
+              <span className="text-[#525252] flex items-center gap-1 font-mono">
+                <Minus className="w-3 h-3" aria-hidden="true" />
                 {neutralPercentage}% Neutral
               </span>
               <span className="text-[#E63946] flex items-center gap-1 font-mono">
-                <ThumbsDown className="w-3 h-3" />
+                <ThumbsDown className="w-3 h-3" aria-hidden="true" />
                 {opposePercentage}% Oppose
               </span>
             </div>
           </div>
 
-          <div className="mt-4 pt-3 border-t border-[#1A1A1A]/10 text-[11px] text-[#777] font-mono">
+          <div className="mt-4 pt-3 border-t border-[#1A1A1A]/10 text-[11px] text-[#525252] font-mono">
             <span className="font-bold text-[#1A1A1A]">Audit:</span> Official City Clerk Public Hearing Transcripts.
           </div>
         </div>
@@ -278,7 +284,7 @@ export const MultiPerspectiveView: React.FC<MultiPerspectiveViewProps> = ({
         <div className="bg-[#F2F0EA] border border-[#1A1A1A]/20 p-5 shadow-xs flex flex-col justify-between">
           <div>
             <h3 className="text-xs font-bold uppercase tracking-wider text-[#1A1A1A] border-b border-[#1A1A1A]/20 pb-2 mb-2 flex items-center gap-1.5">
-              <EyeOff className="w-3.5 h-3.5 text-[#E63946]" />
+              <EyeOff className="w-3.5 h-3.5 text-[#E63946]" aria-hidden="true" />
               Editorial Blindspot Alert
             </h3>
             <p className="text-xs text-[#333] font-serif italic leading-relaxed">
@@ -286,8 +292,8 @@ export const MultiPerspectiveView: React.FC<MultiPerspectiveViewProps> = ({
                 'Mainstream media outlets focused on overall budget totals, while neighborhood testimonies focused on traffic detours and local minority business subcontractor participation.'}"
             </p>
           </div>
-          <div className="mt-4 pt-3 border-t border-[#1A1A1A]/15 flex items-center gap-1.5 text-[10px] uppercase font-bold tracking-wider text-[#777]">
-            <AlertCircle className="w-3.5 h-3.5 text-[#E63946]" />
+          <div className="mt-4 pt-3 border-t border-[#1A1A1A]/15 flex items-center gap-1.5 text-[10px] uppercase font-bold tracking-wider text-[#525252]">
+            <AlertCircle className="w-3.5 h-3.5 text-[#E63946]" aria-hidden="true" />
             <span>CivicDigest NLP Triangulation</span>
           </div>
         </div>
@@ -302,14 +308,14 @@ export const MultiPerspectiveView: React.FC<MultiPerspectiveViewProps> = ({
           <div className="space-y-4">
             <div className="pb-2 border-b-2 border-[#1A1A1A] flex items-center justify-between">
               <h4 className="font-bold text-xs uppercase tracking-widest text-[#1A1A1A] flex items-center gap-1.5">
-                <FileText className="w-3.5 h-3.5" />
+                <FileText className="w-3.5 h-3.5" aria-hidden="true" />
                 1. Official Filing Stance
               </h4>
-              <span className="text-[10px] font-mono text-[#777]">The Docket</span>
+              <span className="text-[10px] font-mono text-[#525252]">The Docket</span>
             </div>
 
             <div>
-              <span className="text-[10px] font-bold text-[#777] uppercase tracking-widest block mb-1 font-mono">
+              <span className="text-[10px] font-bold text-[#525252] uppercase tracking-widest block mb-1 font-mono">
                 Sponsor Intent
               </span>
               <p className="text-xs text-[#333] leading-relaxed bg-[#F2F0EA] p-3 border border-[#1A1A1A]/10">
@@ -318,7 +324,7 @@ export const MultiPerspectiveView: React.FC<MultiPerspectiveViewProps> = ({
             </div>
 
             <div>
-              <span className="text-[10px] font-bold text-[#777] uppercase tracking-widest block mb-1 font-mono">
+              <span className="text-[10px] font-bold text-[#525252] uppercase tracking-widest block mb-1 font-mono">
                 Legal Department Counsel
               </span>
               <p className="text-xs text-[#333] leading-relaxed bg-[#F2F0EA] p-3 border border-[#1A1A1A]/10">
@@ -327,7 +333,7 @@ export const MultiPerspectiveView: React.FC<MultiPerspectiveViewProps> = ({
             </div>
 
             <div>
-              <span className="text-[10px] font-bold text-[#777] uppercase tracking-widest block mb-1 font-mono">
+              <span className="text-[10px] font-bold text-[#525252] uppercase tracking-widest block mb-1 font-mono">
                 Fiscal Auditor Review
               </span>
               <p className="text-xs text-[#333] leading-relaxed bg-[#F2F0EA] p-3 border border-[#1A1A1A]/10">
@@ -342,10 +348,10 @@ export const MultiPerspectiveView: React.FC<MultiPerspectiveViewProps> = ({
           <div className="space-y-4">
             <div className="pb-2 border-b-2 border-[#1A1A1A] flex items-center justify-between">
               <h4 className="font-bold text-xs uppercase tracking-widest text-[#1A1A1A] flex items-center gap-1.5">
-                <Newspaper className="w-3.5 h-3.5" />
+                <Newspaper className="w-3.5 h-3.5" aria-hidden="true" />
                 2. Press &amp; Media Coverage
               </h4>
-              <span className="text-[10px] font-mono text-[#777]">The Newsroom</span>
+              <span className="text-[10px] font-mono text-[#525252]">The Newsroom</span>
             </div>
 
             <div className="space-y-3">
@@ -367,20 +373,21 @@ export const MultiPerspectiveView: React.FC<MultiPerspectiveViewProps> = ({
                     "{article.headline}"
                   </h5>
 
-                  <p className="text-[11px] text-[#555] leading-relaxed font-sans">
+                  <p className="text-[11px] text-[#4B5563] leading-relaxed font-sans">
                     {article.summary}
                   </p>
 
-                  <div className="pt-1 flex items-center justify-between text-[10px] font-mono text-[#777] border-t border-[#1A1A1A]/10">
+                  <div className="pt-1 flex items-center justify-between text-[10px] font-mono text-[#525252] border-t border-[#1A1A1A]/10">
                     <span className="font-bold text-[#1A1A1A]">Stance: {article.keyStance}</span>
                     {article.articleUrl && article.articleUrl !== '#' && (
                       <a
                         href={article.articleUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="hover:text-[#1A1A1A] flex items-center gap-0.5 uppercase font-bold"
+                        aria-label={`Read article "${article.headline}" from ${article.sourceName} (opens in new tab)`}
+                        className="hover:text-[#1A1A1A] flex items-center gap-0.5 uppercase font-bold focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
                       >
-                        Article <ExternalLink className="w-2.5 h-2.5" />
+                        Article <ExternalLink className="w-2.5 h-2.5" aria-hidden="true" />
                       </a>
                     )}
                   </div>
@@ -395,10 +402,10 @@ export const MultiPerspectiveView: React.FC<MultiPerspectiveViewProps> = ({
           <div className="space-y-4">
             <div className="pb-2 border-b-2 border-[#1A1A1A] flex items-center justify-between">
               <h4 className="font-bold text-xs uppercase tracking-widest text-[#1A1A1A] flex items-center gap-1.5">
-                <MessageSquare className="w-3.5 h-3.5" />
+                <MessageSquare className="w-3.5 h-3.5" aria-hidden="true" />
                 3. Resident Testimonies
               </h4>
-              <span className="text-[10px] font-mono text-[#777]">Public Record</span>
+              <span className="text-[10px] font-mono text-[#525252]">Public Record</span>
             </div>
 
             <div className="space-y-3">
@@ -424,7 +431,7 @@ export const MultiPerspectiveView: React.FC<MultiPerspectiveViewProps> = ({
                     </span>
                   </div>
 
-                  <p className="text-xs font-serif italic text-[#222] leading-relaxed bg-[#FDFDFC] p-2.5 border border-[#1A1A1A]/10">
+                  <p className="text-xs font-serif italic text-[#1A1A1A] leading-relaxed bg-[#FDFDFC] p-2.5 border border-[#1A1A1A]/10">
                     "{item.quoteSample}"
                   </p>
                 </div>

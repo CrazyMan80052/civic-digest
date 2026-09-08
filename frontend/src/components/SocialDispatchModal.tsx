@@ -11,22 +11,16 @@ import {
   CheckCircle2, 
   Sparkles, 
   X, 
-  ExternalLink, 
-  MessageSquare, 
-  Download, 
-  RefreshCw, 
-  Globe, 
-  Radio, 
-  FileText, 
-  Layers, 
   Hash,
-  ArrowRight,
   Sliders,
-  Check,
-  ShieldCheck
+  ShieldCheck,
+  ExternalLink,
+  RefreshCw,
+  Radio
 } from 'lucide-react';
 import { OCDBill } from '../types';
 import { formatCurrency } from '../lib/utils';
+import { useModalKeyboard } from '../lib/useModalKeyboard';
 
 interface SocialDispatchModalProps {
   isOpen: boolean;
@@ -51,6 +45,9 @@ export const SocialDispatchModal: React.FC<SocialDispatchModalProps> = ({
   const [copied, setCopied] = useState<boolean>(false);
   const [shareSuccess, setShareSuccess] = useState<boolean>(false);
   const [activeSlide, setActiveSlide] = useState<number>(0);
+
+  // Accessible keyboard Escape handling and focus return
+  useModalKeyboard(isOpen, onClose);
 
   // Platform specific editable texts
   const [postContent, setPostContent] = useState<{
@@ -124,7 +121,7 @@ export const SocialDispatchModal: React.FC<SocialDispatchModalProps> = ({
             `🏛️ Municipal Update: ${bill.plainTitle} (${bill.fileNumber})`,
             `📋 Plain Language: ${bill.summary}`,
             `👥 Community Impact: ${bill.whoItAffects}`,
-            `🔍 Verified Primary Source: Legistar Clerk Archive`,
+            `💰 Fiscal Note: ${bill.fiscalImpact?.amount > 0 ? formatCurrency(bill.fiscalImpact.amount) : 'Regulatory'}`,
           ],
           hashtags: ['#LocalGov', '#CityCouncil', '#CivicDigest', '#OpenData'],
         });
@@ -137,14 +134,20 @@ export const SocialDispatchModal: React.FC<SocialDispatchModalProps> = ({
   // Update selectedBill when initialBill changes
   useEffect(() => {
     if (initialBill) {
-      setSelectedBill(initialBill);
+      const timer = setTimeout(() => {
+        setSelectedBill(initialBill);
+      }, 0);
+      return () => clearTimeout(timer);
     }
   }, [initialBill]);
 
   // Generate initial social content whenever selectedBill changes
   useEffect(() => {
     if (selectedBill && isOpen) {
-      generateSocialPosts(selectedBill, tone);
+      const timer = setTimeout(() => {
+        generateSocialPosts(selectedBill, tone);
+      }, 0);
+      return () => clearTimeout(timer);
     }
   }, [selectedBill, isOpen, tone]);
 
@@ -257,33 +260,42 @@ export const SocialDispatchModal: React.FC<SocialDispatchModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1A1A1A]/80 backdrop-blur-xs animate-in fade-in duration-150">
-      <div className="bg-[#FDFDFC] max-w-3xl w-full border-2 border-[#1A1A1A] shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+    <div 
+      role="presentation"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1A1A1A]/80 backdrop-blur-xs animate-in fade-in duration-150"
+    >
+      <div 
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="social-dispatch-title"
+        className="bg-[#FDFDFC] max-w-3xl w-full border-2 border-[#1A1A1A] shadow-2xl overflow-hidden flex flex-col max-h-[92vh]"
+      >
         
         {/* Modal Masthead Header */}
         <div className="bg-[#1A1A1A] text-[#FDFDFC] px-6 py-4 flex items-center justify-between border-b border-[#1A1A1A]">
           <div className="flex items-center gap-3">
             <div className="p-1.5 bg-[#FDFDFC] text-[#1A1A1A]">
-              <Share2 className="w-5 h-5" />
+              <Share2 className="w-5 h-5" aria-hidden="true" />
             </div>
             <div>
-              <h3 className="font-serif font-medium text-lg text-white flex items-center gap-2">
+              <h3 id="social-dispatch-title" className="font-serif font-medium text-lg text-white flex items-center gap-2">
                 Civic News Social Dispatch
                 <span className="text-[10px] bg-[#E63946] text-white font-mono font-bold uppercase tracking-wider px-2 py-0.5">
                   Multi-Channel Broadcaster
                 </span>
               </h3>
-              <p className="text-[11px] text-[#aaa] font-sans">
+              <p className="text-[11px] text-[#D1D5DB] font-sans">
                 Broadcast verified municipal dockets directly to social feeds, newsletters, and webhook alerts
               </p>
             </div>
           </div>
           <button
+            type="button"
             onClick={onClose}
-            aria-label="Close"
-            className="text-[#aaa] hover:text-white p-1 hover:bg-[#333] transition-colors"
+            aria-label="Close social media dispatch dialog"
+            className="text-[#D1D5DB] hover:text-white p-1 hover:bg-[#333] transition-colors focus-visible:ring-2 focus-visible:ring-white"
           >
-            <X className="w-5 h-5" />
+            <X className="w-5 h-5" aria-hidden="true" />
           </button>
         </div>
 
@@ -293,17 +305,19 @@ export const SocialDispatchModal: React.FC<SocialDispatchModalProps> = ({
           {/* Bill Selector Bar */}
           <div className="bg-[#F2F0EA] p-3.5 border border-[#1A1A1A]/15 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
             <div className="flex-1">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-[#777] font-mono block">
+              <label htmlFor="dispatch-bill-select" className="text-[10px] font-bold uppercase tracking-wider text-[#525252] font-mono block">
                 Target Ordinance / Docket:
-              </span>
+              </label>
               {allBills.length > 0 ? (
                 <select
+                  id="dispatch-bill-select"
+                  aria-label="Target Ordinance or Docket"
                   value={selectedBill?.id || ''}
                   onChange={(e) => {
                     const b = allBills.find((x) => x.id === e.target.value);
                     if (b) setSelectedBill(b);
                   }}
-                  className="w-full bg-[#FDFDFC] border border-[#1A1A1A]/30 text-xs font-serif font-bold p-1.5 mt-1 focus:outline-none"
+                  className="w-full bg-[#FDFDFC] border border-[#1A1A1A]/30 text-xs font-serif font-bold p-1.5 mt-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
                 >
                   {allBills.map((b) => (
                     <option key={b.id} value={b.id}>
@@ -321,15 +335,18 @@ export const SocialDispatchModal: React.FC<SocialDispatchModalProps> = ({
             {/* Tone Selector & Regenerate */}
             <div className="flex items-center gap-2 shrink-0">
               <div className="flex items-center gap-1">
-                <Sliders className="w-3.5 h-3.5 text-[#777]" />
+                <label htmlFor="dispatch-tone-select" className="sr-only">Tone Setting</label>
+                <Sliders className="w-3.5 h-3.5 text-[#525252]" aria-hidden="true" />
                 <select
+                  id="dispatch-tone-select"
+                  aria-label="Message Tone Setting"
                   value={tone}
                   onChange={(e) => {
                     const newTone = e.target.value as ToneSetting;
                     setTone(newTone);
                     if (selectedBill) generateSocialPosts(selectedBill, newTone);
                   }}
-                  className="bg-[#FDFDFC] border border-[#1A1A1A]/30 text-[11px] font-bold uppercase p-1.5 focus:outline-none"
+                  className="bg-[#FDFDFC] border border-[#1A1A1A]/30 text-[11px] font-bold uppercase p-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
                 >
                   <option value="standard">Objective Civic</option>
                   <option value="urgent">Urgent Notice</option>
@@ -339,57 +356,75 @@ export const SocialDispatchModal: React.FC<SocialDispatchModalProps> = ({
               </div>
 
               <button
+                type="button"
                 onClick={() => selectedBill && generateSocialPosts(selectedBill, tone)}
                 disabled={isGenerating}
                 title="Regenerate with Gemini"
-                className="bg-[#1A1A1A] hover:bg-[#333] text-white p-1.5 text-xs font-bold transition-colors disabled:opacity-50"
+                aria-label="Regenerate social posts with Gemini AI"
+                className="bg-[#1A1A1A] hover:bg-[#333] text-white p-1.5 text-xs font-bold transition-colors disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
               >
-                <RefreshCw className={`w-3.5 h-3.5 ${isGenerating ? 'animate-spin text-[#E63946]' : ''}`} />
+                <RefreshCw className={`w-3.5 h-3.5 ${isGenerating ? 'animate-spin text-[#E63946]' : ''}`} aria-hidden="true" />
               </button>
             </div>
           </div>
 
           {/* Social Platform Selection Tabs */}
-          <div className="flex items-center gap-2 border-b border-[#1A1A1A]/20 pb-2 overflow-x-auto scrollbar-none text-xs font-bold uppercase tracking-wider font-mono">
+          <div 
+            role="tablist" 
+            aria-label="Social Media Platforms"
+            className="flex items-center gap-2 border-b border-[#1A1A1A]/20 pb-2 overflow-x-auto scrollbar-none text-xs font-bold uppercase tracking-wider font-mono"
+          >
             <button
+              type="button"
+              role="tab"
+              aria-selected={activePlatform === 'twitter'}
               onClick={() => setActivePlatform('twitter')}
-              className={`px-3 py-1.5 transition-colors border ${
+              className={`px-3 py-1.5 transition-colors border focus-visible:ring-2 focus-visible:ring-[#1A1A1A] ${
                 activePlatform === 'twitter'
                   ? 'bg-[#1A1A1A] text-white border-[#1A1A1A]'
-                  : 'bg-[#F2F0EA] text-[#555] border-transparent hover:border-[#1A1A1A]/20'
+                  : 'bg-[#F2F0EA] text-[#525252] border-transparent hover:border-[#1A1A1A]/20'
               }`}
             >
               X / Twitter
             </button>
 
             <button
+              type="button"
+              role="tab"
+              aria-selected={activePlatform === 'bluesky'}
               onClick={() => setActivePlatform('bluesky')}
-              className={`px-3 py-1.5 transition-colors border ${
+              className={`px-3 py-1.5 transition-colors border focus-visible:ring-2 focus-visible:ring-[#1A1A1A] ${
                 activePlatform === 'bluesky'
                   ? 'bg-[#1A1A1A] text-white border-[#1A1A1A]'
-                  : 'bg-[#F2F0EA] text-[#555] border-transparent hover:border-[#1A1A1A]/20'
+                  : 'bg-[#F2F0EA] text-[#525252] border-transparent hover:border-[#1A1A1A]/20'
               }`}
             >
               Bluesky
             </button>
 
             <button
+              type="button"
+              role="tab"
+              aria-selected={activePlatform === 'threads'}
               onClick={() => setActivePlatform('threads')}
-              className={`px-3 py-1.5 transition-colors border ${
+              className={`px-3 py-1.5 transition-colors border focus-visible:ring-2 focus-visible:ring-[#1A1A1A] ${
                 activePlatform === 'threads'
                   ? 'bg-[#1A1A1A] text-white border-[#1A1A1A]'
-                  : 'bg-[#F2F0EA] text-[#555] border-transparent hover:border-[#1A1A1A]/20'
+                  : 'bg-[#F2F0EA] text-[#525252] border-transparent hover:border-[#1A1A1A]/20'
               }`}
             >
               Threads
             </button>
 
             <button
+              type="button"
+              role="tab"
+              aria-selected={activePlatform === 'linkedin'}
               onClick={() => setActivePlatform('linkedin')}
-              className={`px-3 py-1.5 transition-colors border ${
+              className={`px-3 py-1.5 transition-colors border focus-visible:ring-2 focus-visible:ring-[#1A1A1A] ${
                 activePlatform === 'linkedin'
                   ? 'bg-[#1A1A1A] text-white border-[#1A1A1A]'
-                  : 'bg-[#F2F0EA] text-[#555] border-transparent hover:border-[#1A1A1A]/20'
+                  : 'bg-[#F2F0EA] text-[#525252] border-transparent hover:border-[#1A1A1A]/20'
               }`}
             >
               LinkedIn

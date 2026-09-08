@@ -13,6 +13,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { OCDBill, OCDJurisdiction } from '../types';
+import { useModalKeyboard } from '../lib/useModalKeyboard';
 
 interface CivicCopilotDrawerProps {
   isOpen: boolean;
@@ -53,6 +54,9 @@ export const CivicCopilotDrawer: React.FC<CivicCopilotDrawerProps> = ({
   ]);
   const [inputQuery, setInputQuery] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  // Accessible keyboard Escape handling and focus return
+  useModalKeyboard(isOpen, onClose);
 
   if (!isOpen) return null;
 
@@ -121,32 +125,38 @@ export const CivicCopilotDrawer: React.FC<CivicCopilotDrawerProps> = ({
   };
 
   return (
-    <div className="fixed inset-y-0 right-0 z-50 w-full sm:w-[480px] bg-[#FDFDFC] shadow-2xl border-l-2 border-[#1A1A1A] flex flex-col animate-in slide-in-from-right duration-200">
+    <div 
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="copilot-drawer-title"
+      className="fixed inset-y-0 right-0 z-50 w-full sm:w-[480px] bg-[#FDFDFC] shadow-2xl border-l-2 border-[#1A1A1A] flex flex-col animate-in slide-in-from-right duration-200"
+    >
       
       {/* Header */}
       <div className="bg-[#1A1A1A] text-[#FDFDFC] p-4 flex items-center justify-between border-b border-[#1A1A1A]">
         <div className="flex items-center gap-3">
           <div className="p-1.5 bg-[#FDFDFC] text-[#1A1A1A]">
-            <Bot className="w-5 h-5" />
+            <Bot className="w-5 h-5" aria-hidden="true" />
           </div>
           <div>
-            <h3 className="font-serif font-medium text-base text-white flex items-center gap-2">
+            <h3 id="copilot-drawer-title" className="font-serif font-medium text-base text-white flex items-center gap-2">
               Civic Digest Co-Pilot
               <span className="text-[9px] bg-[#E63946] text-white px-1.5 py-0.5 font-mono font-bold uppercase tracking-wider">
                 Grounded AI
               </span>
             </h3>
-            <p className="text-[11px] text-[#aaa] font-sans">
+            <p className="text-[11px] text-[#D1D5DB] font-sans">
               Primary source intelligence for {selectedJurisdiction.name}
             </p>
           </div>
         </div>
         <button
+          type="button"
           onClick={onClose}
-          aria-label="Close"
-          className="text-[#aaa] hover:text-white p-1 hover:bg-[#333] transition-colors"
+          aria-label="Close Civic Co-Pilot drawer"
+          className="text-[#D1D5DB] hover:text-white p-1 hover:bg-[#333] transition-colors focus-visible:ring-2 focus-visible:ring-white"
         >
-          <X className="w-5 h-5" />
+          <X className="w-5 h-5" aria-hidden="true" />
         </button>
       </div>
 
@@ -226,22 +236,28 @@ export const CivicCopilotDrawer: React.FC<CivicCopilotDrawerProps> = ({
           }}
           className="flex gap-2"
         >
+          <label htmlFor="copilot-query-input" className="sr-only">
+            Inquire regarding ordinances, zoning, fiscal notes
+          </label>
           <input
+            id="copilot-query-input"
             type="text"
             value={inputQuery}
             onChange={(e) => setInputQuery(e.target.value)}
             placeholder="Inquire regarding ordinances, zoning, fiscal notes..."
-            className="flex-1 bg-[#FDFDFC] border border-[#1A1A1A]/30 px-3.5 py-2 text-xs text-[#1A1A1A] focus:outline-none"
+            aria-label="Inquire regarding ordinances, zoning, fiscal notes"
+            className="flex-1 bg-[#FDFDFC] border border-[#1A1A1A]/30 px-3.5 py-2 text-xs text-[#1A1A1A] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
           />
           <button
             type="submit"
+            aria-label="Send inquiry to Civic Co-Pilot"
             disabled={!inputQuery.trim() || isLoading}
-            className="bg-[#1A1A1A] hover:bg-[#333] text-[#FDFDFC] px-4 py-2 flex items-center justify-center transition-colors disabled:opacity-50"
+            className="bg-[#1A1A1A] hover:bg-[#333] text-[#FDFDFC] px-4 py-2 flex items-center justify-center transition-colors disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
           >
-            <Send className="w-3.5 h-3.5" />
+            <Send className="w-3.5 h-3.5" aria-hidden="true" />
           </button>
         </form>
-        <p className="text-[10px] text-[#777] text-center mt-2 font-mono">
+        <p className="text-[10px] text-[#525252] text-center mt-2 font-mono">
           Responses strictly cited from Open Civic Data &amp; clerk archives.
         </p>
       </div>

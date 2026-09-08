@@ -99,21 +99,38 @@ async def trigger_bot_pipeline(
     Executes an on-demand docket enrichment and broadcast queueing pipeline.
     Synthesizes enriched civic matters and enqueues formatted threads.
     """
-    sample_matter = EnrichedCivicMatter(
-        ocd_bill_id=f"ocd-bill/2026-{req.state_code.lower()}-{req.place_name.lower()}-ord-101",
-        file_number="Ord-101-2026",
-        plain_title=f"{req.place_name} Infrastructure Improvement Authorization",
-        the_what="Authorizes streetscape and utility repairs.",
-        the_who=f"Residents and commercial corridors in {req.place_name}.",
-        fiscal_impact_amount=350000.0,
-        fiscal_impact_type="Capital Infrastructure Fund",
-        impact_priority=ImpactPriority.MODERATE,
-        affected_wards=["Ward 3", "Ward 9"],
-        official_source_url=f"https://{req.client_name}.legistar.com/LegislationDetail.aspx?ID=101",
-        clerk_matter_id="101",
-        receipt_snippet=f"Council of the City of {req.place_name} hereby authorizes $350,000 for infrastructure improvements",
-        receipt_page_number=1,
-    )
+    if req.client_name.lower() == "dublin" or req.place_name.lower() == "dublin":
+        sample_matter = EnrichedCivicMatter(
+            ocd_bill_id="ocd-bill/2026-oh-dublin-ord-01-26",
+            file_number="Ord. 01-26",
+            plain_title="Dublin Noise Control & Engine Braking Prohibition",
+            the_what="Modernizes vehicle decibel limits, regulates high-output sound equipment, and prohibits compression engine braking.",
+            the_who="Dublin residents in residential corridors and motorists along I-270 / SR-161.",
+            fiscal_impact_amount=15000.0,
+            fiscal_impact_type="Police Operating Fund",
+            impact_priority=ImpactPriority.MODERATE,
+            affected_wards=["Ward 1", "Ward 2", "Ward 3", "Ward 4"],
+            official_source_url="https://dublinohiousa.gov/city-council/legislation-minutes/",
+            clerk_matter_id="2601",
+            receipt_snippet="An Ordinance amending Chapter 132 (Offenses Against Public Peace) of the Dublin Codified Ordinances to modernize vehicle decibel standards and prohibit compression engine braking",
+            receipt_page_number=1,
+        )
+    else:
+        sample_matter = EnrichedCivicMatter(
+            ocd_bill_id=f"ocd-bill/2026-{req.state_code.lower()}-{req.place_name.lower()}-ord-101",
+            file_number="Ord-101-2026",
+            plain_title=f"{req.place_name} Infrastructure Improvement Authorization",
+            the_what="Authorizes streetscape and utility repairs.",
+            the_who=f"Residents and commercial corridors in {req.place_name}.",
+            fiscal_impact_amount=350000.0,
+            fiscal_impact_type="Capital Infrastructure Fund",
+            impact_priority=ImpactPriority.MODERATE,
+            affected_wards=["Ward 3", "Ward 9"],
+            official_source_url=f"https://{req.client_name}.legistar.com/LegislationDetail.aspx?ID=101",
+            clerk_matter_id="101",
+            receipt_snippet=f"Council of the City of {req.place_name} hereby authorizes $350,000 for infrastructure improvements",
+            receipt_page_number=1,
+        )
 
     context_thread = DocketContextThread(
         enriched_matter=sample_matter,

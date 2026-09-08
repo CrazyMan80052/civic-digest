@@ -109,25 +109,29 @@ export const PolicyIntelPlatform: React.FC<PolicyIntelPlatformProps> = ({
           <h2 className="text-2xl sm:text-3xl font-serif font-bold text-white tracking-tight">
             Policy Intel &amp; Council Briefing Hub
           </h2>
-          <p className="text-xs text-[#aaa] font-sans max-w-2xl leading-relaxed">
+          <p className="text-xs text-[#D1D5DB] font-sans max-w-2xl leading-relaxed">
             Standardized briefing memos, zero-party resident pulse analytics, and differential privacy benchmarks prepared for City Council members, legislative aides, and committee hearings.
           </p>
         </div>
 
         <div className="flex items-center gap-2">
           <button
+            type="button"
             onClick={() => window.print()}
-            className="px-3 py-2 bg-[#FDFDFC] hover:bg-[#eae8e0] text-[#1A1A1A] text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-1.5 transition-colors border border-[#1A1A1A]"
+            aria-label="Print official legislative briefing memo"
+            className="px-3 py-2 bg-[#FDFDFC] hover:bg-[#eae8e0] text-[#1A1A1A] text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-1.5 transition-colors border border-[#1A1A1A] focus:outline-hidden focus-visible:ring-2 focus-visible:ring-white"
           >
-            <Printer className="w-4 h-4" />
+            <Printer className="w-4 h-4" aria-hidden="true" />
             <span>Print Memo</span>
           </button>
           <button
+            type="button"
             onClick={handleGenerateMemo}
             disabled={isLoadingMemo}
-            className="px-3 py-2 bg-[#2D6A4F] hover:bg-[#1B4332] text-white text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-1.5 transition-colors disabled:opacity-50"
+            aria-label="Regenerate briefing memo with Gemini AI"
+            className="px-3 py-2 bg-[#2D6A4F] hover:bg-[#1B4332] text-white text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-1.5 transition-colors disabled:opacity-50 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-white"
           >
-            <RefreshCw className={`w-4 h-4 ${isLoadingMemo ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-4 h-4 ${isLoadingMemo ? 'animate-spin' : ''}`} aria-hidden="true" />
             <span>Regenerate Brief</span>
           </button>
         </div>
@@ -141,7 +145,7 @@ export const PolicyIntelPlatform: React.FC<PolicyIntelPlatformProps> = ({
           <div className="bg-[#FDFDFC] border-2 border-[#1A1A1A] p-4 space-y-4">
             <div className="flex items-center justify-between border-b border-[#1A1A1A]/10 pb-3">
               <span className="font-mono text-xs font-bold uppercase tracking-wider text-[#1A1A1A] flex items-center gap-1.5">
-                <FileText className="w-4 h-4 text-[#2D6A4F]" />
+                <FileText className="w-4 h-4 text-[#2D6A4F]" aria-hidden="true" />
                 Select Legislative Docket
               </span>
               <span className="text-[10px] font-mono font-bold bg-[#E5E2D9] px-2 py-0.5 border border-[#1A1A1A]/15">
@@ -151,13 +155,15 @@ export const PolicyIntelPlatform: React.FC<PolicyIntelPlatformProps> = ({
 
             {/* Filter by Category */}
             <div>
-              <label className="block text-[10px] font-mono font-bold uppercase text-[#666] mb-1">
+              <label htmlFor="filter-category-select" className="block text-[10px] font-mono font-bold uppercase text-[#525252] mb-1">
                 Filter Category:
               </label>
               <select
+                id="filter-category-select"
+                aria-label="Filter legislative dockets by policy domain"
                 value={filterCategory}
                 onChange={(e) => setFilterCategory(e.target.value)}
-                className="w-full bg-[#F2F0EA] border border-[#1A1A1A] p-2 text-xs font-mono font-bold focus:outline-none"
+                className="w-full bg-[#F2F0EA] border border-[#1A1A1A] p-2 text-xs font-mono font-bold focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
               >
                 <option value="all">All Policy Domains</option>
                 <option value="housing">Housing &amp; Zoning</option>
@@ -174,12 +180,15 @@ export const PolicyIntelPlatform: React.FC<PolicyIntelPlatformProps> = ({
                 const isSelected = selectedBill?.id === b.id;
                 return (
                   <button
+                    type="button"
                     key={b.id}
                     onClick={() => {
                       setSelectedBill(b);
                       setMemo(null);
                     }}
-                    className={`w-full text-left p-3 border transition-all ${
+                    aria-pressed={isSelected}
+                    aria-label={`Select docket ${b.fileNumber}: ${b.plainTitle}`}
+                    className={`w-full text-left p-3 border transition-all focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#1A1A1A] ${
                       isSelected
                         ? 'border-[#1A1A1A] bg-[#1A1A1A] text-white shadow-md'
                         : 'border-[#1A1A1A]/20 bg-[#FDFDFC] hover:border-[#1A1A1A] hover:bg-[#F2F0EA] text-[#1A1A1A]'
@@ -189,14 +198,14 @@ export const PolicyIntelPlatform: React.FC<PolicyIntelPlatformProps> = ({
                       <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 ${isSelected ? 'bg-[#2D6A4F] text-white' : 'bg-[#E5E2D9] text-[#1A1A1A]'}`}>
                         {b.fileNumber}
                       </span>
-                      <span className={`text-[10px] font-mono uppercase ${isSelected ? 'text-[#bbb]' : 'text-[#666]'}`}>
+                      <span className={`text-[10px] font-mono uppercase ${isSelected ? 'text-[#E5E7EB]' : 'text-[#525252]'}`}>
                         {b.category}
                       </span>
                     </div>
                     <div className="font-serif font-bold text-xs line-clamp-2 leading-snug">
                       {b.plainTitle}
                     </div>
-                    <div className={`text-[10px] font-mono mt-1.5 flex items-center justify-between ${isSelected ? 'text-[#aaa]' : 'text-[#777]'}`}>
+                    <div className={`text-[10px] font-mono mt-1.5 flex items-center justify-between ${isSelected ? 'text-[#D1D5DB]' : 'text-[#525252]'}`}>
                       <span>{b.status ? b.status.replace('Committee on ', '') : 'Council Review'}</span>
                       {b.fiscalImpact && <span>${(b.fiscalImpact.amount / 1000).toFixed(0)}k</span>}
                     </div>
@@ -210,15 +219,17 @@ export const PolicyIntelPlatform: React.FC<PolicyIntelPlatformProps> = ({
           {selectedBill && onOpenMicroSurvey && (
             <div className="p-4 bg-[#2D6A4F]/10 border-2 border-[#2D6A4F] space-y-2">
               <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#1B4332] flex items-center gap-1.5">
-                <Vote className="w-4 h-4 text-[#2D6A4F]" />
+                <Vote className="w-4 h-4 text-[#2D6A4F]" aria-hidden="true" />
                 Simulate Constituent Submission
               </span>
               <p className="text-[11px] text-[#2D6A4F] leading-relaxed">
                 Add an anonymized resident vote for <strong>{selectedBill.fileNumber}</strong> with real-time differential privacy noise.
               </p>
               <button
+                type="button"
                 onClick={() => onOpenMicroSurvey(selectedBill)}
-                className="w-full bg-[#2D6A4F] hover:bg-[#1B4332] text-white p-2 text-xs font-mono font-bold uppercase tracking-wider transition-colors"
+                aria-label={`Launch micro-survey ballot for ${selectedBill.fileNumber}`}
+                className="w-full bg-[#2D6A4F] hover:bg-[#1B4332] text-white p-2 text-xs font-mono font-bold uppercase tracking-wider transition-colors focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#1B4332]"
               >
                 Launch Micro-Survey Ballot
               </button>
@@ -230,33 +241,42 @@ export const PolicyIntelPlatform: React.FC<PolicyIntelPlatformProps> = ({
         <div className="lg:col-span-8 space-y-6">
           
           {/* Sub-Header Tabs */}
-          <div className="flex border-b-2 border-[#1A1A1A] gap-2 pb-0">
+          <div role="tablist" aria-label="Policy intelligence view modes" className="flex border-b-2 border-[#1A1A1A] gap-2 pb-0">
             <button
+              type="button"
+              role="tab"
+              aria-selected={activeViewMode === 'memo'}
               onClick={() => setActiveViewMode('memo')}
-              className={`px-4 py-2 text-xs font-mono font-bold uppercase tracking-wider transition-colors border-t-2 border-x-2 -mb-[2px] ${
+              className={`px-4 py-2 text-xs font-mono font-bold uppercase tracking-wider transition-colors border-t-2 border-x-2 -mb-[2px] focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#1A1A1A] ${
                 activeViewMode === 'memo'
                   ? 'bg-[#FDFDFC] border-[#1A1A1A] text-[#1A1A1A]'
-                  : 'bg-[#E5E2D9] border-transparent text-[#666] hover:text-[#1A1A1A]'
+                  : 'bg-[#E5E2D9] border-transparent text-[#525252] hover:text-[#1A1A1A]'
               }`}
             >
               Official Council Memo
             </button>
             <button
+              type="button"
+              role="tab"
+              aria-selected={activeViewMode === 'analytics'}
               onClick={() => setActiveViewMode('analytics')}
-              className={`px-4 py-2 text-xs font-mono font-bold uppercase tracking-wider transition-colors border-t-2 border-x-2 -mb-[2px] ${
+              className={`px-4 py-2 text-xs font-mono font-bold uppercase tracking-wider transition-colors border-t-2 border-x-2 -mb-[2px] focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#1A1A1A] ${
                 activeViewMode === 'analytics'
                   ? 'bg-[#FDFDFC] border-[#1A1A1A] text-[#1A1A1A]'
-                  : 'bg-[#E5E2D9] border-transparent text-[#666] hover:text-[#1A1A1A]'
+                  : 'bg-[#E5E2D9] border-transparent text-[#525252] hover:text-[#1A1A1A]'
               }`}
             >
               Constituent Analytics &amp; Demographics
             </button>
             <button
+              type="button"
+              role="tab"
+              aria-selected={activeViewMode === 'comparison'}
               onClick={() => setActiveViewMode('comparison')}
-              className={`px-4 py-2 text-xs font-mono font-bold uppercase tracking-wider transition-colors border-t-2 border-x-2 -mb-[2px] ${
+              className={`px-4 py-2 text-xs font-mono font-bold uppercase tracking-wider transition-colors border-t-2 border-x-2 -mb-[2px] focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#1A1A1A] ${
                 activeViewMode === 'comparison'
                   ? 'bg-[#FDFDFC] border-[#1A1A1A] text-[#1A1A1A]'
-                  : 'bg-[#E5E2D9] border-transparent text-[#666] hover:text-[#1A1A1A]'
+                  : 'bg-[#E5E2D9] border-transparent text-[#525252] hover:text-[#1A1A1A]'
               }`}
             >
               Ward Differential Matrix
@@ -270,7 +290,7 @@ export const PolicyIntelPlatform: React.FC<PolicyIntelPlatformProps> = ({
               {/* Formal Council Memorandum Masthead */}
               <div className="border-b-4 border-[#1A1A1A] pb-6 space-y-4">
                 <div className="flex items-center justify-between">
-                  <div className="font-mono text-xs font-bold uppercase tracking-widest text-[#555]">
+                  <div className="font-mono text-xs font-bold uppercase tracking-widest text-[#525252]">
                     {jurisdiction.name.toUpperCase()} CITY COUNCIL &bull; LEGISLATIVE SERVICES
                   </div>
                   <span className="font-mono text-[10px] bg-[#1A1A1A] text-white px-2 py-0.5 font-bold uppercase">
@@ -285,25 +305,25 @@ export const PolicyIntelPlatform: React.FC<PolicyIntelPlatformProps> = ({
                 {/* Memo Meta Fields Table */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-2 text-xs font-mono pt-2 border-t border-[#1A1A1A]/20">
                   <div>
-                    <strong className="text-[#555] uppercase">TO:</strong>{' '}
+                    <strong className="text-[#525252] uppercase">TO:</strong>{' '}
                     <span className="font-bold text-[#1A1A1A]">
                       {memo?.memoHeader?.to || selectedBill.status || 'Members of City Council'}
                     </span>
                   </div>
                   <div>
-                    <strong className="text-[#555] uppercase">DATE:</strong>{' '}
+                    <strong className="text-[#525252] uppercase">DATE:</strong>{' '}
                     <span className="text-[#1A1A1A]">{memo?.memoHeader?.date || new Date().toLocaleDateString()}</span>
                   </div>
                   <div>
-                    <strong className="text-[#555] uppercase">FROM:</strong>{' '}
+                    <strong className="text-[#525252] uppercase">FROM:</strong>{' '}
                     <span className="text-[#1A1A1A]">CivicDigest Policy Intelligence &amp; Constituent Research Bureau</span>
                   </div>
                   <div>
-                    <strong className="text-[#555] uppercase">PRIVACY STD:</strong>{' '}
+                    <strong className="text-[#525252] uppercase">PRIVACY STD:</strong>{' '}
                     <span className="text-[#2D6A4F] font-bold">Laplace ε-DP (ε=1.0, Δf=$50.00)</span>
                   </div>
                   <div className="sm:col-span-2 pt-1">
-                    <strong className="text-[#555] uppercase">SUBJECT:</strong>{' '}
+                    <strong className="text-[#525252] uppercase">SUBJECT:</strong>{' '}
                     <span className="font-bold text-[#1A1A1A]">
                       RESIDENT CONSTITUENT PULSE &amp; FISCAL IMPACT BRIEF FOR {selectedBill.fileNumber} (&ldquo;{selectedBill.plainTitle}&rdquo;)
                     </span>
@@ -424,9 +444,9 @@ export const PolicyIntelPlatform: React.FC<PolicyIntelPlatformProps> = ({
               )}
 
               {/* Memo Sign-Off Footer */}
-              <div className="pt-8 border-t-2 border-[#1A1A1A] flex flex-col sm:flex-row items-center justify-between text-[11px] font-mono text-[#666] gap-4">
+              <div className="pt-8 border-t-2 border-[#1A1A1A] flex flex-col sm:flex-row items-center justify-between text-[11px] font-mono text-[#525252] gap-4">
                 <div className="flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-[#2D6A4F]" />
+                  <ShieldCheck className="w-4 h-4 text-[#2D6A4F]" aria-hidden="true" />
                   <span>Verified Open-Civic-Data Integrity Engine</span>
                 </div>
                 <div className="text-right">
@@ -451,17 +471,17 @@ export const PolicyIntelPlatform: React.FC<PolicyIntelPlatformProps> = ({
 
               {/* Resident Role Breakdown */}
               <div className="space-y-3">
-                <h4 className="font-mono text-xs font-bold uppercase text-[#555]">
+                <h4 className="font-mono text-xs font-bold uppercase text-[#525252]">
                   Responses by Resident Stakeholder Profile:
                 </h4>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {stats?.roleBreakdown && Object.entries(stats.roleBreakdown).map(([role, count]: any) => (
                     <div key={role} className="p-3 bg-[#F2F0EA] border border-[#1A1A1A]/20">
-                      <div className="text-[10px] font-mono uppercase text-[#666]">
+                      <div className="text-[10px] font-mono uppercase text-[#525252]">
                         {role.replace('_', ' ')}
                       </div>
                       <div className="text-xl font-serif font-bold text-[#1A1A1A] mt-1">
-                        {count} <span className="text-xs font-sans font-normal text-[#666]">({((count / (stats.totalVotes || 1)) * 100).toFixed(0)}%)</span>
+                        {count} <span className="text-xs font-sans font-normal text-[#525252]">({((count / (stats.totalVotes || 1)) * 100).toFixed(0)}%)</span>
                       </div>
                     </div>
                   ))}
@@ -480,25 +500,25 @@ export const PolicyIntelPlatform: React.FC<PolicyIntelPlatformProps> = ({
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="p-4 bg-[#FDFDFC] border border-[#1A1A1A]/20 space-y-1">
-                    <div className="text-[10px] font-mono uppercase text-[#777]">
+                    <div className="text-[10px] font-mono uppercase text-[#525252]">
                       Official Projected Cost to Taxpayer:
                     </div>
                     <div className="text-lg font-serif font-bold text-[#1A1A1A]">
                       $0.00 / direct tax increase
                     </div>
-                    <p className="text-[11px] font-sans text-[#666]">
+                    <p className="text-[11px] font-sans text-[#4B5563]">
                       Funded entirely through {selectedBill.fiscalImpact?.fundingSource || 'existing revenue allocations'}.
                     </p>
                   </div>
 
                   <div className="p-4 bg-[#FDFDFC] border border-[#1A1A1A]/20 space-y-1">
-                    <div className="text-[10px] font-mono uppercase text-[#777]">
+                    <div className="text-[10px] font-mono uppercase text-[#525252]">
                       Resident Estimated Monthly Net Benefit:
                     </div>
                     <div className="text-lg font-serif font-bold text-[#2D6A4F]">
                       {stats?.dpAvgCostImpactUSD < 0 ? `-$${Math.abs(stats?.dpAvgCostImpactUSD).toFixed(1)}/mo` : `+$${stats?.dpAvgCostImpactUSD || 0}/mo`}
                     </div>
-                    <p className="text-[11px] font-sans text-[#666]">
+                    <p className="text-[11px] font-sans text-[#4B5563]">
                       Aggregated household savings (e.g. avoided stormwater damage &amp; transit costs).
                     </p>
                   </div>
@@ -515,7 +535,7 @@ export const PolicyIntelPlatform: React.FC<PolicyIntelPlatformProps> = ({
                 <span className="font-mono text-xs font-bold uppercase tracking-wider text-[#1A1A1A]">
                   Ward-by-Ward Policy Sentiment Differential Matrix
                 </span>
-                <span className="text-xs font-mono text-[#555]">
+                <span className="text-xs font-mono text-[#525252]">
                   17 City Council Wards Benchmarked
                 </span>
               </div>
