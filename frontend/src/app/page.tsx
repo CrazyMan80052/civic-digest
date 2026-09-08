@@ -36,6 +36,7 @@ import { ResidentMicroSurveyModal } from '@/components/ResidentMicroSurveyModal'
 import { PolicyIntelPlatform } from '@/components/PolicyIntelPlatform';
 import { UserProfileModal } from '@/components/UserProfileModal';
 import { PersonalizedRecommendationsBanner } from '@/components/PersonalizedRecommendationsBanner';
+import { LegalComplianceModal, ComplianceTab } from '@/components/LegalComplianceModal';
 
 import { JURISDICTIONS, BILLS as INITIAL_BILLS } from '@/data/mockData';
 import { 
@@ -75,6 +76,13 @@ export default function App() {
   const [isMicroSurveyOpen, setIsMicroSurveyOpen] = useState<boolean>(false);
   const [surveyTargetBill, setSurveyTargetBill] = useState<OCDBill | null>(null);
   const [socialModalBill, setSocialModalBill] = useState<OCDBill | null>(null);
+  const [isComplianceModalOpen, setIsComplianceModalOpen] = useState<boolean>(false);
+  const [complianceInitialTab, setComplianceInitialTab] = useState<ComplianceTab>('accessibility');
+
+  const handleOpenCompliance = (tab: ComplianceTab = 'accessibility') => {
+    setComplianceInitialTab(tab);
+    setIsComplianceModalOpen(true);
+  };
 
   // Personalized Bill Recommendation Mapping
   const billRecommendationMap = useMemo(() => {
@@ -225,6 +233,14 @@ export default function App() {
   return (
     <div className="min-h-screen bg-[#FDFDFC] text-[#1A1A1A] flex flex-col font-sans selection:bg-[#1A1A1A] selection:text-[#FDFDFC]">
       
+      {/* Skip to Main Content Link (WCAG 2.4.1 Bypass Blocks - Level A) */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2.5 focus:bg-[#1A1A1A] focus:text-white focus:font-bold focus:shadow-2xl focus:border-2 focus:border-white focus:outline-none focus:ring-2 focus:ring-[#E63946]"
+      >
+        Skip to main content
+      </a>
+
       {/* Global Editorial Navigation & Masthead */}
       <Navbar
         jurisdictions={jurisdictions}
@@ -251,10 +267,16 @@ export default function App() {
         }}
         userProfile={userProfile}
         onOpenProfile={() => setIsProfileModalOpen(true)}
+        onOpenCompliance={handleOpenCompliance}
       />
 
       {/* Main Newspaper / Editorial Layout Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main 
+        id="main-content" 
+        role="main" 
+        tabIndex={-1} 
+        className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 focus:outline-none"
+      >
         
         {/* Civic Digest Tab */}
         {activeTab === 'digest' && (
@@ -327,18 +349,20 @@ export default function App() {
               
               {/* Category Filter Badges */}
               <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none pb-1 sm:pb-0">
-                <span className="text-[11px] font-bold uppercase tracking-widest text-[#777] mr-1 flex items-center gap-1">
-                  <Filter className="w-3 h-3" />
+                <span className="text-[11px] font-bold uppercase tracking-widest text-[#525252] mr-1 flex items-center gap-1">
+                  <Filter className="w-3 h-3" aria-hidden="true" />
                   Section:
                 </span>
                 {categories.map((cat) => (
                   <button
                     key={cat}
+                    type="button"
+                    aria-pressed={selectedCategory === cat}
                     onClick={() => setSelectedCategory(cat)}
-                    className={`text-xs font-bold uppercase tracking-wider px-2.5 py-1 transition-colors border ${
+                    className={`text-xs font-bold uppercase tracking-wider px-2.5 py-1 transition-colors border focus-visible:ring-2 focus-visible:ring-[#1A1A1A] focus-visible:outline-none ${
                       selectedCategory === cat
                         ? 'bg-[#1A1A1A] text-[#FDFDFC] border-[#1A1A1A]'
-                        : 'bg-[#FDFDFC] text-[#555] border-[#1A1A1A]/20 hover:border-[#1A1A1A] hover:text-[#1A1A1A]'
+                        : 'bg-[#FDFDFC] text-[#525252] border-[#1A1A1A]/20 hover:border-[#1A1A1A] hover:text-[#1A1A1A]'
                     }`}
                   >
                     {cat}
@@ -347,12 +371,14 @@ export default function App() {
               </div>
 
               {/* Status Filter Dropdown */}
-              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#555] shrink-0">
-                <span>Status:</span>
+              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#525252] shrink-0">
+                <label htmlFor="status-filter-select">Status:</label>
                 <select
+                  id="status-filter-select"
+                  aria-label="Filter dockets by status"
                   value={selectedStatus}
                   onChange={(e) => setSelectedStatus(e.target.value)}
-                  className="bg-[#F2F0EA] border border-[#1A1A1A]/30 text-xs text-[#1A1A1A] font-bold py-1 px-2.5 focus:outline-none focus:border-[#1A1A1A] cursor-pointer"
+                  className="bg-[#F2F0EA] border border-[#1A1A1A]/30 text-xs text-[#1A1A1A] font-bold py-1 px-2.5 focus:outline-none focus:border-[#1A1A1A] focus-visible:ring-2 focus-visible:ring-[#1A1A1A] cursor-pointer"
                 >
                   <option value="All">All Statuses</option>
                   <option value="Passed">Passed / Enacted</option>
@@ -555,22 +581,73 @@ export default function App() {
         }}
       />
 
-      {/* Editorial Footer */}
+      {/* Legal, Accessibility & Regulatory Compliance Modal */}
+      <LegalComplianceModal
+        isOpen={isComplianceModalOpen}
+        onClose={() => setIsComplianceModalOpen(false)}
+        initialTab={complianceInitialTab}
+      />
 
-      <footer className="border-t-2 border-[#1A1A1A] bg-[#FDFDFC] text-[#1A1A1A] py-6 mt-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <span className="font-serif font-black text-sm uppercase italic">Civic Digest</span>
-            <span className="text-[#777]">•</span>
-            <span className="text-xs uppercase font-bold tracking-widest text-[#555]">
-              Open Civic Data (OCD-ID) Standard
-            </span>
+      {/* Editorial Footer */}
+      <footer role="contentinfo" aria-label="Site Footer" className="border-t-2 border-[#1A1A1A] bg-[#FDFDFC] text-[#1A1A1A] py-8 mt-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-2">
+              <span className="font-serif font-black text-sm uppercase italic">Civic Digest</span>
+              <span className="text-[#525252]">•</span>
+              <span className="text-xs uppercase font-bold tracking-widest text-[#525252]">
+                Open Civic Data (OCD-ID) Standard
+              </span>
+            </div>
+
+            <div className="flex items-center gap-4 text-[11px] font-mono text-[#525252]">
+              <span>Mathematical Differential Privacy (ε-DP)</span>
+              <span>•</span>
+              <span>Granicus Legistar OData Feeds</span>
+            </div>
           </div>
 
-          <div className="flex items-center gap-4 text-[11px] font-mono text-[#777]">
-            <span>Mathematical Differential Privacy (ε-DP)</span>
-            <span>•</span>
-            <span>Granicus Legistar OData Feeds</span>
+          {/* Compliance & Regulatory Direct Links */}
+          <div className="pt-3 border-t border-[#1A1A1A]/10 flex flex-wrap items-center justify-center sm:justify-start gap-x-5 gap-y-2 text-[11px] font-mono">
+            <button
+              type="button"
+              onClick={() => handleOpenCompliance('accessibility')}
+              className="text-[#2D6A4F] hover:underline font-bold focus-visible:ring-2 focus-visible:ring-[#2D6A4F]"
+            >
+              Accessibility Statement (WCAG 2.1 AA)
+            </button>
+            <span className="text-[#bbb]">•</span>
+            <button
+              type="button"
+              onClick={() => handleOpenCompliance('disclaimer')}
+              className="text-[#525252] hover:text-[#1A1A1A] hover:underline focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
+            >
+              Public Records &amp; Non-Affiliation Disclaimer
+            </button>
+            <span className="text-[#bbb]">•</span>
+            <button
+              type="button"
+              onClick={() => handleOpenCompliance('ai_disclosure')}
+              className="text-[#525252] hover:text-[#1A1A1A] hover:underline focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
+            >
+              AI &amp; Algorithmic Transparency
+            </button>
+            <span className="text-[#bbb]">•</span>
+            <button
+              type="button"
+              onClick={() => handleOpenCompliance('privacy')}
+              className="text-[#525252] hover:text-[#1A1A1A] hover:underline focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
+            >
+              Zero-Party Privacy &amp; ε-DP
+            </button>
+            <span className="text-[#bbb]">•</span>
+            <button
+              type="button"
+              onClick={() => handleOpenCompliance('terms')}
+              className="text-[#525252] hover:text-[#1A1A1A] hover:underline focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
+            >
+              Terms of Use
+            </button>
           </div>
         </div>
       </footer>

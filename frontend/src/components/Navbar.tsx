@@ -45,6 +45,7 @@ interface NavbarProps {
   onOpenMicroSurvey?: () => void;
   userProfile?: UserProfile | null;
   onOpenProfile?: () => void;
+  onOpenCompliance?: (tab?: 'accessibility' | 'disclaimer' | 'ai_disclosure' | 'privacy' | 'terms') => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -66,10 +67,11 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenMicroSurvey,
   userProfile,
   onOpenProfile,
+  onOpenCompliance,
 }) => {
 
   return (
-    <header className="bg-[#FDFDFC] text-[#1A1A1A] border-b-2 border-[#1A1A1A] sticky top-0 z-40 transition-colors">
+    <header role="banner" className="bg-[#FDFDFC] text-[#1A1A1A] border-b-2 border-[#1A1A1A] sticky top-0 z-40 transition-colors">
       {/* Top Utility & Masthead Bar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-3">
         
@@ -78,22 +80,35 @@ export const Navbar: React.FC<NavbarProps> = ({
           
           {/* Main Masthead Logo / Title */}
           <div className="flex flex-col">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2.5">
               <span className="bg-[#E63946] text-white text-[9px] font-bold px-2 py-0.5 uppercase tracking-widest font-mono">
                 OCD-ID v3
               </span>
-              <span className="text-[11px] font-mono uppercase tracking-wider text-[#777]">
+              <button
+                type="button"
+                onClick={() => onOpenCompliance?.('accessibility')}
+                title="ADA Title III & WCAG 2.1 Level AA Accessibility Statement"
+                aria-label="View ADA Accessibility Statement & Compliance Information"
+                className="bg-[#2D6A4F]/10 hover:bg-[#2D6A4F] text-[#2D6A4F] hover:text-white border border-[#2D6A4F]/30 text-[9px] font-bold px-2 py-0.5 uppercase tracking-wider font-mono transition-colors focus-visible:ring-2 focus-visible:ring-[#2D6A4F]"
+              >
+                ADA / WCAG 2.1 AA
+              </button>
+              <span className="text-[11px] font-mono uppercase tracking-wider text-[#525252]">
                 {new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}
               </span>
             </div>
-            <h1 
-              onClick={() => onSelectTab('digest')}
-              className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black tracking-tighter uppercase italic text-[#1A1A1A] cursor-pointer hover:opacity-90 select-none mt-1"
-            >
-              Civic Digest
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black tracking-tighter uppercase italic text-[#1A1A1A] select-none mt-1">
+              <button 
+                type="button"
+                onClick={() => onSelectTab('digest')}
+                aria-label="Civic Digest Homepage - News and Feed"
+                className="hover:opacity-90 transition-opacity text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
+              >
+                Civic Digest
+              </button>
             </h1>
             <p className="text-[11px] sm:text-xs font-bold uppercase tracking-[0.2em] text-[#555] mt-0.5">
-              Local Governance & Policy Journal • {selectedJurisdiction.name} Bureau
+              Local Governance &amp; Policy Journal • {selectedJurisdiction.name} Bureau
             </p>
           </div>
 
@@ -102,18 +117,25 @@ export const Navbar: React.FC<NavbarProps> = ({
             
             {/* Search Input */}
             <div className="relative w-44 sm:w-60">
-              <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-[#777]" />
+              <label htmlFor="docket-search-input" className="sr-only">
+                Search municipal dockets, ordinances, and votes
+              </label>
+              <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-[#525252]" aria-hidden="true" />
               <input
+                id="docket-search-input"
                 type="text"
                 value={searchQuery}
                 onChange={(e) => onSearchChange(e.target.value)}
                 placeholder="Search dockets, votes..."
-                className="w-full bg-[#F2F0EA] text-xs text-[#1A1A1A] pl-8 pr-6 py-1.5 border border-[#1A1A1A]/20 focus:outline-none focus:border-[#1A1A1A] placeholder-[#777] font-medium"
+                aria-label="Search municipal dockets, ordinances, and votes"
+                className="w-full bg-[#F2F0EA] text-xs text-[#1A1A1A] pl-8 pr-6 py-1.5 border border-[#1A1A1A]/20 focus:outline-none focus:border-[#1A1A1A] focus-visible:ring-2 focus-visible:ring-[#1A1A1A] placeholder-[#525252] font-medium"
               />
               {searchQuery && (
                 <button
+                  type="button"
                   onClick={() => onSearchChange('')}
-                  className="absolute right-2 top-2 text-[10px] text-[#777] hover:text-[#1A1A1A] font-bold"
+                  aria-label="Clear search input"
+                  className="absolute right-2 top-2 text-[10px] text-[#525252] hover:text-[#1A1A1A] font-bold p-0.5 focus-visible:ring-1 focus-visible:ring-[#1A1A1A]"
                 >
                   ✕
                 </button>
@@ -122,7 +144,12 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             {/* Jurisdiction Dropdown */}
             <div className="relative">
+              <label htmlFor="jurisdiction-select" className="sr-only">
+                Select Municipal Jurisdiction
+              </label>
               <select
+                id="jurisdiction-select"
+                aria-label="Select Municipal Jurisdiction"
                 value={selectedJurisdiction.id}
                 onChange={(e) => {
                   const found = jurisdictions.find((j) => j.id === e.target.value);
@@ -131,7 +158,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     onSelectWardId('all');
                   }
                 }}
-                className="appearance-none bg-[#FDFDFC] border border-[#1A1A1A] text-xs text-[#1A1A1A] font-bold py-1.5 pl-2.5 pr-7 focus:outline-none cursor-pointer tracking-tight"
+                className="appearance-none bg-[#FDFDFC] border border-[#1A1A1A] text-xs text-[#1A1A1A] font-bold py-1.5 pl-2.5 pr-7 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A] cursor-pointer tracking-tight"
               >
                 {jurisdictions.map((j) => (
                   <option key={j.id} value={j.id}>
@@ -139,15 +166,20 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </option>
                 ))}
               </select>
-              <ChevronDown className="w-3 h-3 text-[#1A1A1A] absolute right-2 top-2.5 pointer-events-none" />
+              <ChevronDown className="w-3 h-3 text-[#1A1A1A] absolute right-2 top-2.5 pointer-events-none" aria-hidden="true" />
             </div>
 
             {/* Ward/District Dropdown */}
             <div className="relative hidden sm:block">
+              <label htmlFor="ward-select" className="sr-only">
+                Select City Ward or District
+              </label>
               <select
+                id="ward-select"
+                aria-label="Select City Ward or District"
                 value={selectedWardId}
                 onChange={(e) => onSelectWardId(e.target.value)}
-                className="appearance-none bg-[#F2F0EA] border border-[#1A1A1A]/30 text-xs text-[#1A1A1A] font-medium py-1.5 pl-2.5 pr-7 focus:outline-none cursor-pointer"
+                className="appearance-none bg-[#F2F0EA] border border-[#1A1A1A]/30 text-xs text-[#1A1A1A] font-medium py-1.5 pl-2.5 pr-7 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A] cursor-pointer"
               >
                 <option value="all">Citywide / All Wards</option>
                 {selectedJurisdiction.divisions.map((d) => (
@@ -156,17 +188,19 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </option>
                 ))}
               </select>
-              <ChevronDown className="w-3 h-3 text-[#555] absolute right-2 top-2.5 pointer-events-none" />
+              <ChevronDown className="w-3 h-3 text-[#555] absolute right-2 top-2.5 pointer-events-none" aria-hidden="true" />
             </div>
 
             {/* Database & Architecture Button */}
             {onOpenDbModal && (
               <button
+                type="button"
                 onClick={onOpenDbModal}
                 title="PostgreSQL Database Architecture & Connection Status"
-                className="p-1.5 text-[#1A1A1A] hover:bg-[#F2F0EA] border border-[#1A1A1A]/30 transition-colors flex items-center gap-1 text-xs font-bold uppercase tracking-wider"
+                aria-label="View PostgreSQL Database Architecture and Status"
+                className="p-1.5 text-[#1A1A1A] hover:bg-[#F2F0EA] border border-[#1A1A1A]/30 transition-colors flex items-center gap-1 text-xs font-bold uppercase tracking-wider focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
               >
-                <Database className="w-3.5 h-3.5 text-[#1A1A1A]" />
+                <Database className="w-3.5 h-3.5 text-[#1A1A1A]" aria-hidden="true" />
                 <span className="hidden lg:inline text-[10px] font-mono">DB</span>
               </button>
             )}
@@ -174,33 +208,39 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Scraper Pipeline Button */}
             {onOpenScraper && (
               <button
+                type="button"
                 onClick={onOpenScraper}
                 title="Municipal Scraper & Ingestion Pipeline"
-                className="p-1.5 text-[#1A1A1A] hover:bg-[#F2F0EA] border border-[#1A1A1A]/30 transition-colors flex items-center gap-1 text-xs font-bold uppercase tracking-wider"
+                aria-label="View Municipal Scraper and Ingestion Pipeline Control"
+                className="p-1.5 text-[#1A1A1A] hover:bg-[#F2F0EA] border border-[#1A1A1A]/30 transition-colors flex items-center gap-1 text-xs font-bold uppercase tracking-wider focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
               >
-                <Radio className="w-3.5 h-3.5 text-[#E63946]" />
+                <Radio className="w-3.5 h-3.5 text-[#E63946]" aria-hidden="true" />
                 <span className="hidden lg:inline text-[10px] font-mono">Scraper</span>
               </button>
             )}
 
             {/* Proximity Alerts Button */}
             <button
+              type="button"
               onClick={onOpenAlerts}
               title="Configure Civic Alerts & Notifications"
-              className="p-1.5 text-[#1A1A1A] hover:bg-[#F2F0EA] border border-[#1A1A1A]/30 transition-colors relative"
+              aria-label="Open Civic Proximity and Policy Alerts Dialog"
+              className="p-1.5 text-[#1A1A1A] hover:bg-[#F2F0EA] border border-[#1A1A1A]/30 transition-colors relative focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
             >
-              <Bell className="w-3.5 h-3.5" />
-              <span className="absolute -top-1 -right-1 w-2 h-2 bg-[#E63946] rounded-full" />
+              <Bell className="w-3.5 h-3.5" aria-hidden="true" />
+              <span className="absolute -top-1 -right-1 w-2 h-2 bg-[#E63946] rounded-full" aria-hidden="true" />
             </button>
 
             {/* Resident Voice / Micro-Survey Button */}
             {onOpenMicroSurvey && (
               <button
+                type="button"
                 onClick={onOpenMicroSurvey}
                 title="Cast Resident Vote / Zero-Party Micro-Survey"
-                className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider px-2 sm:px-2.5 py-1.5 border border-[#2D6A4F]/40 bg-[#2D6A4F]/10 hover:bg-[#2D6A4F] text-[#2D6A4F] hover:text-white transition-colors"
+                aria-label="Open Resident Voice and Zero-Party Survey Dialog"
+                className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider px-2 sm:px-2.5 py-1.5 border border-[#2D6A4F]/40 bg-[#2D6A4F]/10 hover:bg-[#2D6A4F] text-[#2D6A4F] hover:text-white transition-colors focus-visible:ring-2 focus-visible:ring-[#2D6A4F]"
               >
-                <Vote className="w-3.5 h-3.5" />
+                <Vote className="w-3.5 h-3.5" aria-hidden="true" />
                 <span className="hidden sm:inline">Resident Voice</span>
               </button>
             )}
@@ -208,40 +248,47 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Social Media Dispatch Button */}
             {onOpenSocialDispatch && (
               <button
+                type="button"
                 onClick={onOpenSocialDispatch}
                 title="Broadcast Municipal Dockets to Social Media"
-                className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider px-2.5 sm:px-3 py-1.5 border border-[#1A1A1A]/30 bg-[#F2F0EA] hover:bg-[#1A1A1A] hover:text-[#FDFDFC] transition-colors"
+                aria-label="Open Social Media Multi-Channel Dispatch"
+                className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider px-2.5 sm:px-3 py-1.5 border border-[#1A1A1A]/30 bg-[#F2F0EA] hover:bg-[#1A1A1A] hover:text-[#FDFDFC] transition-colors focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
               >
-                <Share2 className="w-3.5 h-3.5 text-[#E63946]" />
+                <Share2 className="w-3.5 h-3.5 text-[#E63946]" aria-hidden="true" />
                 <span className="hidden md:inline">Social Dispatch</span>
               </button>
             )}
 
             {/* Civic Co-Pilot Trigger */}
             <button
+              type="button"
               onClick={onToggleCopilot}
-              className={`flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider px-3 py-1.5 border transition-all ${
+              aria-label="Toggle Civic Co-Pilot AI Assistant Drawer"
+              aria-expanded={isCopilotOpen}
+              className={`flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider px-3 py-1.5 border transition-all focus-visible:ring-2 focus-visible:ring-[#1A1A1A] ${
                 isCopilotOpen
                   ? 'bg-[#1A1A1A] text-[#FDFDFC] border-[#1A1A1A]'
                   : 'bg-[#F2F0EA] text-[#1A1A1A] border-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-[#FDFDFC]'
               }`}
             >
-              <Bot className="w-3.5 h-3.5" />
+              <Bot className="w-3.5 h-3.5" aria-hidden="true" />
               <span className="hidden sm:inline">Co-Pilot</span>
             </button>
 
             {/* Resident Profile & Address Location Trigger */}
             {onOpenProfile && (
               <button
+                type="button"
                 onClick={onOpenProfile}
                 title="Manage Resident Profile & Home Address"
-                className={`flex items-center gap-1.5 text-xs font-semibold px-2.5 sm:px-3 py-1.5 border transition-all ${
+                aria-label="Open Resident Profile and Address Location Settings"
+                className={`flex items-center gap-1.5 text-xs font-semibold px-2.5 sm:px-3 py-1.5 border transition-all focus-visible:ring-2 focus-visible:ring-[#2D6A4F] ${
                   userProfile
                     ? 'bg-[#2D6A4F]/10 border-[#2D6A4F]/40 text-[#2D6A4F] hover:bg-[#2D6A4F] hover:text-white'
                     : 'bg-[#F2F0EA] border-[#1A1A1A]/30 text-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-white'
                 }`}
               >
-                <MapPin className="w-3.5 h-3.5 shrink-0" />
+                <MapPin className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
                 <span className="hidden sm:inline">
                   {userProfile ? `${userProfile.address.neighborhood || userProfile.address.city} (Ward ${userProfile.address.matchedWardNumber || 'Dist.'})` : 'Find My Ward'}
                 </span>
@@ -253,88 +300,126 @@ export const Navbar: React.FC<NavbarProps> = ({
 
 
         {/* Editorial Navigation Bar */}
-        <nav className="flex items-center gap-4 sm:gap-8 pt-2.5 overflow-x-auto scrollbar-none text-xs font-bold uppercase tracking-widest">
-          <button
-            onClick={() => onSelectTab('digest')}
-            className={`pb-1.5 whitespace-nowrap transition-all border-b-2 ${
-              activeTab === 'digest'
-                ? 'border-[#1A1A1A] text-[#1A1A1A] opacity-100'
-                : 'border-transparent text-[#1A1A1A] opacity-50 hover:opacity-100 hover:border-[#1A1A1A]/30'
-            }`}
+        <nav 
+          role="navigation" 
+          aria-label="Main Navigation"
+          className="pt-2.5"
+        >
+          <div 
+            role="tablist" 
+            aria-label="Civic Digest Primary Sections"
+            className="flex items-center gap-4 sm:gap-8 overflow-x-auto scrollbar-none text-xs font-bold uppercase tracking-widest"
           >
-            News & Feed
-          </button>
+            <button
+              type="button"
+              role="tab"
+              id="tab-nav-digest"
+              aria-selected={activeTab === 'digest'}
+              onClick={() => onSelectTab('digest')}
+              className={`pb-1.5 whitespace-nowrap transition-all border-b-2 focus-visible:ring-2 focus-visible:ring-[#1A1A1A] focus-visible:outline-none ${
+                activeTab === 'digest'
+                  ? 'border-[#1A1A1A] text-[#1A1A1A] opacity-100'
+                  : 'border-transparent text-[#1A1A1A] opacity-60 hover:opacity-100 hover:border-[#1A1A1A]/30'
+              }`}
+            >
+              News &amp; Feed
+            </button>
 
-          <button
-            onClick={() => onSelectTab('meetings')}
-            className={`pb-1.5 whitespace-nowrap transition-all border-b-2 ${
-              activeTab === 'meetings'
-                ? 'border-[#1A1A1A] text-[#1A1A1A] opacity-100'
-                : 'border-transparent text-[#1A1A1A] opacity-50 hover:opacity-100 hover:border-[#1A1A1A]/30'
-            }`}
-          >
-            The Docket & Agendas
-          </button>
+            <button
+              type="button"
+              role="tab"
+              id="tab-nav-meetings"
+              aria-selected={activeTab === 'meetings'}
+              onClick={() => onSelectTab('meetings')}
+              className={`pb-1.5 whitespace-nowrap transition-all border-b-2 focus-visible:ring-2 focus-visible:ring-[#1A1A1A] focus-visible:outline-none ${
+                activeTab === 'meetings'
+                  ? 'border-[#1A1A1A] text-[#1A1A1A] opacity-100'
+                  : 'border-transparent text-[#1A1A1A] opacity-60 hover:opacity-100 hover:border-[#1A1A1A]/30'
+              }`}
+            >
+              The Docket &amp; Agendas
+            </button>
 
-          <button
-            onClick={() => onSelectTab('perspectives')}
-            className={`pb-1.5 whitespace-nowrap transition-all border-b-2 ${
-              activeTab === 'perspectives'
-                ? 'border-[#1A1A1A] text-[#1A1A1A] opacity-100'
-                : 'border-transparent text-[#1A1A1A] opacity-50 hover:opacity-100 hover:border-[#1A1A1A]/30'
-            }`}
-          >
-            Perspectives
-          </button>
+            <button
+              type="button"
+              role="tab"
+              id="tab-nav-perspectives"
+              aria-selected={activeTab === 'perspectives'}
+              onClick={() => onSelectTab('perspectives')}
+              className={`pb-1.5 whitespace-nowrap transition-all border-b-2 focus-visible:ring-2 focus-visible:ring-[#1A1A1A] focus-visible:outline-none ${
+                activeTab === 'perspectives'
+                  ? 'border-[#1A1A1A] text-[#1A1A1A] opacity-100'
+                  : 'border-transparent text-[#1A1A1A] opacity-60 hover:opacity-100 hover:border-[#1A1A1A]/30'
+              }`}
+            >
+              Perspectives
+            </button>
 
-          <button
-            onClick={() => onSelectTab('sentiment')}
-            className={`pb-1.5 whitespace-nowrap transition-all border-b-2 flex items-center gap-1.5 ${
-              activeTab === 'sentiment'
-                ? 'border-[#1A1A1A] text-[#1A1A1A] opacity-100'
-                : 'border-transparent text-[#1A1A1A] opacity-50 hover:opacity-100 hover:border-[#1A1A1A]/30'
-            }`}
-          >
-            <span>Resident Pulse</span>
-            <span className="text-[9px] bg-[#1A1A1A] text-[#FDFDFC] px-1 py-0.2 font-mono">
-              ε-DP
-            </span>
-          </button>
+            <button
+              type="button"
+              role="tab"
+              id="tab-nav-sentiment"
+              aria-selected={activeTab === 'sentiment'}
+              onClick={() => onSelectTab('sentiment')}
+              className={`pb-1.5 whitespace-nowrap transition-all border-b-2 flex items-center gap-1.5 focus-visible:ring-2 focus-visible:ring-[#1A1A1A] focus-visible:outline-none ${
+                activeTab === 'sentiment'
+                  ? 'border-[#1A1A1A] text-[#1A1A1A] opacity-100'
+                  : 'border-transparent text-[#1A1A1A] opacity-60 hover:opacity-100 hover:border-[#1A1A1A]/30'
+              }`}
+            >
+              <span>Resident Pulse</span>
+              <span className="text-[9px] bg-[#1A1A1A] text-[#FDFDFC] px-1 py-0.2 font-mono" aria-label="Differential Privacy Protected">
+                ε-DP
+              </span>
+            </button>
 
-          <button
-            onClick={() => onSelectTab('accountability')}
-            className={`pb-1.5 whitespace-nowrap transition-all border-b-2 ${
-              activeTab === 'accountability'
-                ? 'border-[#1A1A1A] text-[#1A1A1A] opacity-100'
-                : 'border-transparent text-[#1A1A1A] opacity-50 hover:opacity-100 hover:border-[#1A1A1A]/30'
-            }`}
-          >
-            Accountability
-          </button>
+            <button
+              type="button"
+              role="tab"
+              id="tab-nav-accountability"
+              aria-selected={activeTab === 'accountability'}
+              onClick={() => onSelectTab('accountability')}
+              className={`pb-1.5 whitespace-nowrap transition-all border-b-2 focus-visible:ring-2 focus-visible:ring-[#1A1A1A] focus-visible:outline-none ${
+                activeTab === 'accountability'
+                  ? 'border-[#1A1A1A] text-[#1A1A1A] opacity-100'
+                  : 'border-transparent text-[#1A1A1A] opacity-60 hover:opacity-100 hover:border-[#1A1A1A]/30'
+              }`}
+            >
+              Accountability
+            </button>
 
-          <button
-            onClick={() => onSelectTab('scanner')}
-            className={`pb-1.5 whitespace-nowrap transition-all border-b-2 flex items-center gap-1 ${
-              activeTab === 'scanner'
-                ? 'border-[#E63946] text-[#E63946] opacity-100'
-                : 'border-transparent text-[#1A1A1A] opacity-50 hover:opacity-100 hover:border-[#E63946]/30'
-            }`}
-          >
-            <Sparkles className="w-3 h-3 text-[#E63946]" />
-            <span>Docket Scanner</span>
-          </button>
+            <button
+              type="button"
+              role="tab"
+              id="tab-nav-scanner"
+              aria-selected={activeTab === 'scanner'}
+              onClick={() => onSelectTab('scanner')}
+              className={`pb-1.5 whitespace-nowrap transition-all border-b-2 flex items-center gap-1 focus-visible:ring-2 focus-visible:ring-[#E63946] focus-visible:outline-none ${
+                activeTab === 'scanner'
+                  ? 'border-[#E63946] text-[#E63946] opacity-100'
+                  : 'border-transparent text-[#1A1A1A] opacity-60 hover:opacity-100 hover:border-[#E63946]/30'
+              }`}
+            >
+              <Sparkles className="w-3 h-3 text-[#E63946]" aria-hidden="true" />
+              <span>Docket Scanner</span>
+            </button>
 
-          <button
-            onClick={() => onSelectTab('policy_intel')}
-            className={`pb-1.5 whitespace-nowrap transition-all border-b-2 flex items-center gap-1.5 ${
-              activeTab === 'policy_intel'
-                ? 'border-[#2D6A4F] text-[#2D6A4F] opacity-100'
-                : 'border-transparent text-[#1A1A1A] opacity-50 hover:opacity-100 hover:border-[#2D6A4F]/30'
-            }`}
-          >
-            <FileText className="w-3 h-3 text-[#2D6A4F]" />
-            <span>Council Briefs &amp; Intel</span>
-          </button>
+            <button
+              type="button"
+              role="tab"
+              id="tab-nav-policy-intel"
+              aria-selected={activeTab === 'policy_intel'}
+              onClick={() => onSelectTab('policy_intel')}
+              className={`pb-1.5 whitespace-nowrap transition-all border-b-2 flex items-center gap-1.5 focus-visible:ring-2 focus-visible:ring-[#2D6A4F] focus-visible:outline-none ${
+                activeTab === 'policy_intel'
+                  ? 'border-[#2D6A4F] text-[#2D6A4F] opacity-100'
+                  : 'border-transparent text-[#1A1A1A] opacity-60 hover:opacity-100 hover:border-[#2D6A4F]/30'
+              }`}
+            >
+              <FileText className="w-3 h-3 text-[#2D6A4F]" aria-hidden="true" />
+              <span>Council Briefs &amp; Intel</span>
+            </button>
+          </div>
         </nav>
 
 
