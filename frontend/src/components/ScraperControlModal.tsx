@@ -28,6 +28,7 @@ interface ScraperControlModalProps {
   onClose: () => void;
   onImportDockets: (newBills: OCDBill[]) => void;
 }
+import { useModalKeyboard } from '../lib/useModalKeyboard';
 
 interface ScraperTarget {
   id: string;
@@ -51,7 +52,11 @@ export const ScraperControlModal: React.FC<ScraperControlModalProps> = ({
   const [scrapeStep, setScrapeStep] = useState<number>(0);
   const [scrapedResults, setScrapedResults] = useState<OCDBill[]>([]);
   const [logs, setLogs] = useState<string[]>([]);
+  const [rawPreview, setRawPreview] = useState<any[]>([]);
   const [activeSubTab, setActiveSubTab] = useState<'console' | 'preview'>('console');
+
+  // Accessible keyboard Escape handling and focus return
+  useModalKeyboard(isOpen, onClose);
   const [importedCount, setImportedCount] = useState<number>(0);
 
   useEffect(() => {
@@ -156,48 +161,59 @@ export const ScraperControlModal: React.FC<ScraperControlModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1A1A1A]/80 backdrop-blur-xs animate-in fade-in duration-150">
-      <div className="bg-[#FDFDFC] max-w-3xl w-full border-2 border-[#1A1A1A] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+    <div 
+      role="presentation"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1A1A1A]/80 backdrop-blur-xs animate-in fade-in duration-150"
+    >
+      <div 
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="scraper-modal-title"
+        className="bg-[#FDFDFC] max-w-3xl w-full border-2 border-[#1A1A1A] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+      >
         
         {/* Header */}
         <div className="bg-[#1A1A1A] text-[#FDFDFC] px-6 py-4 flex items-center justify-between border-b border-[#1A1A1A]">
           <div className="flex items-center gap-3">
             <div className="p-1.5 bg-[#E63946] text-white">
-              <Radio className="w-5 h-5 animate-pulse" />
+              <Radio className="w-5 h-5 animate-pulse" aria-hidden="true" />
             </div>
             <div>
-              <h3 className="font-serif font-medium text-lg text-white flex items-center gap-2">
+              <h3 id="scraper-modal-title" className="font-serif font-medium text-lg text-white flex items-center gap-2">
                 Municipal Scraper &amp; Ingestion Pipeline
                 <span className="text-[10px] text-white font-mono font-bold uppercase tracking-wider px-2 py-0.5 bg-[#2D6A4F]">
                   Legistar OData v1
                 </span>
               </h3>
-              <p className="text-[11px] text-[#aaa] font-sans">
+              <p className="text-[11px] text-[#D1D5DB] font-sans">
                 Automated OData ingestion, Open Civic Data normalization, and Gemini 2.5 plain-language enrichment
               </p>
             </div>
           </div>
           <button
+            type="button"
             onClick={onClose}
-            aria-label="Close"
-            className="text-[#aaa] hover:text-white p-1 hover:bg-[#333] transition-colors"
+            aria-label="Close municipal scraper dialog"
+            className="text-[#D1D5DB] hover:text-white p-1 hover:bg-[#333] transition-colors focus-visible:ring-2 focus-visible:ring-white"
           >
-            <X className="w-5 h-5" />
+            <X className="w-5 h-5" aria-hidden="true" />
           </button>
         </div>
 
         {/* City Selector & Trigger Bar */}
         <div className="bg-[#F2F0EA] border-b border-[#1A1A1A]/20 px-6 py-3 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <label className="text-xs font-bold uppercase tracking-wider font-mono text-[#555] flex items-center gap-1.5">
-              <Building className="w-3.5 h-3.5 text-[#1A1A1A]" />
+            <label htmlFor="scraper-target-hub-select" className="text-xs font-bold uppercase tracking-wider font-mono text-[#525252] flex items-center gap-1.5">
+              <Building className="w-3.5 h-3.5 text-[#1A1A1A]" aria-hidden="true" />
               Target Hub:
             </label>
             <select
+              id="scraper-target-hub-select"
+              aria-label="Target municipal scraper hub"
               value={selectedCity}
               onChange={(e) => setSelectedCity(e.target.value)}
               disabled={isRunning}
-              className="bg-[#FDFDFC] border border-[#1A1A1A] px-3 py-1.5 text-xs font-serif font-bold text-[#1A1A1A] focus:outline-none"
+              className="bg-[#FDFDFC] border border-[#1A1A1A] px-3 py-1.5 text-xs font-serif font-bold text-[#1A1A1A] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
             >
               {targets.map((t) => (
                 <option key={t.clientName} value={t.clientName}>

@@ -20,6 +20,7 @@ import {
   Compass
 } from 'lucide-react';
 import { UserProfile, AddressLookupResult, OCDJurisdiction, PolicyCategory } from '../types';
+import { useModalKeyboard } from '../lib/useModalKeyboard';
 
 interface UserProfileModalProps {
   isOpen: boolean;
@@ -190,11 +191,20 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
     onClose();
   };
 
+  // Accessible keyboard Escape handling and focus return
+  useModalKeyboard(isOpen, onClose);
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto">
+    <div 
+      role="presentation"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto"
+    >
       <div 
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="user-profile-modal-title"
         className="bg-white border border-[#1A1A1A]/20 shadow-2xl rounded-lg w-full max-w-3xl my-8 overflow-hidden animate-in fade-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
@@ -202,19 +212,22 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
         <div className="bg-[#1A1A1A] text-white px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded bg-[#2D6A4F] flex items-center justify-center text-white">
-              <User className="w-4 h-4" />
+              <User className="w-4 h-4" aria-hidden="true" />
             </div>
             <div>
-              <h2 className="text-base font-semibold text-white tracking-tight">Resident Profile &amp; Location Finder</h2>
+              <h2 id="user-profile-modal-title" className="text-base font-semibold text-white tracking-tight">
+                Resident Profile &amp; Location Finder
+              </h2>
               <p className="text-xs text-white/70">Connect your home address to unlock personalized city council dockets</p>
             </div>
           </div>
           <button
+            type="button"
             onClick={onClose}
-            aria-label="Close"
-            className="p-1 rounded text-white/60 hover:text-white hover:bg-white/10 transition-colors"
+            aria-label="Close resident profile dialog"
+            className="p-1 rounded text-white/60 hover:text-white hover:bg-white/10 transition-colors focus-visible:ring-2 focus-visible:ring-white"
           >
-            <X className="w-5 h-5" />
+            <X className="w-5 h-5" aria-hidden="true" />
           </button>
         </div>
 
@@ -223,8 +236,8 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
           {/* STEP 1: Address & Municipal Boundary Finder */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-bold uppercase tracking-wider text-[#1A1A1A] flex items-center gap-1.5">
-                <MapPin className="w-3.5 h-3.5 text-[#E63946]" />
+              <label htmlFor="resident-address-input" className="text-xs font-bold uppercase tracking-wider text-[#1A1A1A] flex items-center gap-1.5">
+                <MapPin className="w-3.5 h-3.5 text-[#E63946]" aria-hidden="true" />
                 1. Your Home Address or Neighborhood
               </label>
               <span className="text-[11px] text-[#1A1A1A]/60">Auto-identifies your City, Ward &amp; Council Member</span>
@@ -233,14 +246,16 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
             <div className="flex gap-2">
               <div className="relative flex-1">
                 <input
+                  id="resident-address-input"
                   type="text"
                   value={addressInput}
                   onChange={(e) => setAddressInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleLookupAddress()}
                   placeholder="e.g. 5600 Fleet Ave, Cleveland, OH or 915 I St, Sacramento, CA"
-                  className="w-full pl-9 pr-3 py-2.5 bg-[#F4F1EA]/50 border border-[#1A1A1A]/20 rounded text-sm text-[#1A1A1A] placeholder:text-[#1A1A1A]/40 focus:outline-none focus:ring-1 focus:ring-[#2D6A4F] focus:border-[#2D6A4F]"
+                  aria-label="Your Home Address or Neighborhood"
+                  className="w-full pl-9 pr-3 py-2.5 bg-[#F4F1EA]/50 border border-[#1A1A1A]/20 rounded text-sm text-[#1A1A1A] placeholder:text-[#1A1A1A]/40 focus:outline-none focus:ring-1 focus:ring-[#2D6A4F] focus:border-[#2D6A4F] focus-visible:ring-2 focus-visible:ring-[#2D6A4F]"
                 />
-                <Search className="w-4 h-4 text-[#1A1A1A]/40 absolute left-3 top-3" />
+                <Search className="w-4 h-4 text-[#1A1A1A]/40 absolute left-3 top-3" aria-hidden="true" />
               </div>
               <button
                 type="button"
