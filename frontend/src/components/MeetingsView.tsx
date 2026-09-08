@@ -70,10 +70,13 @@ export const MeetingsView: React.FC<MeetingsViewProps> = ({
           {MEETINGS.map((meeting) => {
             const isSelected = meeting.id === selectedMeetingId;
             return (
-              <div
+              <button
+                type="button"
                 key={meeting.id}
                 onClick={() => setSelectedMeetingId(meeting.id)}
-                className={`p-4 border cursor-pointer transition-all duration-150 ${
+                aria-pressed={isSelected}
+                aria-label={`Select meeting: ${meeting.title} on ${meeting.date}`}
+                className={`w-full text-left p-4 border cursor-pointer transition-all duration-150 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#1A1A1A] ${
                   isSelected
                     ? 'bg-[#1A1A1A] text-[#FDFDFC] border-[#1A1A1A]'
                     : 'bg-[#FDFDFC] text-[#1A1A1A] border-[#1A1A1A]/20 hover:border-[#1A1A1A]'
@@ -93,7 +96,7 @@ export const MeetingsView: React.FC<MeetingsViewProps> = ({
                   >
                     {meeting.status}
                   </span>
-                  <span className={`text-xs font-mono ${isSelected ? 'text-[#aaa]' : 'text-[#777]'}`}>
+                  <span className={`text-xs font-mono ${isSelected ? 'text-[#D1D5DB]' : 'text-[#525252]'}`}>
                     {meeting.date}
                   </span>
                 </div>
@@ -102,13 +105,13 @@ export const MeetingsView: React.FC<MeetingsViewProps> = ({
                   {meeting.title}
                 </h4>
 
-                <div className={`space-y-1 text-xs ${isSelected ? 'text-[#ccc]' : 'text-[#555]'}`}>
+                <div className={`space-y-1 text-xs ${isSelected ? 'text-[#E5E7EB]' : 'text-[#4B5563]'}`}>
                   <div className="flex items-center gap-1.5">
-                    <Clock className="w-3 h-3 shrink-0" />
+                    <Clock className="w-3 h-3 shrink-0" aria-hidden="true" />
                     <span>{meeting.time}</span>
                   </div>
                   <div className="flex items-center gap-1.5 truncate">
-                    <MapPin className="w-3 h-3 shrink-0" />
+                    <MapPin className="w-3 h-3 shrink-0" aria-hidden="true" />
                     <span className="truncate">{meeting.location}</span>
                   </div>
                 </div>
@@ -117,9 +120,9 @@ export const MeetingsView: React.FC<MeetingsViewProps> = ({
                   <span className={isSelected ? 'text-[#E63946]' : 'text-[#1A1A1A]'}>
                     {meeting.agendaItems.length} Agenda Items
                   </span>
-                  <ChevronRight className="w-4 h-4" />
+                  <ChevronRight className="w-4 h-4" aria-hidden="true" />
                 </div>
-              </div>
+              </button>
             );
           })}
         </div>
@@ -131,20 +134,20 @@ export const MeetingsView: React.FC<MeetingsViewProps> = ({
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#1A1A1A]/20">
               <div>
-                <span className="text-[10px] font-bold text-[#777] uppercase tracking-widest block mb-1 font-mono">
+                <span className="text-[10px] font-bold text-[#525252] uppercase tracking-widest block mb-1 font-mono">
                   {currentMeeting.body}
                 </span>
                 <h3 className="text-2xl font-serif font-medium text-[#1A1A1A]">
                   {currentMeeting.title}
                 </h3>
-                <p className="text-xs text-[#555] mt-1 flex flex-wrap items-center gap-3 font-mono">
+                <p className="text-xs text-[#4B5563] mt-1 flex flex-wrap items-center gap-3 font-mono">
                   <span className="flex items-center gap-1">
-                    <Clock className="w-3 h-3 text-[#777]" />
+                    <Clock className="w-3 h-3 text-[#525252]" aria-hidden="true" />
                     {currentMeeting.date} at {currentMeeting.time}
                   </span>
                   <span>•</span>
                   <span className="flex items-center gap-1">
-                    <MapPin className="w-3 h-3 text-[#777]" />
+                    <MapPin className="w-3 h-3 text-[#525252]" aria-hidden="true" />
                     {currentMeeting.location}
                   </span>
                 </p>
@@ -155,11 +158,12 @@ export const MeetingsView: React.FC<MeetingsViewProps> = ({
                   href={currentMeeting.officialAgendaPdfUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 bg-[#FDFDFC] hover:bg-[#F2F0EA] text-[#1A1A1A] border border-[#1A1A1A]/30 text-xs font-bold uppercase tracking-wider px-3 py-2 transition-colors"
+                  aria-label={`Open official agenda PDF for ${currentMeeting.title} (opens in new tab)`}
+                  className="inline-flex items-center gap-1.5 bg-[#FDFDFC] hover:bg-[#F2F0EA] text-[#1A1A1A] border border-[#1A1A1A]/30 text-xs font-bold uppercase tracking-wider px-3 py-2 transition-colors focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
                 >
-                  <FileText className="w-3.5 h-3.5" />
+                  <FileText className="w-3.5 h-3.5" aria-hidden="true" />
                   <span>Agenda PDF</span>
-                  <ExternalLink className="w-3 h-3" />
+                  <ExternalLink className="w-3 h-3" aria-hidden="true" />
                 </a>
 
                 {currentMeeting.officialMinutesPdfUrl && (
@@ -167,9 +171,10 @@ export const MeetingsView: React.FC<MeetingsViewProps> = ({
                     href={currentMeeting.officialMinutesPdfUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 bg-[#1A1A1A] hover:bg-[#333] text-[#FDFDFC] text-xs font-bold uppercase tracking-wider px-3 py-2 transition-colors"
+                    aria-label={`Open official approved journal for ${currentMeeting.title} (opens in new tab)`}
+                    className="inline-flex items-center gap-1.5 bg-[#1A1A1A] hover:bg-[#333] text-[#FDFDFC] text-xs font-bold uppercase tracking-wider px-3 py-2 transition-colors focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
                   >
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#2D6A4F]" />
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#2D6A4F]" aria-hidden="true" />
                     <span>Approved Journal</span>
                   </a>
                 )}
@@ -179,7 +184,7 @@ export const MeetingsView: React.FC<MeetingsViewProps> = ({
             {/* Key Decisions Highlights */}
             {currentMeeting.keyDecisionsSummary && (
               <div className="my-4 bg-[#F2F0EA] border-l-4 border-[#1A1A1A] p-4 text-xs text-[#1A1A1A] space-y-1">
-                <span className="font-bold uppercase tracking-wider text-[10px] text-[#777] block font-mono">
+                <span className="font-bold uppercase tracking-wider text-[10px] text-[#525252] block font-mono">
                   Executive Summary of Docket Items
                 </span>
                 <p className="text-xs text-[#333] leading-relaxed font-serif italic">
@@ -190,7 +195,7 @@ export const MeetingsView: React.FC<MeetingsViewProps> = ({
 
             {/* Agenda Item Line Items */}
             <div className="space-y-3 mt-4">
-              <h4 className="text-xs font-bold uppercase tracking-widest text-[#777] border-b border-[#1A1A1A]/10 pb-1.5 font-mono">
+              <h4 className="text-xs font-bold uppercase tracking-widest text-[#525252] border-b border-[#1A1A1A]/10 pb-1.5 font-mono">
                 Itemized Order of Business
               </h4>
 
@@ -207,7 +212,7 @@ export const MeetingsView: React.FC<MeetingsViewProps> = ({
                         <span className="text-xs font-mono font-bold bg-[#1A1A1A] text-[#FDFDFC] px-2 py-0.5">
                           Item #{item.itemNumber}
                         </span>
-                        <span className="text-xs text-[#777] font-mono">
+                        <span className="text-xs text-[#525252] font-mono">
                           {item.department}
                         </span>
                       </div>
@@ -223,20 +228,22 @@ export const MeetingsView: React.FC<MeetingsViewProps> = ({
                       {item.title}
                     </h5>
 
-                    <p className="text-xs text-[#555] leading-relaxed font-sans">
+                    <p className="text-xs text-[#4B5563] leading-relaxed font-sans">
                       {item.plainSummary}
                     </p>
 
                     {/* Linked Bill Card Quick Action */}
                     {linkedBill && (
                       <div className="pt-2 flex items-center justify-between border-t border-[#1A1A1A]/10 text-xs">
-                        <span className="text-[#555]">
+                        <span className="text-[#4B5563]">
                           Docket Reference: <strong className="text-[#1A1A1A] font-mono">{linkedBill.fileNumber}</strong> ({linkedBill.category})
                         </span>
                         <div className="flex items-center gap-2">
                           <button
+                            type="button"
                             onClick={() => onOpenReceipt(linkedBill)}
-                            className="text-xs font-bold uppercase tracking-wider text-[#1A1A1A] hover:bg-[#F2F0EA] border border-[#1A1A1A]/30 px-2 py-1 flex items-center gap-1 transition-colors"
+                            aria-label={`Open verification receipt for ${linkedBill.fileNumber}`}
+                            className="text-xs font-bold uppercase tracking-wider text-[#1A1A1A] hover:bg-[#F2F0EA] border border-[#1A1A1A]/30 px-2 py-1 flex items-center gap-1 transition-colors focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
                           >
                             Receipt Check
                           </button>

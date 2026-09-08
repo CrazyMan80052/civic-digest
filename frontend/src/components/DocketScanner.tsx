@@ -187,34 +187,40 @@ export const DocketScanner: React.FC<DocketScannerProps> = ({ onAddParsedBill })
               
               {/* Quick Sample Buttons */}
               <div className="flex items-center gap-1.5">
-                <span className="text-[10px] text-[#777] font-mono">Presets:</span>
+                <span className="text-[10px] text-[#525252] font-mono">Presets:</span>
                 <button
+                  type="button"
+                  aria-label="Load Sacramento ADU Zoning sample docket"
                   onClick={() => {
                     setInputText(SAMPLE_LEGALESE.sacramentoZoning);
                     setFileNumber('Ord. 2026-0891');
                     setJurisdiction('City of Sacramento');
                   }}
-                  className="text-[10px] bg-[#F2F0EA] hover:bg-[#1A1A1A] hover:text-white text-[#1A1A1A] border border-[#1A1A1A]/20 px-2 py-0.5 font-mono transition-colors"
+                  className="text-[10px] bg-[#F2F0EA] hover:bg-[#1A1A1A] hover:text-white text-[#1A1A1A] border border-[#1A1A1A]/20 px-2 py-0.5 font-mono transition-colors focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
                 >
                   ADU Zoning
                 </button>
                 <button
+                  type="button"
+                  aria-label="Load Cleveland Trail Bond sample docket"
                   onClick={() => {
                     setInputText(SAMPLE_LEGALESE.clevelandGreenway);
                     setFileNumber('Ord. 1042-2026');
                     setJurisdiction('City of Cleveland');
                   }}
-                  className="text-[10px] bg-[#F2F0EA] hover:bg-[#1A1A1A] hover:text-white text-[#1A1A1A] border border-[#1A1A1A]/20 px-2 py-0.5 font-mono transition-colors"
+                  className="text-[10px] bg-[#F2F0EA] hover:bg-[#1A1A1A] hover:text-white text-[#1A1A1A] border border-[#1A1A1A]/20 px-2 py-0.5 font-mono transition-colors focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
                 >
                   Trail Bond
                 </button>
                 <button
+                  type="button"
+                  aria-label="Load Cleveland Tax Abatement sample docket"
                   onClick={() => {
                     setInputText(SAMPLE_LEGALESE.taxAbatement);
                     setFileNumber('Res. 2026-058');
                     setJurisdiction('City of Cleveland');
                   }}
-                  className="text-[10px] bg-[#F2F0EA] hover:bg-[#1A1A1A] hover:text-white text-[#1A1A1A] border border-[#1A1A1A]/20 px-2 py-0.5 font-mono transition-colors"
+                  className="text-[10px] bg-[#F2F0EA] hover:bg-[#1A1A1A] hover:text-white text-[#1A1A1A] border border-[#1A1A1A]/20 px-2 py-0.5 font-mono transition-colors focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
                 >
                   Abatement
                 </button>
@@ -223,60 +229,64 @@ export const DocketScanner: React.FC<DocketScannerProps> = ({ onAddParsedBill })
 
             <div className="grid grid-cols-2 gap-3 text-xs">
               <div>
-                <label className="font-bold uppercase tracking-wider text-[10px] text-[#777] block mb-1 font-mono">
+                <label htmlFor="docket-file-number" className="font-bold uppercase tracking-wider text-[10px] text-[#525252] block mb-1 font-mono">
                   File / Ordinance Number
                 </label>
                 <input
+                  id="docket-file-number"
                   type="text"
                   value={fileNumber}
                   onChange={(e) => setFileNumber(e.target.value)}
                   placeholder="e.g. Ord. 882-2026"
-                  className="w-full bg-[#F2F0EA] border border-[#1A1A1A]/30 p-2 text-[#1A1A1A] font-mono text-xs"
+                  className="w-full bg-[#F2F0EA] border border-[#1A1A1A]/30 p-2 text-[#1A1A1A] font-mono text-xs focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
                 />
               </div>
               <div>
-                <label className="font-bold uppercase tracking-wider text-[10px] text-[#777] block mb-1 font-mono">
+                <label htmlFor="docket-jurisdiction" className="font-bold uppercase tracking-wider text-[10px] text-[#525252] block mb-1 font-mono">
                   Jurisdiction
                 </label>
                 <input
+                  id="docket-jurisdiction"
                   type="text"
                   value={jurisdiction}
                   onChange={(e) => setJurisdiction(e.target.value)}
                   placeholder="e.g. City of Cleveland"
-                  className="w-full bg-[#F2F0EA] border border-[#1A1A1A]/30 p-2 text-[#1A1A1A] text-xs font-sans"
+                  className="w-full bg-[#F2F0EA] border border-[#1A1A1A]/30 p-2 text-[#1A1A1A] text-xs font-sans focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
                 />
               </div>
             </div>
 
             <div>
-              <label className="font-bold uppercase tracking-wider text-[10px] text-[#777] block mb-1 font-mono">
+              <label htmlFor="docket-legalese-input" className="font-bold uppercase tracking-wider text-[10px] text-[#525252] block mb-1 font-mono">
                 Legalese &amp; Attachment Body
               </label>
               <textarea
+                id="docket-legalese-input"
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 rows={11}
                 placeholder="Paste municipal docket text, committee resolutions, or council agenda notes here..."
-                className="w-full bg-[#F2F0EA] border border-[#1A1A1A]/30 p-3 text-xs font-mono text-[#1A1A1A] focus:outline-none leading-relaxed"
+                className="w-full bg-[#F2F0EA] border border-[#1A1A1A]/30 p-3 text-xs font-mono text-[#1A1A1A] focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#1A1A1A] leading-relaxed"
               />
             </div>
           </div>
 
           <button
+            type="button"
             onClick={handleScan}
             disabled={isScanning || !inputText.trim()}
-            className="w-full bg-[#1A1A1A] hover:bg-[#333] text-[#FDFDFC] font-bold uppercase tracking-wider py-3 px-4 flex items-center justify-center gap-2 transition-colors disabled:opacity-50 text-xs"
+            className="w-full bg-[#1A1A1A] hover:bg-[#333] text-[#FDFDFC] font-bold uppercase tracking-wider py-3 px-4 flex items-center justify-center gap-2 transition-colors disabled:opacity-50 text-xs focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
           >
             {isScanning ? (
               <>
-                <RefreshCw className="w-4 h-4 animate-spin text-[#E63946]" />
+                <RefreshCw className="w-4 h-4 animate-spin text-[#E63946]" aria-hidden="true" />
                 <span>Parsing Docket with Gemini AI...</span>
               </>
             ) : (
               <>
-                <Sparkles className="w-4 h-4 text-[#E63946]" />
+                <Sparkles className="w-4 h-4 text-[#E63946]" aria-hidden="true" />
                 <span>Extract Plain-Language Civic Summary</span>
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </>
             )}
           </button>
@@ -302,7 +312,7 @@ export const DocketScanner: React.FC<DocketScannerProps> = ({ onAddParsedBill })
                 
                 {/* Headline */}
                 <div>
-                  <span className="text-[10px] uppercase font-bold text-[#777] tracking-widest block font-mono">
+                  <span className="text-[10px] uppercase font-bold text-[#525252] tracking-widest block font-mono">
                     Plain Title
                   </span>
                   <h4 className="text-xl font-serif font-bold text-[#1A1A1A] mt-0.5">
@@ -312,7 +322,7 @@ export const DocketScanner: React.FC<DocketScannerProps> = ({ onAddParsedBill })
 
                 {/* Summary */}
                 <div className="bg-[#F2F0EA] p-3.5 border border-[#1A1A1A]/10">
-                  <span className="text-[10px] uppercase font-bold text-[#777] tracking-widest block mb-1 font-mono">
+                  <span className="text-[10px] uppercase font-bold text-[#525252] tracking-widest block mb-1 font-mono">
                     Plain-Language Summary
                   </span>
                   <p className="text-xs text-[#333] leading-relaxed font-sans">
@@ -323,8 +333,8 @@ export const DocketScanner: React.FC<DocketScannerProps> = ({ onAddParsedBill })
                 {/* Demographic & Fiscal Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="bg-[#F2F0EA] p-3 border border-[#1A1A1A]/10 space-y-1">
-                    <span className="text-[10px] uppercase font-bold text-[#777] tracking-wider flex items-center gap-1 font-mono">
-                      <Users className="w-3.5 h-3.5 text-[#1A1A1A]" />
+                    <span className="text-[10px] uppercase font-bold text-[#525252] tracking-wider flex items-center gap-1 font-mono">
+                      <Users className="w-3.5 h-3.5 text-[#1A1A1A]" aria-hidden="true" />
                       Who It Affects
                     </span>
                     <p className="text-[#1A1A1A] font-medium font-sans">
@@ -333,8 +343,8 @@ export const DocketScanner: React.FC<DocketScannerProps> = ({ onAddParsedBill })
                   </div>
 
                   <div className="bg-[#F2F0EA] p-3 border border-[#1A1A1A]/10 space-y-1">
-                    <span className="text-[10px] uppercase font-bold text-[#777] tracking-wider flex items-center gap-1 font-mono">
-                      <DollarSign className="w-3.5 h-3.5 text-[#1A1A1A]" />
+                    <span className="text-[10px] uppercase font-bold text-[#525252] tracking-wider flex items-center gap-1 font-mono">
+                      <DollarSign className="w-3.5 h-3.5 text-[#1A1A1A]" aria-hidden="true" />
                       Fiscal Impact
                     </span>
                     <p className="text-[#1A1A1A] font-bold font-mono">
@@ -346,7 +356,7 @@ export const DocketScanner: React.FC<DocketScannerProps> = ({ onAddParsedBill })
                         'No direct general fund impact'
                       )}
                     </p>
-                    <p className="text-[10px] text-[#555] font-sans">
+                    <p className="text-[10px] text-[#4B5563] font-sans">
                       {parsedResult.fiscalImpact?.description}
                     </p>
                   </div>
@@ -379,8 +389,8 @@ export const DocketScanner: React.FC<DocketScannerProps> = ({ onAddParsedBill })
 
                 {/* Verifiable Receipt Excerpt */}
                 <div className="bg-[#F2F0EA] border-l-4 border-[#1A1A1A] p-3.5 space-y-1">
-                  <span className="text-[10px] uppercase font-bold text-[#777] tracking-widest flex items-center gap-1 font-mono">
-                    <FileText className="w-3 h-3 text-[#1A1A1A]" />
+                  <span className="text-[10px] uppercase font-bold text-[#525252] tracking-widest flex items-center gap-1 font-mono">
+                    <FileText className="w-3 h-3 text-[#1A1A1A]" aria-hidden="true" />
                     Verified Primary Source Receipt Snippet
                   </span>
                   <p className="text-xs font-serif italic text-[#1A1A1A] leading-relaxed">
@@ -390,8 +400,8 @@ export const DocketScanner: React.FC<DocketScannerProps> = ({ onAddParsedBill })
 
               </div>
             ) : (
-              <div className="text-center py-16 text-[#888] space-y-3">
-                <FileCode2 className="w-10 h-10 mx-auto text-[#bbb] stroke-1" />
+              <div className="text-center py-16 text-[#525252] space-y-3">
+                <FileCode2 className="w-10 h-10 mx-auto text-[#9CA3AF] stroke-1" aria-hidden="true" />
                 <p className="text-xs max-w-xs mx-auto font-sans">
                   Click "Extract Plain-Language Civic Summary" to run real-time NLP analysis on the docket text.
                 </p>
@@ -402,22 +412,23 @@ export const DocketScanner: React.FC<DocketScannerProps> = ({ onAddParsedBill })
           {/* Action Footer */}
           {parsedResult && (
             <div className="pt-4 border-t border-[#1A1A1A]/10 flex items-center justify-between gap-3">
-              <span className="text-xs text-[#777] font-mono">
+              <span className="text-xs text-[#525252] font-mono">
                 OCD-ID Compliant Schema
               </span>
               <button
+                type="button"
                 onClick={handleSaveToDigest}
                 disabled={savedSuccess}
-                className="bg-[#1A1A1A] hover:bg-[#333] text-[#FDFDFC] text-xs font-bold uppercase tracking-wider px-4 py-2.5 flex items-center gap-1.5 transition-colors"
+                className="bg-[#1A1A1A] hover:bg-[#333] text-[#FDFDFC] text-xs font-bold uppercase tracking-wider px-4 py-2.5 flex items-center gap-1.5 transition-colors focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
               >
                 {savedSuccess ? (
                   <>
-                    <CheckCircle2 className="w-4 h-4 text-[#2D6A4F]" />
+                    <CheckCircle2 className="w-4 h-4 text-[#2D6A4F]" aria-hidden="true" />
                     <span>Added to Live Feed!</span>
                   </>
                 ) : (
                   <>
-                    <PlusCircle className="w-4 h-4 text-[#E63946]" />
+                    <PlusCircle className="w-4 h-4 text-[#E63946]" aria-hidden="true" />
                     <span>Pin to Civic Digest Feed</span>
                   </>
                 )}
