@@ -144,16 +144,30 @@ To keep pull requests trackable and prevent review fatigue:
 
 Before creating or updating a Pull Request, agents **MUST** execute and pass these gates:
 
-1. **Frontend Verification**:
+1. **Upstream Synchronization & Conflict Check**:
+   - Always ensure your branch is strictly up-to-date with `main` before submitting:
+     ```bash
+     git fetch origin main
+     git merge origin/main  # or git pull --rebase origin main
+     ```
+   - Verify zero merge conflicts and confirm no conflict markers (`<<<<<<<`, `=======`, `>>>>>>>`) exist in any file:
+     ```bash
+     git diff --check
+     ```
+   - If conflicts occur, resolve them explicitly, re-run all checks, and stage the resolution.
+
+2. **Frontend Verification**:
    ```bash
    cd frontend
+   bun install --frozen-lockfile
+   bun x tsc --noEmit
    bun run lint
    bun run build
    bun test
    ```
-   *Expected: 0 lint errors, build compiles successfully, all bun tests pass.*
+   *Expected: 0 TypeScript errors, 0 lint errors, build compiles successfully, all bun tests pass.*
 
-2. **Backend Verification**:
+3. **Backend Verification**:
    ```bash
    cd backend
    ruff check .
@@ -161,6 +175,90 @@ Before creating or updating a Pull Request, agents **MUST** execute and pass the
    ```
    *Expected: All ruff checks pass, all pytest test cases pass.*
 
-3. **Review & Diff Check**:
+4. **Documentation Verification** (if `docs/` or MkDocs configuration touched):
+   ```bash
+   mkdocs build --strict
+   ```
+   *Expected: MkDocs strict build succeeds with zero warnings.*
+
+5. **Review & Diff Check**:
    - Run Ponytail Review pass (cut over-engineering, unneeded deps, and boilerplate).
    - Run `git diff --stat origin/main...HEAD` to verify all individual commits remain under the 600-line reviewability ceiling.
+
+---
+
+## 7. Automated PR Creation & Description Protocol
+
+Once all checks in the Definition of Done (Section 6) pass with zero errors, agents **MUST** automatically open the Pull Request using GitHub CLI (`gh`).
+
+### 1. Branch Strategy & Push
+- Never push directly to `main`.
+- Work on a semantic branch named after the task (e.g. `feat/ada-compliance`, `fix/legistar-timeout`).
+- Push your branch to remote:
+  ```bash
+  git push -u origin HEAD
+  ```
+
+### 2. Standardized PR Description Template
+Agents must populate the PR description using this structured format:
+
+```markdown
+## Summary of Changes
+- <High-level bullet point of core change>
+- <Component or pipeline modified>
+- <Key architectural, data model, or domain decisions made>
+
+## Related Issue
+Closes #<issue-number> <!-- or Fixes #<issue-number>, omit if standalone -->
+
+## Pre-PR & CI Verification Checklist
+- [x] Synced with `origin/main` (0 merge conflicts, no conflict markers)
+- [x] Frontend checks passed (`bun x tsc --noEmit`, `bun run lint`, `bun run build`, `bun test`)
+- [x] Backend checks passed (`ruff check .`, `pytest tests/ -v`)
+- [x] Ponytail Simplicity Gate passed (minimal code, standard library preferred, no dead code)
+- [x] Reviewability ceiling respected (individual commits < 600 lines)
+
+## Verification Evidence
+- **Frontend**: `bun test` passed (all tests green), Next.js build compiled cleanly.
+- **Backend**: `pytest` passed (all tests green), `ruff check` clean.
+```
+
+### 3. Automated PR Creation Command
+Generate the PR via `gh pr create` with a Conventional Commit title:
+
+```bash
+gh pr create \
+  --title "<type>(<scope>): <concise imperative summary>" \
+  --body "$(cat <<'EOF'
+## Summary of Changes
+- <Bullet point 1>
+- <Bullet point 2>
+
+## Related Issue
+Closes #<issue-number>
+
+## Pre-PR & CI Verification Checklist
+- [x] Synced with `origin/main` (0 merge conflicts)
+- [x] Frontend checks passed (`bun x tsc`, `bun run lint`, `bun run build`, `bun test`)
+- [x] Backend checks passed (`ruff check .`, `pytest tests/ -v`)
+- [x] Ponytail Simplicity Gate passed (<600 lines diff, no over-engineering)
+
+## Verification Evidence
+- Frontend: bun build & bun test clean
+- Backend: ruff & pytest clean
+EOF
+)"
+```
+
+### 4. Post-PR Verification & Mergeability Check
+After creating the PR:
+1. Verify GitHub reports the PR as cleanly mergeable:
+   ```bash
+   gh pr view --json mergeable,state
+   ```
+   *Expected: `"mergeable": "MERGEABLE"`*
+2. Check CI status:
+   ```bash
+   gh pr checks
+   ```
+   If any CI check fails or a conflict is detected on GitHub, immediately pull `origin/main`, resolve the discrepancy, re-test locally, and push the fix.

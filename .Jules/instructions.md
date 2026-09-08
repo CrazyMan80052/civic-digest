@@ -17,27 +17,64 @@ When assigned an issue or task in **CivicDigest**, follow this exact workflow:
    - Declare all hooks before any early returns.
    - Ensure proper contrast and responsive styling.
 
-## Step 3: Self-Verification
-Before submitting your changes as a Pull Request, run the corresponding verification suites:
-- **Frontend changes**:
-  ```bash
-  cd frontend
-  bun run lint
-  bun run build
-  bun test
-  ```
-- **Backend changes**:
-  ```bash
-  cd backend
-  ruff check .
-  pytest tests/ -v
-  ```
+## Step 3: Self-Verification & Upstream Sync
+Before submitting your changes as a Pull Request, guarantee clean mergeability with `main` and execute the local CI test suites:
+
+1. **Sync with Main & Conflict Check**:
+   ```bash
+   git fetch origin main
+   git merge origin/main
+   git diff --check
+   ```
+   *Expected: Zero merge conflicts and no conflict markers.*
+
+2. **Frontend changes**:
+   ```bash
+   cd frontend
+   bun install --frozen-lockfile
+   bun x tsc --noEmit
+   bun run lint
+   bun run build
+   bun test
+   ```
+
+3. **Backend changes**:
+   ```bash
+   cd backend
+   ruff check .
+   pytest tests/ -v
+   ```
+
 If any check fails, fix the errors before concluding the task.
 
-## Step 4: Pull Request Delivery
-- Use a clear, conventional branch name (e.g. `jules/feature-name` or `jules/fix-issue-12`).
-- Include a descriptive PR title (e.g. `feat(scrapers): add Austin Legistar pipeline`).
-- In the PR body, summarize:
-  - **What changed**: bullet points of files and modifications.
-  - **Verification**: confirmation that `bun run build` / `pytest` passed.
-  - **Closes**: link to the GitHub issue (e.g. `Closes #123`).
+## Step 4: Automated Pull Request Delivery
+1. Push branch to remote:
+   ```bash
+   git push -u origin HEAD
+   ```
+2. Automatically create the PR using `gh pr create` with the standardized template from `AGENTS.md`:
+   ```bash
+   gh pr create \
+     --title "<type>(<scope>): <concise imperative summary>" \
+     --body "$(cat <<'EOF'
+   ## Summary of Changes
+   - <Bullet point of change>
+
+   ## Related Issue
+   Closes #<issue_number>
+
+   ## Pre-PR & CI Verification Checklist
+   - [x] Synced with `origin/main` (0 merge conflicts)
+   - [x] Frontend checks passed (`bun x tsc`, `bun run lint`, `bun run build`, `bun test`)
+   - [x] Backend checks passed (`ruff check .`, `pytest tests/ -v`)
+   - [x] Ponytail Simplicity Gate passed (<600 lines diff)
+
+   ## Verification Evidence
+   - All tests passing, builds cleanly without errors.
+   EOF
+   )"
+   ```
+3. Confirm mergeability:
+   ```bash
+   gh pr view --json mergeable
+   ```
