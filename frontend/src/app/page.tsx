@@ -51,7 +51,19 @@ import {
 
 export default function App() {
   const [jurisdictions] = useState<OCDJurisdiction[]>(JURISDICTIONS);
-  const [selectedJurisdiction, setSelectedJurisdiction] = useState<OCDJurisdiction>(JURISDICTIONS[0]);
+  const [selectedJurisdiction, setSelectedJurisdiction] = useState<OCDJurisdiction>(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const city = params.get('city') || params.get('jurisdiction');
+      if (city) {
+        const found = JURISDICTIONS.find(
+          (j) => j.id === city || j.name.toLowerCase().includes(city.toLowerCase()) || j.clientIdentifier === city.toLowerCase()
+        );
+        if (found) return found;
+      }
+    }
+    return JURISDICTIONS[0];
+  });
   const [selectedWardId, setSelectedWardId] = useState<string>('all');
   const [activeTab, setActiveTab] = useState<ActiveTab>('digest');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -151,7 +163,7 @@ export default function App() {
     let list = bills.filter((b) => {
       // Jurisdiction match
       if (b.jurisdictionId && b.jurisdictionId !== selectedJurisdiction.id) {
-        // if user changed jurisdiction, keep or filter appropriately
+        return false;
       }
 
       // Ward filter

@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { useModalKeyboard } from '../lib/useModalKeyboard';
 import { formatCurrency } from '../lib/utils';
+import { CANONICAL_JURISDICTIONS } from '../data/jurisdictions';
 
 export interface PendingBotPost {
   id: string;
@@ -169,13 +170,18 @@ export const BotModerationStudio: React.FC<BotModerationStudioProps> = ({
     }
   };
 
-  const handleTriggerPipelineRun = async (placeName: string) => {
+  const handleTriggerPipelineRun = async (placeName: string, stateCode = 'OH', clientName = '') => {
     setIsLoading(true);
     try {
       const res = await fetch('/api/bot/pipeline/run', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ place_name: placeName, state_code: 'OH', top: 3 }),
+        body: JSON.stringify({
+          place_name: placeName,
+          state_code: stateCode,
+          client_name: clientName || placeName.toLowerCase(),
+          top: 3,
+        }),
       });
       if (res.ok) {
         setActionMessage(`✓ Pipeline ran for ${placeName}. New posts enqueued.`);
@@ -255,18 +261,30 @@ export const BotModerationStudio: React.FC<BotModerationStudioProps> = ({
             <div className="p-3 border-b border-gray-800 flex items-center justify-between text-xs font-semibold text-gray-400 uppercase tracking-wider">
               <span>Pending Queue ({posts.length})</span>
               <div className="flex gap-1">
-                <button
-                  onClick={() => handleTriggerPipelineRun('Dublin')}
-                  className="px-2 py-0.5 rounded bg-gray-800 text-gray-300 hover:bg-gray-700 text-[10px]"
+                <select
+                  aria-label="Trigger pipeline for jurisdiction"
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (!val) return;
+                    const found = CANONICAL_JURISDICTIONS.find((j) => j.id === val);
+                    if (found) {
+                      handleTriggerPipelineRun(
+                        found.name.replace(/^City of /, ''),
+                        found.state,
+                        found.clientIdentifier || found.legistarClient
+                      );
+                    }
+                    e.target.value = '';
+                  }}
+                  className="bg-gray-800 text-gray-300 hover:bg-gray-700 text-[10px] px-2 py-0.5 rounded border border-gray-700 focus:outline-none cursor-pointer"
                 >
-                  + Dublin
-                </button>
-                <button
-                  onClick={() => handleTriggerPipelineRun('Cleveland')}
-                  className="px-2 py-0.5 rounded bg-gray-800 text-gray-300 hover:bg-gray-700 text-[10px]"
-                >
-                  + Cleveland
-                </button>
+                  <option value="">+ Run City...</option>
+                  {CANONICAL_JURISDICTIONS.map((j) => (
+                    <option key={j.id} value={j.id}>
+                      {j.name.replace(/^City of /, '')} ({j.state})
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 
