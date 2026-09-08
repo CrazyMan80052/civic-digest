@@ -37,6 +37,7 @@ import { PolicyIntelPlatform } from '@/components/PolicyIntelPlatform';
 import { UserProfileModal } from '@/components/UserProfileModal';
 import { PersonalizedRecommendationsBanner } from '@/components/PersonalizedRecommendationsBanner';
 import { LegalComplianceModal, ComplianceTab } from '@/components/LegalComplianceModal';
+import { BotModerationStudio } from '@/components/BotModerationStudio';
 
 import { JURISDICTIONS, BILLS as INITIAL_BILLS } from '@/data/mockData';
 import { 
@@ -76,6 +77,7 @@ export default function App() {
   const [isMicroSurveyOpen, setIsMicroSurveyOpen] = useState<boolean>(false);
   const [surveyTargetBill, setSurveyTargetBill] = useState<OCDBill | null>(null);
   const [socialModalBill, setSocialModalBill] = useState<OCDBill | null>(null);
+  const [isBotStudioOpen, setIsBotStudioOpen] = useState<boolean>(false);
   const [isComplianceModalOpen, setIsComplianceModalOpen] = useState<boolean>(false);
   const [complianceInitialTab, setComplianceInitialTab] = useState<ComplianceTab>('accessibility');
 
@@ -267,6 +269,7 @@ export default function App() {
         }}
         userProfile={userProfile}
         onOpenProfile={() => setIsProfileModalOpen(true)}
+        onOpenBotStudio={() => setIsBotStudioOpen(true)}
         onOpenCompliance={handleOpenCompliance}
       />
 
@@ -586,6 +589,12 @@ export default function App() {
         isOpen={isComplianceModalOpen}
         onClose={() => setIsComplianceModalOpen(false)}
         initialTab={complianceInitialTab}
+      />
+
+      {/* Civic Bot Human-In-The-Loop (HITL) Moderation Studio Modal */}
+      <BotModerationStudio
+        isOpen={isBotStudioOpen}
+        onClose={() => setIsBotStudioOpen(false)}
       />
 
       {/* Editorial Footer */}

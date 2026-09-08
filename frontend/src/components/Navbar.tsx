@@ -45,6 +45,7 @@ interface NavbarProps {
   onOpenMicroSurvey?: () => void;
   userProfile?: UserProfile | null;
   onOpenProfile?: () => void;
+  onOpenBotStudio?: () => void;
   onOpenCompliance?: (tab?: 'accessibility' | 'disclaimer' | 'ai_disclosure' | 'privacy' | 'terms') => void;
 }
 
@@ -67,6 +68,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenMicroSurvey,
   userProfile,
   onOpenProfile,
+  onOpenBotStudio,
   onOpenCompliance,
 }) => {
 
@@ -256,6 +258,21 @@ export const Navbar: React.FC<NavbarProps> = ({
               >
                 <Share2 className="w-3.5 h-3.5 text-[#E63946]" aria-hidden="true" />
                 <span className="hidden md:inline">Social Dispatch</span>
+              </button>
+            )}
+
+            {/* Bot Studio (HITL) Button */}
+            {onOpenBotStudio && (
+              <button
+                type="button"
+                onClick={onOpenBotStudio}
+                title="Open Civic Bot Moderation Studio (Human-In-The-Loop)"
+                aria-label="Open Civic Bot Moderation Studio"
+                className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider px-2 sm:px-2.5 py-1.5 border border-amber-600/40 bg-amber-500/10 hover:bg-amber-600 text-amber-900 hover:text-white transition-colors focus-visible:ring-2 focus-visible:ring-amber-600"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-amber-600" aria-hidden="true" />
+                <span className="hidden xl:inline">Bot Studio</span>
+                <span className="px-1 py-0.2 bg-amber-500/20 text-[10px] font-mono rounded">HITL</span>
               </button>
             )}
 
