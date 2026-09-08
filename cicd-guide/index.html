@@ -1,0 +1,920 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for CivicDigest - Municipal transparency service.">
+      
+      
+      
+      
+        <link rel="prev" href="../backend/">
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>CI/CD & AI Agents - CivicDigest</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#cicd-autonomous-ai-agent-pipeline-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="CivicDigest" class="md-header__button md-logo" aria-label="CivicDigest" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            CivicDigest
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              CI/CD & AI Agents
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="CivicDigest" class="md-nav__button md-logo" aria-label="CivicDigest" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    CivicDigest
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../frontend/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Frontend
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../backend/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Backend
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CI/CD & AI Agents
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CI/CD & AI Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-architecture-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Architecture Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-setting-up-google-jules-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Setting Up Google Jules Integration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Setting Up Google Jules Integration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-obtain-your-jules-api-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Obtain Your Jules API Key
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-store-in-github-repository-secrets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Store in GitHub Repository Secrets
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-how-to-trigger-jules-tasks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. How to Trigger Jules Tasks
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. How to Trigger Jules Tasks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-a-issue-driven-dispatch-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option A: Issue-Driven Dispatch (Recommended)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-b-slash-command-trigger-jules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option B: Slash Command Trigger (/jules)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-c-batch-execution-burning-100-tasksday" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option C: Batch Execution (Burning 100 Tasks/Day)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-d-automated-post-merge-documentation-sync" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option D: Automated Post-Merge Documentation Sync
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-pull-request-ci-gates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Pull Request CI Gates
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-deployment-pipelines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Deployment Pipelines
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Deployment Pipelines">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#frontend-vercel-preview-production" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frontend: Vercel Preview &amp; Production
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backend-containerization-cloud-run-paas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backend: Containerization &amp; Cloud Run / PaaS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentation-github-pages-jules-auto-sync" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Documentation: GitHub Pages &amp; Jules Auto-Sync
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-architecture-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Architecture Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-setting-up-google-jules-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Setting Up Google Jules Integration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Setting Up Google Jules Integration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-obtain-your-jules-api-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Obtain Your Jules API Key
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-store-in-github-repository-secrets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Store in GitHub Repository Secrets
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-how-to-trigger-jules-tasks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. How to Trigger Jules Tasks
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. How to Trigger Jules Tasks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-a-issue-driven-dispatch-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option A: Issue-Driven Dispatch (Recommended)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-b-slash-command-trigger-jules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option B: Slash Command Trigger (/jules)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-c-batch-execution-burning-100-tasksday" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option C: Batch Execution (Burning 100 Tasks/Day)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-d-automated-post-merge-documentation-sync" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option D: Automated Post-Merge Documentation Sync
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-pull-request-ci-gates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Pull Request CI Gates
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-deployment-pipelines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Deployment Pipelines
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Deployment Pipelines">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#frontend-vercel-preview-production" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frontend: Vercel Preview &amp; Production
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backend-containerization-cloud-run-paas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backend: Containerization &amp; Cloud Run / PaaS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentation-github-pages-jules-auto-sync" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Documentation: GitHub Pages &amp; Jules Auto-Sync
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="cicd-autonomous-ai-agent-pipeline-guide">CI/CD &amp; Autonomous AI Agent Pipeline Guide</h1>
+<p>CivicDigest features a modern CI/CD pipeline tailored specifically for <strong>rapid iteration with AI coding agents</strong> (such as Google Jules, Claude, and Gemini).</p>
+<hr />
+<h2 id="1-architecture-overview">1. Architecture Overview</h2>
+<pre><code>                                  GitHub Repository
+                       ┌─────────────────────────────────────┐
+                       │ Issues / PRs / Backlog Queue        │
+                       └──────────────────┬──────────────────┘
+                                          │
+                         [Trigger: 'jules' label or /jules]
+                                          ▼
+                       ┌─────────────────────────────────────┐
+                       │ Jules Dispatcher (GitHub Actions)   │
+                       │ - Authenticates via JULES_API_KEY   │
+                       │ - Enforces security allowlist       │
+                       │ - Injects AGENTS.md instructions    │
+                       └──────────────────┬──────────────────┘
+                                          ▼
+                       ┌─────────────────────────────────────┐
+                       │ Google Jules Agent (Cloud VM)       │
+                       │ - Reads monorepo architecture       │
+                       │ - Implements changes                │
+                       │ - Self-verifies build &amp; tests       │
+                       │ - Opens Pull Request                │
+                       └──────────────────┬──────────────────┘
+                                          ▼
+                       ┌─────────────────────────────────────┐
+                       │ Monorepo CI Pipeline (ci.yml)       │
+                       │ - Frontend: Bun, tsc, lint, build   │
+                       │ - Backend: Python 3.12, ruff, pytest│
+                       │ - Docs: MkDocs strict build         │
+                       └───────────┬─────────────────────────┘
+                                   │
+              Pass ┌───────────────┴───────────────┐ Fail
+                   ▼                               ▼
+       ┌───────────────────────┐       ┌───────────────────────┐
+       │ Vercel Preview Deploy │       │ CI Failure Reporter   │
+       │ (Instant live preview)│       │ (One-click auto-heal) │
+       └───────────────────────┘       └───────────────────────┘
+</code></pre>
+<hr />
+<h2 id="2-setting-up-google-jules-integration">2. Setting Up Google Jules Integration</h2>
+<h3 id="step-1-obtain-your-jules-api-key">Step 1: Obtain Your Jules API Key</h3>
+<ol>
+<li>Visit <a href="https://jules.google.com">jules.google.com</a> and log in with your Google Account.</li>
+<li>In your account settings, locate the <strong>API Keys</strong> section and generate a new key.</li>
+</ol>
+<h3 id="step-2-store-in-github-repository-secrets">Step 2: Store in GitHub Repository Secrets</h3>
+<ol>
+<li>In your GitHub repository, navigate to:
+   <strong>Settings</strong> → <strong>Secrets and variables</strong> → <strong>Actions</strong></li>
+<li>Click <strong>New repository secret</strong>.</li>
+<li>Name: <code>JULES_API_KEY</code></li>
+<li>Value: <em>paste your generated key</em></li>
+</ol>
+<hr />
+<h2 id="3-how-to-trigger-jules-tasks">3. How to Trigger Jules Tasks</h2>
+<h3 id="option-a-issue-driven-dispatch-recommended">Option A: Issue-Driven Dispatch (Recommended)</h3>
+<ol>
+<li>Open a new issue using the <strong>🤖 Jules AI Task</strong> issue template.</li>
+<li>Fill in the objective, target files, and acceptance criteria.</li>
+<li>The issue will automatically receive the <code>jules</code> label.</li>
+<li>GitHub Actions will trigger Jules, post an acknowledgment comment, and Jules will open a Pull Request once completed.</li>
+</ol>
+<h3 id="option-b-slash-command-trigger-jules">Option B: Slash Command Trigger (<code>/jules</code>)</h3>
+<p>Comment anywhere on an open Issue or Pull Request:</p>
+<pre><code class="language-text">/jules Add an integration test in backend/tests/test_api.py for the preview-odata endpoint.
+</code></pre>
+<p>Jules will immediately spin up a cloud VM, implement the request, and push commits to the PR branch or create a new branch.</p>
+<h3 id="option-c-batch-execution-burning-100-tasksday">Option C: Batch Execution (Burning 100 Tasks/Day)</h3>
+<p>Jules on Google AI Pro provides <strong>100 tasks/day</strong> and up to <strong>15 concurrent tasks</strong>.</p>
+<p>To execute multiple tasks simultaneously:
+1. Review <code>.github/jules-tasks.json</code> or add new items with <code>"status": "pending"</code>.
+2. In GitHub, go to <strong>Actions</strong> → <strong>Jules — Batch Task Runner</strong>.
+3. Click <strong>Run workflow</strong>, set <code>max_concurrent</code> (up to 15), and click <strong>Run</strong>.
+4. Up to 15 tasks will execute in parallel across independent Jules cloud VMs!</p>
+<h3 id="option-d-automated-post-merge-documentation-sync">Option D: Automated Post-Merge Documentation Sync</h3>
+<p>Whenever any Pull Request is merged into <code>main</code>, GitHub Actions automatically dispatches Jules via <code>.github/workflows/jules-docs-sync.yml</code>.
+- <strong>Scope Analysis:</strong> Jules examines the PR's code diff across <code>frontend/</code>, <code>backend/</code>, and configuration files.
+- <strong>Documentation Audit:</strong> Jules compares the merged changes against <code>docs/</code> and <code>mkdocs.yml</code> to identify new endpoints, updated schemas, new UI components, or modified workflows.
+- <strong>Self-Healing PR:</strong> If updates are warranted, Jules commits the updated markdown files, verifies <code>mkdocs build --strict</code>, and opens a targeted documentation PR.
+- <strong>Loop Prevention &amp; Guardrails:</strong> Automatically skips PRs authored by Jules (<code>google-labs-jules[bot]</code>), PRs that only touched <code>docs/</code>, or PRs tagged with the <code>skip-docs</code> label.</p>
+<hr />
+<h2 id="4-pull-request-ci-gates">4. Pull Request CI Gates</h2>
+<p>Every PR must pass the following verification checks in <code>.github/workflows/ci.yml</code>:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Subsystem</th>
+<th style="text-align: left;">Tools &amp; Commands</th>
+<th style="text-align: left;">Expected Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Frontend</strong></td>
+<td style="text-align: left;"><code>bun x tsc --noEmit</code><br><code>bun run lint</code><br><code>bun run build</code><br><code>bun test</code></td>
+<td style="text-align: left;">0 type errors, 0 lint errors, build succeeds, all Bun tests pass.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Backend</strong></td>
+<td style="text-align: left;"><code>ruff check .</code><br><code>pytest tests/ -v</code></td>
+<td style="text-align: left;">0 ruff errors/warnings, all Pytest test cases pass.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Docs</strong></td>
+<td style="text-align: left;"><code>mkdocs build --strict</code></td>
+<td style="text-align: left;">Clean documentation build with no broken links.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="5-deployment-pipelines">5. Deployment Pipelines</h2>
+<h3 id="frontend-vercel-preview-production">Frontend: Vercel Preview &amp; Production</h3>
+<ul>
+<li><strong>Preview Deployments:</strong> Every PR opened by Jules or team members automatically triggers a Vercel preview deployment with an isolated URL.</li>
+<li><strong>Production Deployment:</strong> Merging into <code>main</code> deploys directly to production.</li>
+<li><strong>Settings:</strong> Configured via <code>vercel.json</code> in repository root.</li>
+</ul>
+<h3 id="backend-containerization-cloud-run-paas">Backend: Containerization &amp; Cloud Run / PaaS</h3>
+<ul>
+<li><strong>Dockerfile:</strong> A production-ready multi-stage container is available at <code>backend/Dockerfile</code>.</li>
+<li><strong>Health Check:</strong> <code>/api/health</code> validates API responsiveness and standards compliance.</li>
+<li><strong>Deploy:</strong> Can be deployed to Google Cloud Run, Render, Fly.io, or Railway with a single command or GitHub Actions hook.</li>
+</ul>
+<h3 id="documentation-github-pages-jules-auto-sync">Documentation: GitHub Pages &amp; Jules Auto-Sync</h3>
+<ul>
+<li><strong>Automatic Deployment:</strong> <code>deploy-docs.yml</code> automatically builds and deploys documentation to GitHub Pages whenever changes land in <code>docs/**</code> or <code>mkdocs.yml</code> on <code>main</code>.</li>
+<li><strong>Autonomous Synchronization:</strong> <code>jules-docs-sync.yml</code> dispatches Jules to review merged code changes and keep documentation continuously up-to-date.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
