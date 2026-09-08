@@ -109,7 +109,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onChange={(e) => onSearchChange(e.target.value)}
                 placeholder="Search dockets, votes..."
                 aria-label="Search"
-                className="w-full bg-[#F2F0EA] text-xs text-[#1A1A1A] pl-8 pr-6 py-1.5 border border-[#1A1A1A]/20 focus:outline-none focus:border-[#1A1A1A] placeholder-[#777] font-medium"
+                className="w-full bg-[#F2F0EA] text-xs text-[#1A1A1A] pl-8 pr-6 py-1.5 border border-[#1A1A1A]/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A] focus:border-[#1A1A1A] placeholder-[#777] font-medium"
               />
               {searchQuery && (
                 <button
@@ -134,7 +134,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     onSelectWardId('all');
                   }
                 }}
-                className="appearance-none bg-[#FDFDFC] border border-[#1A1A1A] text-xs text-[#1A1A1A] font-bold py-1.5 pl-2.5 pr-7 focus:outline-none cursor-pointer tracking-tight"
+                className="appearance-none bg-[#FDFDFC] border border-[#1A1A1A] text-xs text-[#1A1A1A] font-bold py-1.5 pl-2.5 pr-7 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A] cursor-pointer tracking-tight"
               >
                 {jurisdictions.map((j) => (
                   <option key={j.id} value={j.id}>
@@ -151,7 +151,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 value={selectedWardId}
                 aria-label="Select ward or district"
                 onChange={(e) => onSelectWardId(e.target.value)}
-                className="appearance-none bg-[#F2F0EA] border border-[#1A1A1A]/30 text-xs text-[#1A1A1A] font-medium py-1.5 pl-2.5 pr-7 focus:outline-none cursor-pointer"
+                className="appearance-none bg-[#F2F0EA] border border-[#1A1A1A]/30 text-xs text-[#1A1A1A] font-medium py-1.5 pl-2.5 pr-7 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A] cursor-pointer"
               >
                 <option value="all">Citywide / All Wards</option>
                 {selectedJurisdiction.divisions.map((d) => (
