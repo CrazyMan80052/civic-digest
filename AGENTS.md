@@ -19,6 +19,7 @@ civic-digest/
 │   │   ├── ci.yml             # Fast PR verification (Frontend, Backend, Docs)
 │   │   ├── jules-dispatch.yml # Autonomous issue & comment task dispatcher
 │   │   ├── jules-batch.yml    # Batch task queue runner (up to 15 concurrent)
+│   │   ├── jules-docs-sync.yml# Automated post-merge documentation sync
 │   │   └── deploy-docs.yml    # Documentation deployer
 │   └── ISSUE_TEMPLATE/        # Structured AI task templates
 ├── frontend/                  # Next.js 16 App Router web application

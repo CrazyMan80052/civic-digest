@@ -1,0 +1,208 @@
+name: Jules — Automated Documentation Sync
+
+on:
+  # Trigger when a Pull Request is merged into main
+  pull_request:
+    branches:
+      - main
+    types: [closed]
+
+  # Manual dispatch for ad-hoc doc audits or syncing specific PRs
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to sync docs for (optional)'
+        required: false
+        default: ''
+        type: string
+      custom_instruction:
+        description: 'Custom instructions for documentation sync'
+        required: false
+        default: ''
+        type: string
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  sync-docs:
+    name: Sync Documentation via Jules
+    runs-on: ubuntu-latest
+    # Only run on merged PRs or manual dispatch
+    if: >-
+      (github.event_name == 'workflow_dispatch') ||
+      (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Prepare Context & Filter
+        id: prepare-prompt
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const eventName = context.eventName;
+            let prNumber = '';
+            let prTitle = '';
+            let prBody = '';
+            let prAuthor = '';
+            let changedFilesSummary = '';
+            let shouldRun = true;
+            let skipReason = '';
+
+            if (eventName === 'pull_request') {
+              const pr = context.payload.pull_request;
+              prNumber = pr.number;
+              prTitle = pr.title || '';
+              prBody = pr.body || '';
+              prAuthor = pr.user ? pr.user.login : '';
+              const headRef = pr.head ? pr.head.ref : '';
+
+              // 1. Loop Prevention: Skip if PR was opened by Jules or a jules branch
+              if (prAuthor.toLowerCase().includes('jules') || headRef.toLowerCase().startsWith('jules')) {
+                shouldRun = false;
+                skipReason = `PR #${prNumber} was authored by Jules (${prAuthor} on ${headRef}). Skipping to prevent recursion.`;
+              }
+
+              // 2. Skip if PR is explicitly tagged to skip docs
+              const labels = (pr.labels || []).map(l => l.name.toLowerCase());
+              if (labels.includes('skip-docs') || labels.includes('no-docs')) {
+                shouldRun = false;
+                skipReason = `PR #${prNumber} has skip-docs label. Skipping documentation sync.`;
+              }
+
+              // 3. Skip if PR only modified documentation or deployment configs
+              if (shouldRun) {
+                try {
+                  const files = await github.paginate(github.rest.pulls.listFiles, {
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    pull_number: prNumber,
+                    per_page: 100,
+                  });
+
+                  const filenames = files.map(f => f.filename);
+                  const nonDocFiles = filenames.filter(f => 
+                    !f.startsWith('docs/') && 
+                    f !== 'mkdocs.yml' && 
+                    f !== '.github/workflows/deploy-docs.yml' &&
+                    f !== '.github/workflows/jules-docs-sync.yml'
+                  );
+
+                  if (nonDocFiles.length === 0) {
+                    shouldRun = false;
+                    skipReason = `PR #${prNumber} only touched documentation files (${filenames.join(', ')}). No code changes to document.`;
+                  } else {
+                    changedFilesSummary = filenames.slice(0, 50).map(f => `- ${f}`).join('\n');
+                    if (filenames.length > 50) {
+                      changedFilesSummary += `\n- ...and ${filenames.length - 50} more files`;
+                    }
+                  }
+                } catch (err) {
+                  console.warn('Could not list PR files:', err.message);
+                }
+              }
+            } else if (eventName === 'workflow_dispatch') {
+              const inputPr = context.payload.inputs ? context.payload.inputs.pr_number : '';
+              if (inputPr) {
+                prNumber = inputPr;
+                try {
+                  const { data: pr } = await github.rest.pulls.get({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    pull_number: parseInt(inputPr, 10),
+                  });
+                  prTitle = pr.title || '';
+                  prBody = pr.body || '';
+                  prAuthor = pr.user ? pr.user.login : '';
+                } catch (err) {
+                  console.warn(`Could not fetch details for PR #${inputPr}:`, err.message);
+                }
+              }
+            }
+
+            if (!shouldRun) {
+              console.log(`[SKIP] ${skipReason}`);
+              core.setOutput('should_run', 'false');
+              core.setOutput('pr_number', '');
+              return;
+            }
+
+            let rawPrompt = '';
+            if (prNumber) {
+              rawPrompt = `Task: Update CivicDigest Documentation for Merged PR #${prNumber} ("${prTitle}")
+
+A pull request has just been merged into main:
+- PR Number: #${prNumber}
+- PR Title: ${prTitle}
+- PR Author: @${prAuthor}
+
+### Description of Changes from PR:
+${prBody || 'No PR description provided.'}
+
+### Files Modified in this PR:
+${changedFilesSummary || 'See git commit history on main.'}
+
+### Objective:
+1. Review the codebase changes introduced by PR #${prNumber} against existing documentation in docs/ (e.g. docs/backend.md, docs/frontend.md, docs/cicd-guide.md, docs/index.md) and mkdocs.yml.
+2. Identify any new endpoints, data models, components, CLI tools, scrapers, data schemas, or configuration options that need to be documented.
+3. Update or add documentation pages to keep docs accurate and complete.
+4. Run 'mkdocs build --strict' in docs/ to ensure no broken links or syntax errors.
+5. If no documentation changes are warranted (e.g. purely internal test refactoring), exit cleanly without opening unnecessary PRs.`;
+            } else {
+              const customInstruction = context.payload.inputs && context.payload.inputs.custom_instruction;
+              rawPrompt = `Task: Comprehensive CivicDigest Documentation Audit and Synchronization
+
+Instructions:
+${customInstruction || 'Audit all documentation in docs/ against current frontend (Next.js/React 19) and backend (FastAPI/Python 3.12/scrapers) implementations. Ensure all endpoints, models, scrapers, bot pipelines, and CI/CD workflows are accurately documented.'}
+
+### Objective:
+1. Compare docs/ against current code in frontend/ and backend/.
+2. Update existing documentation or add missing guides in docs/.
+3. Verify mkdocs.yml navigation links.
+4. Run 'mkdocs build --strict' to ensure 100% clean documentation build.`;
+            }
+
+            const fullPrompt = `${rawPrompt}
+
+---
+### MANDATORY EXECUTION RULES (from AGENTS.md):
+1. Review AGENTS.md before modifying code.
+2. Documentation must pass 'mkdocs build --strict'.
+3. Follow Material for MkDocs syntax and keep documentation concise, clear, and well-formatted.
+4. Keep commit messages conventional (e.g. 'docs: update documentation for PR #${prNumber || 'sync'}').
+5. Diff size ceiling: keep commits under 600 lines.`;
+
+            core.setOutput('should_run', 'true');
+            core.setOutput('pr_number', prNumber.toString());
+            core.exportVariable('AGENT_PROMPT', fullPrompt);
+
+      - name: Post Dispatch Confirmation Comment
+        if: steps.prepare-prompt.outputs.should_run == 'true' && steps.prepare-prompt.outputs.pr_number != ''
+        uses: actions/github-script@v7
+        env:
+          PR_NUMBER: ${{ steps.prepare-prompt.outputs.pr_number }}
+        with:
+          script: |
+            const prNumber = parseInt(process.env.PR_NUMBER, 10);
+            if (!prNumber) return;
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body: `📚 **Jules Auto-Doc Sync Dispatched!**\n\nGoogle Jules has been triggered to review the changes merged in this PR (#${prNumber}) and update the project documentation in \`docs/\`.\n- **Target:** Verify and sync \`docs/\` and \`mkdocs.yml\`\n- **Verification:** \`mkdocs build --strict\`\n- Once completed, Jules will open a documentation PR with the updates.`
+            });
+
+      - name: Invoke Jules Agent
+        if: steps.prepare-prompt.outputs.should_run == 'true'
+        uses: google-labs-code/jules-invoke@v1
+        with:
+          prompt: ${{ env.AGENT_PROMPT }}
+          jules_api_key: ${{ secrets.JULES_API_KEY }}
+          starting_branch: 'main'
+          include_last_commit: true
