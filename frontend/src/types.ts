@@ -3,13 +3,21 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+export type MunicipalDataProvider = 'legistar' | 'custom_portal' | 'civicplus' | 'municode';
+
 // Open Civic Data (OCD-ID) Standardized Entities
 export interface OCDJurisdiction {
   id: string; // e.g. "ocd-jurisdiction/country:us/state:oh/place:cleveland/government"
   name: string;
   state: string;
   level: 'city' | 'county' | 'state';
-  legistarClient: string;
+  legistarClient: string; // Kept for backward compatibility
+  provider?: MunicipalDataProvider;
+  clientIdentifier?: string;
+  officialUrl?: string;
+  endpoint?: string;
+  zipCodes?: string[];
+  councilSize?: number;
   divisions: OCDDivision[];
 }
 

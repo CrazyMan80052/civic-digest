@@ -9,6 +9,11 @@ import logging
 from datetime import UTC, datetime
 from typing import Any
 
+try:
+    from .base import BaseMunicipalClient
+except (ImportError, ValueError):
+    from scrapers.base import BaseMunicipalClient
+
 logger = logging.getLogger("civicdigest.scrapers.dublin")
 
 DUBLIN_OFFICIAL_MATTERS: list[dict[str, Any]] = [
@@ -130,16 +135,16 @@ DUBLIN_OFFICIAL_MATTERS: list[dict[str, Any]] = [
 ]
 
 
-class DublinMunicipalClient:
+class DublinMunicipalClient(BaseMunicipalClient):
     """
     Municipal scraper client for Dublin, Ohio (ZIP 43016).
     Normalizes official Dublin City Council ordinances and resolutions into OCD schema.
     """
 
-    def __init__(self, timeout: float = 15.0):
+    def __init__(self, timeout: float = 15.0, *args: Any, **kwargs: Any):
         self.client_name = "dublin"
-        self.state_code = "OH"
-        self.place_name = "Dublin"
+        self.state_code = kwargs.get("state_code", "OH")
+        self.place_name = kwargs.get("place_name", "Dublin")
         self.timeout = timeout
         self.base_url = "https://dublinohiousa.gov"
 

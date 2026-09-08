@@ -44,9 +44,10 @@ app.add_middleware(
 app.include_router(bot_router)
 
 class ScrapeTriggerRequest(BaseModel):
-    client_name: str = Field(..., example="cleveland", description="Municipal Legistar identifier")
+    client_name: str = Field(..., example="cleveland", description="Municipal Legistar or client identifier")
     state_code: str = Field(default="OH", example="OH")
     place_name: str = Field(default="Cleveland", example="Cleveland")
+    provider: str | None = Field(default=None, example="legistar", description="Scraper provider: legistar, custom_portal, etc.")
     top: int = Field(default=15, ge=1, le=100)
     days_back: int = Field(default=30, ge=1, le=180)
 
@@ -72,6 +73,7 @@ async def trigger_scraper(request: ScrapeTriggerRequest):
         client_name=request.client_name,
         state_code=request.state_code,
         place_name=request.place_name,
+        provider=request.provider,
     )
 
     results = await pipeline.run(top=request.top, days_back=request.days_back)

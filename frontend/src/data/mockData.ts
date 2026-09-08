@@ -13,60 +13,9 @@ import {
   PolicyOutcomeCorrelation,
   DifferentialPrivacyConfig,
 } from '../types';
+import { CANONICAL_JURISDICTIONS } from './jurisdictions';
 
-export const JURISDICTIONS: OCDJurisdiction[] = [
-  {
-    id: 'ocd-jurisdiction/country:us/state:oh/place:dublin/government',
-    name: 'City of Dublin',
-    state: 'OH',
-    level: 'city',
-    legistarClient: 'dublin',
-    divisions: [
-      { id: 'ocd-division/country:us/state:oh/place:dublin/ward:1', name: 'Ward 1 (Northwest / 43016)', type: 'ward', representativeId: 'ocd-person/dub-1', population: 12400 },
-      { id: 'ocd-division/country:us/state:oh/place:dublin/ward:2', name: 'Ward 2 (Southwest / Shier Rings)', type: 'ward', representativeId: 'ocd-person/dub-2', population: 11800 },
-      { id: 'ocd-division/country:us/state:oh/place:dublin/ward:3', name: 'Ward 3 (Historic District / Central)', type: 'ward', representativeId: 'ocd-person/dub-3', population: 12100 },
-      { id: 'ocd-division/country:us/state:oh/place:dublin/ward:4', name: 'Ward 4 (Southeast / Riverside)', type: 'ward', representativeId: 'ocd-person/dub-4', population: 13200 },
-    ],
-  },
-  {
-    id: 'ocd-jurisdiction/country:us/state:oh/place:cleveland/government',
-    name: 'City of Cleveland',
-    state: 'OH',
-    level: 'city',
-    legistarClient: 'cleveland',
-    divisions: [
-      { id: 'ocd-division/country:us/state:oh/place:cleveland/ward:1', name: 'Ward 1 (Lee-Harvard)', type: 'ward', representativeId: 'ocd-person/cle-1', population: 20400 },
-      { id: 'ocd-division/country:us/state:oh/place:cleveland/ward:3', name: 'Ward 3 (Downtown / Ohio City)', type: 'ward', representativeId: 'ocd-person/cle-3', population: 24800 },
-      { id: 'ocd-division/country:us/state:oh/place:cleveland/ward:12', name: 'Ward 12 (Slavic Village / Tremont South)', type: 'ward', representativeId: 'ocd-person/cle-12', population: 21100 },
-      { id: 'ocd-division/country:us/state:oh/place:cleveland/ward:15', name: 'Ward 15 (Detroit Shoreway / Cudell)', type: 'ward', representativeId: 'ocd-person/cle-15', population: 22600 },
-      { id: 'ocd-division/country:us/state:oh/place:cleveland/ward:17', name: 'Ward 17 (West Park / Kamm\'s Corners)', type: 'ward', representativeId: 'ocd-person/cle-17', population: 23900 },
-    ],
-  },
-  {
-    id: 'ocd-jurisdiction/country:us/state:ca/place:sacramento/government',
-    name: 'City of Sacramento',
-    state: 'CA',
-    level: 'city',
-    legistarClient: 'sacramento',
-    divisions: [
-      { id: 'ocd-division/country:us/state:ca/place:sacramento/district:1', name: 'District 1 (North Natomas)', type: 'district', representativeId: 'ocd-person/sac-1', population: 64000 },
-      { id: 'ocd-division/country:us/state:ca/place:sacramento/district:4', name: 'District 4 (Central City / Land Park)', type: 'district', representativeId: 'ocd-person/sac-4', population: 68500 },
-      { id: 'ocd-division/country:us/state:ca/place:sacramento/district:6', name: 'District 6 (Tahoe Park / Elmhurst)', type: 'district', representativeId: 'ocd-person/sac-6', population: 62100 },
-      { id: 'ocd-division/country:us/state:ca/place:sacramento/district:8', name: 'District 8 (Meadowview / South Sac)', type: 'district', representativeId: 'ocd-person/sac-8', population: 66000 },
-    ],
-  },
-  {
-    id: 'ocd-jurisdiction/country:us/state:tx/place:austin/government',
-    name: 'City of Austin',
-    state: 'TX',
-    level: 'city',
-    legistarClient: 'austin',
-    divisions: [
-      { id: 'ocd-division/country:us/state:tx/place:austin/district:3', name: 'District 3 (East Austin / Montopolis)', type: 'district', representativeId: 'ocd-person/atx-3', population: 98000 },
-      { id: 'ocd-division/country:us/state:tx/place:austin/district:9', name: 'District 9 (Downtown / Central)', type: 'district', representativeId: 'ocd-person/atx-9', population: 104000 },
-    ],
-  },
-];
+export const JURISDICTIONS: OCDJurisdiction[] = CANONICAL_JURISDICTIONS;
 
 export const OFFICIALS: OCDPerson[] = [
   {

@@ -11,16 +11,23 @@ from typing import Any
 
 import httpx
 
+try:
+    from .base import BaseMunicipalClient
+except (ImportError, ValueError):
+    from scrapers.base import BaseMunicipalClient
+
 logger = logging.getLogger("civicdigest.legistar")
 
-class LegistarClient:
+class LegistarClient(BaseMunicipalClient):
     BASE_URL = "https://webapi.legistar.com/v1"
 
-    def __init__(self, client_name: str, timeout: float = 15.0):
+    def __init__(self, client_name: str, timeout: float = 15.0, *args: Any, **kwargs: Any):
         """
         :param client_name: Municipal identifier (e.g., 'cleveland', 'austin', 'chicago', 'seattle')
         """
         self.client_name = client_name.lower().strip()
+        self.place_name = kwargs.get("place_name", client_name.title())
+        self.state_code = kwargs.get("state_code", "")
         self.timeout = timeout
         self.headers = {
             "Accept": "application/json",

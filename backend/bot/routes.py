@@ -90,17 +90,17 @@ class RollCallOverrideRequest(BaseModel):
 
 
 # Routes
-@router.post("/pipeline/run")
-async def trigger_bot_pipeline(
-    req: PipelineRunRequest,
-    db: Session = Depends(get_db_optional),
-) -> dict[str, Any]:
-    """
-    Executes an on-demand docket enrichment and broadcast queueing pipeline.
-    Synthesizes enriched civic matters and enqueues formatted threads.
-    """
-    if req.client_name.lower() == "dublin" or req.place_name.lower() == "dublin":
-        sample_matter = EnrichedCivicMatter(
+def synthesize_matter_for_municipality(
+    client_name: str,
+    place_name: str,
+    state_code: str,
+) -> EnrichedCivicMatter:
+    client = client_name.lower().strip()
+    place = place_name.strip() or client.title()
+    state = state_code.strip().upper() or "US"
+
+    if client == "dublin" or place.lower() == "dublin":
+        return EnrichedCivicMatter(
             ocd_bill_id="ocd-bill/2026-oh-dublin-ord-01-26",
             file_number="Ord. 01-26",
             plain_title="Dublin Noise Control & Engine Braking Prohibition",
@@ -115,22 +115,72 @@ async def trigger_bot_pipeline(
             receipt_snippet="An Ordinance amending Chapter 132 (Offenses Against Public Peace) of the Dublin Codified Ordinances to modernize vehicle decibel standards and prohibit compression engine braking",
             receipt_page_number=1,
         )
-    else:
-        sample_matter = EnrichedCivicMatter(
-            ocd_bill_id=f"ocd-bill/2026-{req.state_code.lower()}-{req.place_name.lower()}-ord-101",
-            file_number="Ord-101-2026",
-            plain_title=f"{req.place_name} Infrastructure Improvement Authorization",
-            the_what="Authorizes streetscape and utility repairs.",
-            the_who=f"Residents and commercial corridors in {req.place_name}.",
+
+    if client == "cleveland" or place.lower() == "cleveland":
+        return EnrichedCivicMatter(
+            ocd_bill_id="ocd-bill/2026-oh-cleveland-ord-101-2026",
+            file_number="Ord. 101-2026",
+            plain_title="Cleveland Slavic Village Fleet Ave Revitalization",
+            the_what="Authorizes $350,000 in matching capital grants for small business facade improvements and pedestrian safety bollards along Fleet Avenue.",
+            the_who="Ward 12 residents, merchants, and neighborhood storefront owners.",
             fiscal_impact_amount=350000.0,
             fiscal_impact_type="Capital Infrastructure Fund",
-            impact_priority=ImpactPriority.MODERATE,
-            affected_wards=["Ward 3", "Ward 9"],
-            official_source_url=f"https://{req.client_name}.legistar.com/LegislationDetail.aspx?ID=101",
+            impact_priority=ImpactPriority.HIGH,
+            affected_wards=["Ward 12", "Ward 3"],
+            official_source_url="https://cleveland.legistar.com/LegislationDetail.aspx?ID=101",
             clerk_matter_id="101",
-            receipt_snippet=f"Council of the City of {req.place_name} hereby authorizes $350,000 for infrastructure improvements",
+            receipt_snippet="Council of the City of Cleveland hereby authorizes $350,000 for Slavic Village Fleet Ave corridor facade modernization and pedestrian improvements",
+            receipt_page_number=2,
+        )
+
+    if client == "austin" or place.lower() == "austin":
+        return EnrichedCivicMatter(
+            ocd_bill_id="ocd-bill/2026-tx-austin-res-55",
+            file_number="Res. 2026-55",
+            plain_title="Austin Urban Heat Island Canopy Protection Standard",
+            the_what="Requires 30% minimum preserved canopy coverage on commercial developments exceeding 2 acres.",
+            the_who="Austin commercial developers, environmental commissions, and urban transit corridors.",
+            fiscal_impact_amount=85000.0,
+            fiscal_impact_type="Environmental Protection Fund",
+            impact_priority=ImpactPriority.MODERATE,
+            affected_wards=["District 3", "District 9"],
+            official_source_url="https://austintexas.gov/council",
+            clerk_matter_id="55",
+            receipt_snippet="Directing the City Manager to adopt standard tree protection requirements of no less than 30% canopy retention for commercial tracts exceeding two acres",
             receipt_page_number=1,
         )
+
+    return EnrichedCivicMatter(
+        ocd_bill_id=f"ocd-bill/2026-{state.lower()}-{client}-ord-101",
+        file_number="Ord-101-2026",
+        plain_title=f"{place} Municipal Infrastructure & Safety Authorization",
+        the_what=f"Authorizes streetscape, utility repairs, and pedestrian safety improvements in {place}.",
+        the_who=f"Residents, commuters, and commercial corridors in {place}.",
+        fiscal_impact_amount=250000.0,
+        fiscal_impact_type="Capital Infrastructure Fund",
+        impact_priority=ImpactPriority.MODERATE,
+        affected_wards=["Ward 1", "Ward 2"],
+        official_source_url=f"https://{client}.legistar.com/LegislationDetail.aspx?ID=101",
+        clerk_matter_id="101",
+        receipt_snippet=f"Council of the City of {place} hereby authorizes capital appropriations for municipal infrastructure and safety improvements",
+        receipt_page_number=1,
+    )
+
+
+@router.post("/pipeline/run")
+async def trigger_bot_pipeline(
+    req: PipelineRunRequest,
+    db: Session = Depends(get_db_optional),
+) -> dict[str, Any]:
+    """
+    Executes an on-demand docket enrichment and broadcast queueing pipeline.
+    Synthesizes enriched civic matters and enqueues formatted threads.
+    """
+    sample_matter = synthesize_matter_for_municipality(
+        client_name=req.client_name,
+        place_name=req.place_name,
+        state_code=req.state_code,
+    )
 
     context_thread = DocketContextThread(
         enriched_matter=sample_matter,

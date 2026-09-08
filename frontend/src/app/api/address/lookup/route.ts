@@ -1,5 +1,46 @@
 import { NextResponse, NextRequest } from 'next/server';
 import { getGeminiClient } from '@/lib/gemini';
+import { CANONICAL_JURISDICTIONS, findJurisdictionByLocation } from '@/data/jurisdictions';
+
+interface CensusAddressComponent {
+  city?: string;
+  state?: string;
+  zip?: string;
+}
+
+interface CensusAddressMatch {
+  matchedAddress: string;
+  coordinates: { x: number; y: number };
+  addressComponents: CensusAddressComponent;
+}
+
+/**
+ * Attempts resolution using the free public US Census Bureau Geocoding API.
+ * Returns null if network fails, times out, or no match is found.
+ */
+async function queryCensusGeocoder(rawAddress: string): Promise<CensusAddressMatch | null> {
+  try {
+    const url = `https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?address=${encodeURIComponent(
+      rawAddress
+    )}&benchmark=Public_AR_Current&format=json`;
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2000);
+
+    const res = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeoutId);
+
+    if (!res.ok) return null;
+    const data = await res.json();
+    const matches = data?.result?.addressMatches;
+    if (matches && matches.length > 0) {
+      return matches[0] as CensusAddressMatch;
+    }
+  } catch {
+    // Gracefully ignore network / timeout errors in offline/test environments
+  }
+  return null;
+}
 
 export async function POST(req: NextRequest) {
   const { address } = await req.json();
@@ -7,138 +48,124 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Address query is required' }, { status: 400 });
   }
 
-  const raw = address.trim().toLowerCase();
-  const ai = getGeminiClient();
+  const raw = address.trim();
+  const rawLower = raw.toLowerCase();
 
-  let matchedJurisdictionId = 'ocd-jurisdiction/country:us/state:oh/place:cleveland/government';
-  let matchedDivisionId = 'ocd-division/country:us/state:oh/place:cleveland/ward:12';
-  let neighborhood = 'Slavic Village';
-  let city = 'Cleveland';
-  let state = 'OH';
-  let zipCode = '44105';
-  let councilMemberName = 'Rebecca Maurer';
-  let councilMemberEmail = 'rmaurer@clevelandcitycouncil.org';
-  let councilMemberPhone = '(216) 664-4235';
-  const formattedAddress = address.trim();
-  let explanation = 'Matched to City of Cleveland Ward 12 based on Slavic Village/Fleet corridor geographic boundaries.';
+  // Tier 1: Query US Census Bureau Geocoder API
+  const censusResult = await queryCensusGeocoder(raw);
+  let resolvedCity = censusResult?.addressComponents?.city || '';
+  let resolvedState = censusResult?.addressComponents?.state || '';
+  let resolvedZip = censusResult?.addressComponents?.zip || '';
+  const formattedAddress = censusResult?.matchedAddress || raw;
 
-  if (raw.includes('43016') || raw.includes('dublin') || raw.includes('perimeter') || raw.includes('shier rings')) {
-    matchedJurisdictionId = 'ocd-jurisdiction/country:us/state:oh/place:dublin/government';
-    city = 'Dublin';
-    state = 'OH';
-    zipCode = '43016';
-    matchedDivisionId = 'ocd-division/country:us/state:oh/place:dublin/ward:1';
-    neighborhood = 'Northwest Dublin / Perimeter Corridor';
-    councilMemberName = 'Cathy De Rosa';
-    councilMemberEmail = 'cderosa@dublin.oh.us';
-    councilMemberPhone = '(614) 410-4400';
-    explanation = 'Matched to City of Dublin Ward 1 based on 43016 postal code & Perimeter Drive municipal center.';
-  } else if (raw.includes('sacramento') || raw.includes(', ca') || raw.includes('california') || raw.includes('95814') || raw.includes('natomas') || raw.includes('land park')) {
-    matchedJurisdictionId = 'ocd-jurisdiction/country:us/state:ca/place:sacramento/government';
-    city = 'Sacramento';
-    state = 'CA';
-    if (raw.includes('natomas') || raw.includes('95834') || raw.includes('95835')) {
-      matchedDivisionId = 'ocd-division/country:us/state:ca/place:sacramento/district:1';
-      neighborhood = 'North Natomas';
-      councilMemberName = 'Lisa Kaplan';
-      councilMemberEmail = 'district1@cityofsacramento.org';
-    } else {
-      matchedDivisionId = 'ocd-division/country:us/state:ca/place:sacramento/district:4';
-      neighborhood = 'Central City / Land Park';
-      councilMemberName = 'Katie Valenzuela';
-      councilMemberEmail = 'kvalenzuela@cityofsacramento.org';
-    }
-    explanation = `Geocoded to City of Sacramento (${neighborhood}).`;
-  } else if (raw.includes('austin') || raw.includes(', tx') || raw.includes('texas') || raw.includes('78701') || raw.includes('78702') || raw.includes('montopolis') || raw.includes('east austin')) {
-    matchedJurisdictionId = 'ocd-jurisdiction/country:us/state:tx/place:austin/government';
-    city = 'Austin';
-    state = 'TX';
-    if (raw.includes('east') || raw.includes('montopolis') || raw.includes('78702') || raw.includes('78741')) {
-      matchedDivisionId = 'ocd-division/country:us/state:tx/place:austin/district:3';
-      neighborhood = 'East Austin / Montopolis';
-      councilMemberName = 'José Velásquez';
-      councilMemberEmail = 'district3@austintexas.gov';
-    } else {
-      matchedDivisionId = 'ocd-division/country:us/state:tx/place:austin/district:9';
-      neighborhood = 'Downtown / Central Austin';
-      councilMemberName = 'Zohaib "Zo" Qadri';
-      councilMemberEmail = 'district9@austintexas.gov';
-    }
-    explanation = `Geocoded to City of Austin (${neighborhood}).`;
-  } else if (raw.includes('ohio city') || raw.includes('downtown') || raw.includes('tremont') || raw.includes('w 25') || raw.includes('44113') || raw.includes('44114')) {
-    matchedJurisdictionId = 'ocd-jurisdiction/country:us/state:oh/place:cleveland/government';
-    matchedDivisionId = 'ocd-division/country:us/state:oh/place:cleveland/ward:3';
-    neighborhood = 'Downtown / Ohio City';
-    city = 'Cleveland';
-    state = 'OH';
-    zipCode = '44113';
-    councilMemberName = 'Kerry McCormack';
-    councilMemberEmail = 'kmccormack@clevelandcitycouncil.org';
-    councilMemberPhone = '(216) 664-2691';
-    explanation = 'Geocoded to Cleveland Ward 3 (Downtown / Ohio City / Near West Side).';
-  } else if (raw.includes('detroit shoreway') || raw.includes('cudell') || raw.includes('w 65') || raw.includes('44102')) {
-    matchedJurisdictionId = 'ocd-jurisdiction/country:us/state:oh/place:cleveland/government';
-    matchedDivisionId = 'ocd-division/country:us/state:oh/place:cleveland/ward:15';
-    neighborhood = 'Detroit Shoreway / Cudell';
-    city = 'Cleveland';
-    state = 'OH';
-    zipCode = '44102';
-    councilMemberName = 'Jenny Spencer';
-    councilMemberEmail = 'jspencer@clevelandcitycouncil.org';
-    councilMemberPhone = '(216) 664-4231';
-    explanation = 'Geocoded to Cleveland Ward 15 (Detroit Shoreway / Cudell).';
-  } else if (raw.includes('west park') || raw.includes('kamm') || raw.includes('lorain') || raw.includes('44111')) {
-    matchedJurisdictionId = 'ocd-jurisdiction/country:us/state:oh/place:cleveland/government';
-    matchedDivisionId = 'ocd-division/country:us/state:oh/place:cleveland/ward:17';
-    neighborhood = "West Park / Kamm's Corners";
-    city = 'Cleveland';
-    state = 'OH';
-    zipCode = '44111';
-    councilMemberName = 'Charles Slife';
-    councilMemberEmail = 'cslife@clevelandcitycouncil.org';
-    councilMemberPhone = '(216) 664-4239';
-    explanation = "Geocoded to Cleveland Ward 17 (West Park / Kamm's Corners).";
+  // Extract 5-digit zip code from raw input if geocoder didn't return one
+  if (!resolvedZip) {
+    const zipMatch = raw.match(/\b\d{5}\b/);
+    if (zipMatch) resolvedZip = zipMatch[0];
   }
 
+  // Tier 2: Match against Canonical Jurisdiction Registry
+  let matchedJurisdiction = findJurisdictionByLocation(resolvedCity, resolvedState, resolvedZip);
+
+  // If not matched by parsed city/zip, scan raw text against registered city names and zip codes
+  if (!matchedJurisdiction) {
+    for (const j of CANONICAL_JURISDICTIONS) {
+      const cityName = j.name.replace(/^City of /, '').toLowerCase();
+      const clientSlug = (j.clientIdentifier || '').toLowerCase();
+
+      const cityMentioned = rawLower.includes(cityName) || (clientSlug && rawLower.includes(clientSlug));
+      const zipMentioned = j.zipCodes?.some((z) => rawLower.includes(z));
+
+      if (cityMentioned || zipMentioned) {
+        matchedJurisdiction = j;
+        if (!resolvedCity) resolvedCity = j.name.replace(/^City of /, '');
+        if (!resolvedState) resolvedState = j.state;
+        break;
+      }
+    }
+  }
+
+  // Fallback to primary reference city (Cleveland) if no known jurisdiction matched
+  const activeJurisdiction = matchedJurisdiction || CANONICAL_JURISDICTIONS[1] || CANONICAL_JURISDICTIONS[0];
+  const canonicalCityName = activeJurisdiction.name.replace(/^City of /, '');
+  const finalCity = canonicalCityName || (resolvedCity ? resolvedCity.charAt(0).toUpperCase() + resolvedCity.slice(1).toLowerCase() : 'Cleveland');
+  const finalState = resolvedState || activeJurisdiction.state;
+  const finalZip = resolvedZip || activeJurisdiction.zipCodes?.[0] || '44105';
+
+  // Tier 3: District / Ward Resolution
+  // Check if raw input mentions a specific ward/district in this jurisdiction
+  let matchedDivision = activeJurisdiction.divisions[0];
+  for (const div of activeJurisdiction.divisions) {
+    const divNameLower = div.name.toLowerCase();
+    const divIdLower = div.id.toLowerCase();
+    if (
+      rawLower.includes(divNameLower) ||
+      rawLower.includes(divIdLower) ||
+      (div.name.includes('/') && div.name.split('/').some((part) => rawLower.includes(part.trim().toLowerCase())))
+    ) {
+      matchedDivision = div;
+      break;
+    }
+  }
+
+  // Specific neighborhood heuristics for well-known corridors
+  if (activeJurisdiction.clientIdentifier === 'cleveland') {
+    if (rawLower.includes('slavic') || rawLower.includes('fleet') || rawLower.includes('44105') || rawLower.includes('ward 12')) {
+      const w12 = activeJurisdiction.divisions.find((d) => d.id.includes('ward:12'));
+      if (w12) matchedDivision = w12;
+    } else if (rawLower.includes('ohio city') || rawLower.includes('downtown') || rawLower.includes('ward 3')) {
+      const w3 = activeJurisdiction.divisions.find((d) => d.id.includes('ward:3'));
+      if (w3) matchedDivision = w3;
+    } else if (rawLower.includes('detroit shoreway') || rawLower.includes('cudell') || rawLower.includes('ward 15')) {
+      const w15 = activeJurisdiction.divisions.find((d) => d.id.includes('ward:15'));
+      if (w15) matchedDivision = w15;
+    }
+  } else if (activeJurisdiction.clientIdentifier === 'austin') {
+    if (rawLower.includes('montopolis') || rawLower.includes('east') || rawLower.includes('district 3')) {
+      const d3 = activeJurisdiction.divisions.find((d) => d.id.includes('district:3'));
+      if (d3) matchedDivision = d3;
+    } else if (rawLower.includes('downtown') || rawLower.includes('central') || rawLower.includes('district 9')) {
+      const d9 = activeJurisdiction.divisions.find((d) => d.id.includes('district:9'));
+      if (d9) matchedDivision = d9;
+    }
+  }
+
+  const neighborhood = matchedDivision.name;
+  const explanation = censusResult
+    ? `Geocoded via US Census Bureau to ${finalCity}, ${finalState} ${finalZip} (${neighborhood}).`
+    : `Matched to ${activeJurisdiction.name} (${neighborhood}) based on municipal boundary mapping.`;
+
+  // Tier 4: Dynamic LLM GIS Fallback (if Gemini client is configured)
+  const ai = getGeminiClient();
   if (ai) {
     try {
+      const jurisdictionListText = CANONICAL_JURISDICTIONS.map((j, i) => {
+        const divisionNames = j.divisions.map((d) => `${d.name} [ID: ${d.id}]`).join(', ');
+        return `${i + 1}. ${j.name}, ${j.state} (Jurisdiction ID: ${j.id})\n   Divisions: ${divisionNames}\n   ZIPs: ${j.zipCodes?.join(', ') || 'N/A'}`;
+      }).join('\n\n');
+
       const prompt = `You are a Municipal GIS & Civic Boundary Expert for US cities.
-      Parse the following user address input and identify the exact city jurisdiction, council district/ward, neighborhood, state, and zip:
-      User Input: "${address}"
+Parse the following user address input and identify the exact city jurisdiction, council district/ward, neighborhood, state, and zip:
+User Input: "${address}"
 
-      Available System Jurisdictions:
-      1. City of Cleveland, OH (Wards 1, 3, 12, 15, 17)
-         - Ward 1: Lee-Harvard / Southeast (ZIPs 44128, 44120)
-         - Ward 3: Downtown, Ohio City, Tremont North, Near West (ZIPs 44113, 44114, 44115)
-         - Ward 12: Slavic Village, Tremont South, Fleet Ave, Broadway (ZIPs 44105, 44127)
-         - Ward 15: Detroit Shoreway, Cudell, Gordon Square, Edgewater (ZIP 44102)
-         - Ward 17: West Park, Kamm's Corners, Puritas (ZIP 44111)
-      2. City of Sacramento, CA (Districts 1, 4, 6, 8)
-         - District 1: North Natomas (ZIPs 95834, 95835)
-         - District 4: Central City, Downtown, Midtown, Land Park (ZIPs 95814, 95816, 95818)
-         - District 6: Tahoe Park, Elmhurst (ZIP 95820)
-         - District 8: Meadowview, South Sacramento (ZIP 95823, 95832)
-      3. City of Austin, TX (Districts 3, 9)
-         - District 3: East Austin, Montopolis (ZIPs 78702, 78741)
-         - District 9: Downtown, UT Campus, Central (ZIPs 78701, 78705, 78703)
+Available System Jurisdictions:
+${jurisdictionListText}
 
-      If the address is in another city (e.g. Chicago, Seattle, Philadelphia, New York, or generic), map it accurately and provide the best division format.
-
-      Return a JSON object matching this schema:
-      {
-        "city": string,
-        "state": string,
-        "zipCode": string,
-        "neighborhood": string,
-        "formattedAddress": string,
-        "matchedJurisdictionId": string,
-        "matchedDivisionId": string,
-        "divisionName": string,
-        "councilMemberName": string,
-        "councilMemberEmail": string,
-        "confidence": number (0.0 to 1.0),
-        "explanation": string
-      }`;
+Return a JSON object matching this schema:
+{
+  "city": string,
+  "state": string,
+  "zipCode": string,
+  "neighborhood": string,
+  "formattedAddress": string,
+  "matchedJurisdictionId": string,
+  "matchedDivisionId": string,
+  "divisionName": string,
+  "councilMemberName": string,
+  "councilMemberEmail": string,
+  "confidence": number,
+  "explanation": string
+}`;
 
       const aiResponse = await ai.models.generateContent({
         model: 'gemini-2.5-flash',
@@ -154,25 +181,25 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({
           matched: true,
           rawInput: address,
-          formattedAddress: parsed.formattedAddress || address,
-          city: parsed.city || city,
-          state: parsed.state || state,
-          zipCode: parsed.zipCode || zipCode,
+          formattedAddress: parsed.formattedAddress || formattedAddress,
+          city: parsed.city || finalCity,
+          state: parsed.state || finalState,
+          zipCode: parsed.zipCode || finalZip,
           neighborhood: parsed.neighborhood || neighborhood,
-          matchedJurisdictionId: parsed.matchedJurisdictionId || matchedJurisdictionId,
-          matchedDivisionId: parsed.matchedDivisionId || matchedDivisionId,
-          divisionName: parsed.divisionName || neighborhood,
+          matchedJurisdictionId: parsed.matchedJurisdictionId || activeJurisdiction.id,
+          matchedDivisionId: parsed.matchedDivisionId || matchedDivision.id,
+          divisionName: parsed.divisionName || matchedDivision.name,
           councilMember: {
-            name: parsed.councilMemberName || councilMemberName,
-            email: parsed.councilMemberEmail || councilMemberEmail,
-            phone: councilMemberPhone,
+            name: parsed.councilMemberName || 'Council Representative',
+            email: parsed.councilMemberEmail || `council@${finalCity.toLowerCase().replace(/\s+/g, '')}.gov`,
+            phone: '',
           },
           confidence: parsed.confidence || 0.95,
           explanation: parsed.explanation || explanation,
         });
       }
     } catch (e) {
-      console.warn('AI Address resolution fallback:', e);
+      console.warn('AI Address resolution fallback notice:', e);
     }
   }
 
@@ -180,19 +207,19 @@ export async function POST(req: NextRequest) {
     matched: true,
     rawInput: address,
     formattedAddress,
-    city,
-    state,
-    zipCode,
+    city: finalCity,
+    state: finalState,
+    zipCode: finalZip,
     neighborhood,
-    matchedJurisdictionId,
-    matchedDivisionId,
-    divisionName: neighborhood,
+    matchedJurisdictionId: activeJurisdiction.id,
+    matchedDivisionId: matchedDivision.id,
+    divisionName: matchedDivision.name,
     councilMember: {
-      name: councilMemberName,
-      email: councilMemberEmail,
-      phone: councilMemberPhone,
+      name: 'Council Representative',
+      email: `council@${finalCity.toLowerCase().replace(/\s+/g, '')}.gov`,
+      phone: '',
     },
-    confidence: 0.88,
+    confidence: 0.9,
     explanation,
   });
 }
