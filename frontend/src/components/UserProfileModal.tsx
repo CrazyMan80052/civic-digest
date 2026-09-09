@@ -446,8 +446,9 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-[11px] font-semibold text-[#1A1A1A]/70 mb-1">Your Name / Display Name</label>
+                <label htmlFor="full-name-input" className="block text-[11px] font-semibold text-[#1A1A1A]/70 mb-1">Your Name / Display Name</label>
                 <input
+                  id="full-name-input"
                   type="text"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
@@ -457,8 +458,9 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold text-[#1A1A1A]/70 mb-1">Email for Hearing Alerts (Optional)</label>
+                <label htmlFor="email-input" className="block text-[11px] font-semibold text-[#1A1A1A]/70 mb-1">Email for Hearing Alerts (Optional)</label>
                 <input
+                  id="email-input"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -469,8 +471,9 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 pt-2">
-              <label className="flex items-center gap-2 cursor-pointer text-xs text-[#1A1A1A]">
+              <label htmlFor="notify-ward-checkbox" className="flex items-center gap-2 cursor-pointer text-xs text-[#1A1A1A]">
                 <input
+                  id="notify-ward-checkbox"
                   type="checkbox"
                   checked={notifyWard}
                   onChange={(e) => setNotifyWard(e.target.checked)}
@@ -479,8 +482,9 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
                 <span>Alert me when bills affect my specific ward/neighborhood</span>
               </label>
 
-              <label className="flex items-center gap-2 cursor-pointer text-xs text-[#1A1A1A]">
+              <label htmlFor="auto-switch-checkbox" className="flex items-center gap-2 cursor-pointer text-xs text-[#1A1A1A]">
                 <input
+                  id="auto-switch-checkbox"
                   type="checkbox"
                   checked={autoSwitchCity}
                   onChange={(e) => setAutoSwitchCity(e.target.checked)}
