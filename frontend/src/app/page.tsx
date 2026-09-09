@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { 
   Building2, 
   Filter, 
@@ -227,22 +227,36 @@ export default function App() {
     'Budget & Finance',
   ];
 
-  const handleOpenReceipt = (bill: OCDBill) => {
+  const handleOpenReceipt = useCallback((bill: OCDBill) => {
     setActiveReceipt({
       receipt: bill.receipt,
       title: `${bill.fileNumber}: ${bill.plainTitle}`,
     });
-  };
+  }, []);
 
-  const handleOpenPerspectives = (bill: OCDBill) => {
+  const handleOpenPerspectives = useCallback((bill: OCDBill) => {
     setPerspectiveBillId(bill.id);
     setActiveTab('perspectives');
-  };
+  }, []);
 
-  const handleAddParsedBill = (newBill: Partial<OCDBill>) => {
+  const handleAddParsedBill = useCallback((newBill: Partial<OCDBill>) => {
     setBills((prev) => [newBill as OCDBill, ...prev]);
     setActiveTab('digest');
-  };
+  }, []);
+
+  const handleShareBill = useCallback((b: OCDBill) => {
+    setSocialModalBill(b);
+    setIsSocialModalOpen(true);
+  }, []);
+
+  const handleOpenMicroSurvey = useCallback((b: OCDBill) => {
+    setSurveyTargetBill(b);
+    setIsMicroSurveyOpen(true);
+  }, []);
+
+  const handleSelectTag = useCallback((tag: string) => {
+    setSearchQuery(tag);
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#FDFDFC] text-[#1A1A1A] flex flex-col font-sans selection:bg-[#1A1A1A] selection:text-[#FDFDFC]">
@@ -415,15 +429,9 @@ export default function App() {
                       bill={bill}
                       onViewReceipt={handleOpenReceipt}
                       onViewPerspectives={handleOpenPerspectives}
-                      onShareBill={(b) => {
-                        setSocialModalBill(b);
-                        setIsSocialModalOpen(true);
-                      }}
-                      onOpenMicroSurvey={(b) => {
-                        setSurveyTargetBill(b);
-                        setIsMicroSurveyOpen(true);
-                      }}
-                      onSelectTag={(tag) => setSearchQuery(tag)}
+                      onShareBill={handleShareBill}
+                      onOpenMicroSurvey={handleOpenMicroSurvey}
+                      onSelectTag={handleSelectTag}
                       personalMatchReason={rec?.reason}
                       personalMatchScore={rec?.score}
                     />
