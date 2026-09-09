@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
+import React, { memo } from 'react';
 import { 
   DollarSign, 
   Users, 
@@ -32,7 +32,7 @@ interface DocketCardProps {
   personalMatchScore?: number;
 }
 
-export const DocketCard: React.FC<DocketCardProps> = ({
+export const DocketCard: React.FC<DocketCardProps> = memo(({
   bill,
   onViewReceipt,
   onViewPerspectives,
@@ -251,5 +251,7 @@ export const DocketCard: React.FC<DocketCardProps> = ({
       </div>
     </article>
   );
-};
+});
+
+DocketCard.displayName = 'DocketCard';
 
