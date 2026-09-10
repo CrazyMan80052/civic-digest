@@ -4,6 +4,7 @@ FastAPI Entry Point for CivicDigest Backend Service
 Exposes endpoints for Scrapers, OCR Pipeline, NLP Enrichment, and Differential Privacy.
 """
 
+import os
 from datetime import datetime
 
 from fastapi import FastAPI, Query
@@ -35,7 +36,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[os.getenv("APP_URL", "http://localhost:3000")],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
