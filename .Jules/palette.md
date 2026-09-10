@@ -17,3 +17,6 @@
 ## 2024-05-14 - Accessible Form Controls in Next.js Components
 **Learning:** Found that custom dropdowns (`<select>`) and utility buttons (like a search clear "✕" button) in `Navbar.tsx` were missing accessible names. Screen readers rely on `aria-label` when visual labels are omitted or placed via icons without text alternatives.
 **Action:** Always add explicit `aria-label` attributes to `<input>`, `<select>`, and icon-only `<button>` elements in interactive components.
+## 2024-05-15 - Focus Visibility on Buttons
+**Learning:** Certain UI components, like the `BotModerationStudio` and other interactive elements in the frontend, were found lacking focus states, impairing keyboard navigation and accessibility.
+**Action:** Consistently apply `focus-visible:outline-none focus-visible:ring-2` with appropriate ring colors (e.g., `focus-visible:ring-blue-500` or `focus-visible:ring-[#1A1A1A]`) to all interactive elements such as `<button>` and `<input>`.
