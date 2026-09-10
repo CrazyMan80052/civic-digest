@@ -231,14 +231,14 @@ export const BotModerationStudio: React.FC<BotModerationStudioProps> = ({
               onClick={fetchPendingPosts}
               disabled={isLoading}
               aria-label="Refresh moderation queue"
-              className="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"
+              className="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             >
               <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
             </button>
             <button
               onClick={onClose}
               aria-label="Close moderation studio"
-              className="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"
+              className="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             >
               <X className="w-5 h-5" />
             </button>
@@ -249,7 +249,7 @@ export const BotModerationStudio: React.FC<BotModerationStudioProps> = ({
         {actionMessage && (
           <div className="px-5 py-2.5 bg-blue-950/80 border-b border-blue-800 text-blue-200 text-xs flex items-center justify-between">
             <span className="font-medium">{actionMessage}</span>
-            <button onClick={() => setActionMessage(null)} className="text-blue-400 hover:text-blue-200 text-xs">Dismiss</button>
+            <button onClick={() => setActionMessage(null)} className="text-blue-400 hover:text-blue-200 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">Dismiss</button>
           </div>
         )}
 
@@ -426,7 +426,7 @@ export const BotModerationStudio: React.FC<BotModerationStudioProps> = ({
                       <select
                         value={rollCallAction}
                         onChange={(e) => setRollCallAction(e.target.value)}
-                        className="w-full bg-gray-800 text-white p-2 rounded-lg border border-gray-700 text-xs"
+                        className="w-full bg-gray-800 text-white p-2 rounded-lg border border-gray-700 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                       >
                         <option value="Passed">Passed (Approved)</option>
                         <option value="Failed">Failed (Rejected)</option>
@@ -439,7 +439,7 @@ export const BotModerationStudio: React.FC<BotModerationStudioProps> = ({
                         type="text"
                         value={rollCallAyes}
                         onChange={(e) => setRollCallAyes(e.target.value)}
-                        className="w-full bg-gray-800 text-white p-2 rounded-lg border border-gray-700 text-xs"
+                        className="w-full bg-gray-800 text-white p-2 rounded-lg border border-gray-700 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                       />
                     </div>
                     <div>
@@ -449,7 +449,7 @@ export const BotModerationStudio: React.FC<BotModerationStudioProps> = ({
                         value={rollCallNotes}
                         onChange={(e) => setRollCallNotes(e.target.value)}
                         placeholder="Verified via official meeting video archive timestamp..."
-                        className="w-full bg-gray-800 text-white p-2 rounded-lg border border-gray-700 text-xs"
+                        className="w-full bg-gray-800 text-white p-2 rounded-lg border border-gray-700 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                       />
                     </div>
                     <button
@@ -472,7 +472,7 @@ export const BotModerationStudio: React.FC<BotModerationStudioProps> = ({
                       value={rejectReason}
                       onChange={(e) => setRejectReason(e.target.value)}
                       placeholder="Enter rejection reason for audit log..."
-                      className="flex-1 bg-gray-900 text-white text-xs p-2.5 rounded-lg border border-rose-500/50"
+                      className="flex-1 bg-gray-900 text-white text-xs p-2.5 rounded-lg border border-rose-500/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                     />
                     <button
                       onClick={handleReject}
@@ -483,7 +483,7 @@ export const BotModerationStudio: React.FC<BotModerationStudioProps> = ({
                     </button>
                     <button
                       onClick={() => setShowRejectInput(false)}
-                      className="px-3 py-2 text-gray-400 hover:text-white text-xs"
+                      className="px-3 py-2 text-gray-400 hover:text-white text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                     >
                       Cancel
                     </button>
