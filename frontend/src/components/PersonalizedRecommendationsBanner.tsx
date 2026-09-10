@@ -52,8 +52,9 @@ export const PersonalizedRecommendationsBanner: React.FC<PersonalizedRecommendat
         </div>
 
         <button
+          type="button"
           onClick={onOpenProfileModal}
-          className="px-4 py-2 bg-[#2D6A4F] text-white text-xs font-semibold rounded hover:bg-[#2D6A4F]/90 transition-all flex items-center gap-1.5 whitespace-nowrap shrink-0 shadow-xs"
+          className="px-4 py-2 bg-[#2D6A4F] text-white text-xs font-semibold rounded hover:bg-[#2D6A4F]/90 transition-all flex items-center gap-1.5 whitespace-nowrap shrink-0 shadow-xs focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2D6A4F] focus-visible:ring-offset-1 focus-visible:ring-offset-white"
         >
           <Compass className="w-3.5 h-3.5" />
           Set Home Address &amp; Profile
@@ -101,7 +102,8 @@ export const PersonalizedRecommendationsBanner: React.FC<PersonalizedRecommendat
               {profile.address.councilMemberEmail && (
                 <a 
                   href={`mailto:${profile.address.councilMemberEmail}`}
-                  className="text-[#2D6A4F] hover:underline flex items-center gap-1 text-[11px]"
+                  aria-label={`Email representative ${profile.address.councilMemberName || 'Council Member'}`}
+                  className="text-[#2D6A4F] hover:underline flex items-center gap-1 text-[11px] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2D6A4F] focus-visible:ring-offset-1 focus-visible:ring-offset-white rounded-sm px-0.5"
                 >
                   <Mail className="w-3 h-3" />
                   Email Rep
@@ -127,8 +129,9 @@ export const PersonalizedRecommendationsBanner: React.FC<PersonalizedRecommendat
         {/* Personalized Filter Switch & Actions */}
         <div className="flex items-center gap-3 self-end lg:self-center shrink-0">
           <button
+            type="button"
             onClick={() => onTogglePersonalizedOnly(!isPersonalizedOnly)}
-            className={`px-3 py-1.5 rounded text-xs font-semibold flex items-center gap-2 border transition-all ${
+            className={`px-3 py-1.5 rounded text-xs font-semibold flex items-center gap-2 border transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2D6A4F] focus-visible:ring-offset-1 focus-visible:ring-offset-white ${
               isPersonalizedOnly
                 ? 'bg-[#2D6A4F] text-white border-[#2D6A4F] shadow-xs'
                 : 'bg-[#F4F1EA] text-[#1A1A1A] border-[#1A1A1A]/15 hover:border-[#2D6A4F]/40'
@@ -144,8 +147,9 @@ export const PersonalizedRecommendationsBanner: React.FC<PersonalizedRecommendat
           </button>
 
           <button
+            type="button"
             onClick={onOpenProfileModal}
-            className="px-3 py-1.5 text-xs font-medium text-[#1A1A1A]/70 hover:text-[#1A1A1A] hover:bg-[#F4F1EA] border border-[#1A1A1A]/15 rounded transition-colors flex items-center gap-1.5"
+            className="px-3 py-1.5 text-xs font-medium text-[#1A1A1A]/70 hover:text-[#1A1A1A] hover:bg-[#F4F1EA] border border-[#1A1A1A]/15 rounded transition-colors flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A] focus-visible:ring-offset-1 focus-visible:ring-offset-white"
             title="Edit address, civic role, or policy priorities"
           >
             <Sliders className="w-3.5 h-3.5" />
