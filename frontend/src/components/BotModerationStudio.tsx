@@ -477,13 +477,15 @@ export const BotModerationStudio: React.FC<BotModerationStudioProps> = ({
                     <button
                       onClick={handleReject}
                       disabled={isLoading || !rejectReason.trim()}
-                      className="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs rounded-lg transition-colors"
+                      className="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs rounded-lg transition-colors flex items-center gap-1.5 disabled:opacity-75"
                     >
-                      Confirm Reject
+                      {isLoading && <RefreshCw className="w-3.5 h-3.5 animate-spin" />}
+                      <span>Confirm Reject</span>
                     </button>
                     <button
                       onClick={() => setShowRejectInput(false)}
-                      className="px-3 py-2 text-gray-400 hover:text-white text-xs"
+                      disabled={isLoading}
+                      className="px-3 py-2 text-gray-400 hover:text-white text-xs disabled:opacity-50"
                     >
                       Cancel
                     </button>
@@ -501,9 +503,13 @@ export const BotModerationStudio: React.FC<BotModerationStudioProps> = ({
                     <button
                       onClick={handleApprove}
                       disabled={isLoading}
-                      className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-950 transition-all"
+                      className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-950 transition-all disabled:opacity-75"
                     >
-                      <CheckCircle2 className="w-4 h-4" />
+                      {isLoading ? (
+                        <RefreshCw className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <CheckCircle2 className="w-4 h-4" />
+                      )}
                       <span>Approve & Dispatch to Queue</span>
                     </button>
                   </>

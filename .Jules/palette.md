@@ -17,3 +17,6 @@
 ## 2024-05-14 - Accessible Form Controls in Next.js Components
 **Learning:** Found that custom dropdowns (`<select>`) and utility buttons (like a search clear "✕" button) in `Navbar.tsx` were missing accessible names. Screen readers rely on `aria-label` when visual labels are omitted or placed via icons without text alternatives.
 **Action:** Always add explicit `aria-label` attributes to `<input>`, `<select>`, and icon-only `<button>` elements in interactive components.
+## 2025-02-23 - Bot Moderation Studio Action Button Loading States
+**Learning:** Async moderation actions in the Bot Moderation Studio lacked visual feedback (loading spinners) when submitting, which could lead to user confusion or accidental double-submissions while waiting for the server response. Additionally, handling complex interactive Playwright verifications requires route interception to reliably capture transient UI states like a loading spinner.
+**Action:** When adding async operations to interactive modals, ensure buttons are bound to a loading state (`isLoading`) that replaces the default icon with a spinning loader (e.g., `<RefreshCw className="animate-spin" />`) and reduces the button opacity to visually indicate a disabled state.
