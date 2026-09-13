@@ -17,3 +17,7 @@
 ## 2024-05-14 - Accessible Form Controls in Next.js Components
 **Learning:** Found that custom dropdowns (`<select>`) and utility buttons (like a search clear "✕" button) in `Navbar.tsx` were missing accessible names. Screen readers rely on `aria-label` when visual labels are omitted or placed via icons without text alternatives.
 **Action:** Always add explicit `aria-label` attributes to `<input>`, `<select>`, and icon-only `<button>` elements in interactive components.
+
+## $(date +%Y-%m-%d) - Focus Rings and Label Links in React Components
+**Learning:** Found several input components wrapped in a label without an explicit `id` and `htmlFor` attributes which can cause screen readers issues, and they also lack `focus-visible` classes to show an explicit focus ring when using Tailwind's `focus:outline-none`.
+**Action:** When creating form inputs, checkboxes, and toggles, always explicitly link labels to their input by ID using `htmlFor`, and ensure that if `focus:outline-none` is used to hide default styling, a custom focus class like `focus-visible:ring-2 focus-visible:ring-[#1A1A1A]` is added.
