@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
   ShieldCheck, 
   Lock, 
@@ -55,18 +55,20 @@ export const SentimentHub: React.FC<SentimentHubProps> = ({
   const currentWardData = WARD_METRICS[selectedWardId] || WARD_METRICS[wardKeys[0]];
 
   // Prepare chart dataset comparing Raw vs DP across Wards
-  const chartData = wardKeys.map((key) => {
-    const w = WARD_METRICS[key];
-    const noiseFactor = (1.0 / Math.max(0.1, activeEpsilon)) * 0.1;
-    return {
-      name: w.wardName.split('(')[0].trim(),
-      fullWard: w.wardName,
-      'Raw Cost of Living (1-10)': Number(w.rawCostOfLivingIndex.toFixed(2)),
-      'DP Private Estimate (ε)': Number((w.rawCostOfLivingIndex + (getSecureRandom() - 0.5) * noiseFactor * 2).toFixed(2)),
-      'Housing Burden (%)': Number(w.rawHousingBurdenPct.toFixed(1)),
-      'Business Confidence (1-10)': Number(w.rawBusinessConfidence.toFixed(2)),
-    };
-  });
+  const chartData = useMemo(() => {
+    return wardKeys.map((key) => {
+      const w = WARD_METRICS[key];
+      const noiseFactor = (1.0 / Math.max(0.1, activeEpsilon)) * 0.1;
+      return {
+        name: w.wardName.split('(')[0].trim(),
+        fullWard: w.wardName,
+        'Raw Cost of Living (1-10)': Number(w.rawCostOfLivingIndex.toFixed(2)),
+        'DP Private Estimate (ε)': Number((w.rawCostOfLivingIndex + (getSecureRandom() - 0.5) * noiseFactor * 2).toFixed(2)),
+        'Housing Burden (%)': Number(w.rawHousingBurdenPct.toFixed(1)),
+        'Business Confidence (1-10)': Number(w.rawBusinessConfidence.toFixed(2)),
+      };
+    });
+  }, [wardKeys, activeEpsilon]);
 
   const handleEpsilonChange = async (newEps: number) => {
     setActiveEpsilon(newEps);
