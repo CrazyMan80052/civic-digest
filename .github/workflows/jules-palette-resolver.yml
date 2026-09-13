@@ -1,0 +1,116 @@
+name: Jules — Auto-Resolve Memory Conflicts
+
+on:
+  # 1. Trigger when a PR modifying Jules memory files is opened or updated
+  pull_request:
+    paths:
+      - '.Jules/**'
+      - '.jules/**'
+    types: [opened, synchronize, reopened]
+
+  # 2. Trigger when main is updated to keep open Jules PRs conflict-free
+  push:
+    branches:
+      - main
+
+  # 3. Allow manual dispatch
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  resolve-single-pr:
+    name: Resolve PR Memory Conflicts
+    if: github.event_name == 'pull_request' && !github.event.pull_request.head.repo.fork
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR Branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Run Conflict Resolver
+        run: |
+          chmod +x .github/scripts/resolve-jules-conflicts.sh
+          BEFORE_REV=$(git rev-parse HEAD)
+          ./.github/scripts/resolve-jules-conflicts.sh origin/main || true
+          AFTER_REV=$(git rev-parse HEAD)
+
+          if [ "$BEFORE_REV" != "$AFTER_REV" ]; then
+            echo "Pushing resolved memory merge to PR branch..."
+            git push origin HEAD:${{ github.head_ref }}
+          else
+            echo "No resolution changes needed."
+          fi
+
+  resolve-all-open-prs:
+    name: Sync Open Jules PRs with Main
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Find and Update Open Jules PRs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          REPO_OWNER="${{ github.repository_owner }}"
+          chmod +x .github/scripts/resolve-jules-conflicts.sh
+
+          # List open pull requests from the same repository
+          PR_LIST=$(gh pr list --state open --json number,headRefName,headRepositoryOwner --jq '.[] | select(.headRepositoryOwner.login == "'"$REPO_OWNER"'") | "\(.number):\(.headRefName)"')
+
+          if [ -z "$PR_LIST" ]; then
+            echo "No open PRs found."
+            exit 0
+          fi
+
+          for ITEM in $PR_LIST; do
+            PR_NUM="${ITEM%%:*}"
+            HEAD_REF="${ITEM##*:}"
+
+            echo "----------------------------------------------------"
+            echo "Evaluating PR #${PR_NUM} (branch: ${HEAD_REF})..."
+
+            # Check if this PR touches Jules memory files or is a palette/bolt task
+            FILES=$(gh pr diff "$PR_NUM" --name-only 2>/dev/null || true)
+            TOUCHES_MEMORY=$(echo "$FILES" | grep -E '^\.([jJ]ules)/.*\.md$' || true)
+
+            if [ -z "$TOUCHES_MEMORY" ] && [[ "$HEAD_REF" != palette* ]] && [[ "$HEAD_REF" != *jules* ]]; then
+              echo "PR #${PR_NUM} does not touch Jules memory files. Skipping."
+              continue
+            fi
+
+            echo "PR #${PR_NUM} involves Jules memories. Syncing..."
+            git checkout "$HEAD_REF"
+            git pull origin "$HEAD_REF"
+
+            BEFORE_REV=$(git rev-parse HEAD)
+            if ./.github/scripts/resolve-jules-conflicts.sh origin/main; then
+              AFTER_REV=$(git rev-parse HEAD)
+              if [ "$BEFORE_REV" != "$AFTER_REV" ]; then
+                echo "Pushing resolved branch update to ${HEAD_REF}..."
+                git push origin HEAD:"$HEAD_REF"
+              else
+                echo "PR #${PR_NUM} already cleanly up-to-date."
+              fi
+            else
+              echo "PR #${PR_NUM} has source code conflicts requiring manual attention. Skipping memory push."
+            fi
+          done
