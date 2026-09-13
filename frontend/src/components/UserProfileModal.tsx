@@ -446,8 +446,9 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-[11px] font-semibold text-[#1A1A1A]/70 mb-1">Your Name / Display Name</label>
+                <label htmlFor="user-fullname" className="block text-[11px] font-semibold text-[#1A1A1A]/70 mb-1">Your Name / Display Name</label>
                 <input
+                  id="user-fullname"
                   type="text"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
@@ -457,8 +458,9 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold text-[#1A1A1A]/70 mb-1">Email for Hearing Alerts (Optional)</label>
+                <label htmlFor="user-email" className="block text-[11px] font-semibold text-[#1A1A1A]/70 mb-1">Email for Hearing Alerts (Optional)</label>
                 <input
+                  id="user-email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}

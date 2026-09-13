@@ -17,3 +17,7 @@
 ## 2024-05-14 - Accessible Form Controls in Next.js Components
 **Learning:** Found that custom dropdowns (`<select>`) and utility buttons (like a search clear "✕" button) in `Navbar.tsx` were missing accessible names. Screen readers rely on `aria-label` when visual labels are omitted or placed via icons without text alternatives.
 **Action:** Always add explicit `aria-label` attributes to `<input>`, `<select>`, and icon-only `<button>` elements in interactive components.
+
+## 2024-09-13 - Accessible Form Controls in Interactive Modals
+**Learning:** Discovered numerous forms and interactive components (`<input>`, `<select>`, `<textarea>`) throughout various modals (e.g., `UserProfileModal`, `SocialDispatchModal`, `BotModerationStudio`, `ResidentMicroSurveyModal`) lacking programmatic label association via `id` and `htmlFor`. A visual label without the correct `htmlFor`/`id` linking prevents screen readers from understanding the input context.
+**Action:** Always ensure that form controls, whether standard `<input>` or complex `<select>` elements, are programmatically linked to a `<label>` using the `htmlFor` attribute. When a visual label is absent by design, use `aria-label` or hide a `<label>` element accessibly (`sr-only`).
