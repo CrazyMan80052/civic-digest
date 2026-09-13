@@ -466,7 +466,9 @@ export const SocialDispatchModal: React.FC<SocialDispatchModalProps> = ({
                 </span>
               </div>
 
+              <label htmlFor="post-content" className="sr-only">Post Content</label>
               <textarea
+                id="post-content"
                 value={currentText}
                 onChange={(e) => {
                   const val = e.target.value;
@@ -555,10 +557,11 @@ export const SocialDispatchModal: React.FC<SocialDispatchModalProps> = ({
                 {/* Editable Slide Text */}
                 <div className="space-y-2 flex flex-col justify-between">
                   <div>
-                    <label className="font-bold uppercase tracking-wider text-[10px] text-[#777] block mb-1 font-mono">
+                    <label htmlFor="slide-copy" className="font-bold uppercase tracking-wider text-[10px] text-[#777] block mb-1 font-mono">
                       Edit Slide {activeSlide + 1} Copy:
                     </label>
                     <textarea
+                      id="slide-copy"
                       value={postContent.instagramSlides[activeSlide] || ''}
                       onChange={(e) => {
                         const val = e.target.value;
@@ -596,10 +599,11 @@ export const SocialDispatchModal: React.FC<SocialDispatchModalProps> = ({
           {activePlatform === 'webhook' && (
             <div className="space-y-3 bg-[#F2F0EA] p-4 border border-[#1A1A1A]/15 text-xs font-mono">
               <div>
-                <label className="font-bold uppercase tracking-wider text-[10px] text-[#777] block mb-1">
+                <label htmlFor="webhook-url" className="font-bold uppercase tracking-wider text-[10px] text-[#777] block mb-1">
                   Target Webhook Endpoint (Discord / Slack / Zapier / Make):
                 </label>
                 <input
+                  id="webhook-url"
                   type="text"
                   value={webhookUrl}
                   onChange={(e) => setWebhookUrl(e.target.value)}

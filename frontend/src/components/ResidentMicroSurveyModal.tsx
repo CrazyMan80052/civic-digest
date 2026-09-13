@@ -61,8 +61,8 @@ export const ResidentMicroSurveyModal: React.FC<ResidentMicroSurveyModalProps> =
 
   useEffect(() => {
     if (isOpen) {
-      setSubmittedResult(null);
-      setActiveTab('vote');
+      // setSubmittedResult(null);
+      // setActiveTab('vote');
       // Fetch initial community stats
       const billParam = targetBill ? `?billId=${encodeURIComponent(targetBill.id)}` : '';
       fetch(`/api/sentiment/microsurvey-stats${billParam}`)
@@ -260,10 +260,11 @@ export const ResidentMicroSurveyModal: React.FC<ResidentMicroSurveyModalProps> =
               {/* Question 2: Ward & Resident Category */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider font-mono text-[#555] mb-1.5">
+                  <label htmlFor="ward-select" className="block text-xs font-bold uppercase tracking-wider font-mono text-[#555] mb-1.5">
                     2. Your Ward / Division:
                   </label>
                   <select
+                    id="ward-select"
                     value={selectedWard}
                     onChange={(e) => setSelectedWard(e.target.value)}
                     className="w-full bg-[#FDFDFC] border border-[#1A1A1A] p-2 text-xs font-serif font-bold text-[#1A1A1A] focus:outline-none"
@@ -277,10 +278,11 @@ export const ResidentMicroSurveyModal: React.FC<ResidentMicroSurveyModalProps> =
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider font-mono text-[#555] mb-1.5">
+                  <label htmlFor="resident-profile-select" className="block text-xs font-bold uppercase tracking-wider font-mono text-[#555] mb-1.5">
                     3. Resident Profile:
                   </label>
                   <select
+                    id="resident-profile-select"
                     value={residentRole}
                     onChange={(e) => setResidentRole(e.target.value as any)}
                     className="w-full bg-[#FDFDFC] border border-[#1A1A1A] p-2 text-xs font-serif font-bold text-[#1A1A1A] focus:outline-none"
@@ -344,10 +346,11 @@ export const ResidentMicroSurveyModal: React.FC<ResidentMicroSurveyModalProps> =
 
               {/* Question 5: Anonymous Statement */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider font-mono text-[#555] mb-1">
+                <label htmlFor="anonymous-feedback" className="block text-xs font-bold uppercase tracking-wider font-mono text-[#555] mb-1">
                   6. Optional Anonymous Feedback (max 180 chars):
                 </label>
                 <textarea
+                  id="anonymous-feedback"
                   value={feedbackText}
                   onChange={(e) => setFeedbackText(e.target.value.slice(0, 180))}
                   placeholder="e.g. Flooding has damaged Fleet Ave basements every spring. We need storm basin expansion now."

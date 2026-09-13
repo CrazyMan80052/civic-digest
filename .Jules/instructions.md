@@ -26,7 +26,7 @@ Before submitting your changes as a Pull Request, guarantee clean mergeability w
    git merge origin/main
    git diff --check
    ```
-   *Expected: Zero merge conflicts and no conflict markers.*
+   *Expected: Zero merge conflicts and no conflict markers. Note that `.gitattributes` automatically applies union merge for Jules persistent memory files (`.Jules/*.md`, `.jules/*.md`).*
 
 2. **Frontend changes**:
    ```bash

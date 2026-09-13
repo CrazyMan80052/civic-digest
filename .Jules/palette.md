@@ -17,6 +17,13 @@
 ## 2024-05-14 - Accessible Form Controls in Next.js Components
 **Learning:** Found that custom dropdowns (`<select>`) and utility buttons (like a search clear "✕" button) in `Navbar.tsx` were missing accessible names. Screen readers rely on `aria-label` when visual labels are omitted or placed via icons without text alternatives.
 **Action:** Always add explicit `aria-label` attributes to `<input>`, `<select>`, and icon-only `<button>` elements in interactive components.
-## 2025-02-23 - Bot Moderation Studio Action Button Loading States
-**Learning:** Async moderation actions in the Bot Moderation Studio lacked visual feedback (loading spinners) when submitting, which could lead to user confusion or accidental double-submissions while waiting for the server response. Additionally, handling complex interactive Playwright verifications requires route interception to reliably capture transient UI states like a loading spinner.
-**Action:** When adding async operations to interactive modals, ensure buttons are bound to a loading state (`isLoading`) that replaces the default icon with a spinning loader (e.g., `<RefreshCw className="animate-spin" />`) and reduces the button opacity to visually indicate a disabled state.
+
+## 2024-09-10 - Button Accessibility in Banners
+**Learning:** Found several buttons in `PersonalizedRecommendationsBanner.tsx` lacking `type="button"`, causing potential form submission issues, and missing `focus-visible` styles for keyboard navigation.
+**Action:** Always add `type="button"` to non-submit buttons and include explicit `focus-visible` styles (`focus:outline-none focus-visible:ring-2 focus-visible:ring-[color] focus-visible:ring-offset-1`) for keyboard accessibility.
+## 2026-09-09 - Explicit Form Label Binding
+**Learning:** Found inputs in `UserProfileModal.tsx` relying on implicit wrapping for labels instead of explicit `htmlFor` and `id` bindings. This degrades screen reader experience and click target areas.
+**Action:** Ensure all `<label>` elements use `htmlFor` explicitly linked to the `id` of their corresponding form control for better a11y.
+## 2024-05-18 - Form Accessibility and Focus States
+**Learning:** In Next.js forms inside modals, standard `<input>` fields sometimes lack corresponding `id`s for their labels (using `htmlFor`), breaking screen reader support. Moreover, when using Tailwind `focus:outline-none`, the `focus-visible:ring-2` (and an appropriate ring color) must be explicitly applied to retain visual keyboard accessibility indicators.
+**Action:** Always verify that input fields within Modals have valid `id` attributes that match the `htmlFor` of their label, and explicitly check if `focus-visible:ring-2` is set alongside `focus:outline-none`.
