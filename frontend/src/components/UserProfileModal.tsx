@@ -453,7 +453,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="e.g. Maria Gonzalez"
-                  className="w-full px-3 py-2 bg-[#F4F1EA]/50 border border-[#1A1A1A]/20 rounded text-xs text-[#1A1A1A] focus:outline-none focus:border-[#2D6A4F]"
+                  className="w-full px-3 py-2 bg-[#F4F1EA]/50 border border-[#1A1A1A]/20 rounded text-xs text-[#1A1A1A] focus:outline-none focus:border-[#2D6A4F] focus-visible:ring-2 focus-visible:ring-[#2D6A4F]"
                 />
               </div>
 
@@ -465,7 +465,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="e.g. maria@example.com"
-                  className="w-full px-3 py-2 bg-[#F4F1EA]/50 border border-[#1A1A1A]/20 rounded text-xs text-[#1A1A1A] focus:outline-none focus:border-[#2D6A4F]"
+                  className="w-full px-3 py-2 bg-[#F4F1EA]/50 border border-[#1A1A1A]/20 rounded text-xs text-[#1A1A1A] focus:outline-none focus:border-[#2D6A4F] focus-visible:ring-2 focus-visible:ring-[#2D6A4F]"
                 />
               </div>
             </div>

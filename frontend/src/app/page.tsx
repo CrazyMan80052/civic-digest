@@ -227,17 +227,28 @@ export default function App() {
     'Budget & Finance',
   ];
 
-  const handleOpenReceipt = (bill: OCDBill) => {
+  // ⚡ Bolt: Memoized event handlers passed to DocketCard to maintain referential equality and prevent re-renders
+  const handleOpenReceipt = React.useCallback((bill: OCDBill) => {
     setActiveReceipt({
       receipt: bill.receipt,
       title: `${bill.fileNumber}: ${bill.plainTitle}`,
     });
-  };
+  }, []);
 
-  const handleOpenPerspectives = (bill: OCDBill) => {
+  const handleOpenPerspectives = React.useCallback((bill: OCDBill) => {
     setPerspectiveBillId(bill.id);
     setActiveTab('perspectives');
-  };
+  }, []);
+
+  const handleShareBill = React.useCallback((bill: OCDBill) => {
+    setSocialModalBill(bill);
+    setIsSocialModalOpen(true);
+  }, []);
+
+  const handleOpenMicroSurvey = React.useCallback((bill: OCDBill) => {
+    setSurveyTargetBill(bill);
+    setIsMicroSurveyOpen(true);
+  }, []);
 
   const handleAddParsedBill = (newBill: Partial<OCDBill>) => {
     setBills((prev) => [newBill as OCDBill, ...prev]);
@@ -415,15 +426,9 @@ export default function App() {
                       bill={bill}
                       onViewReceipt={handleOpenReceipt}
                       onViewPerspectives={handleOpenPerspectives}
-                      onShareBill={(b) => {
-                        setSocialModalBill(b);
-                        setIsSocialModalOpen(true);
-                      }}
-                      onOpenMicroSurvey={(b) => {
-                        setSurveyTargetBill(b);
-                        setIsMicroSurveyOpen(true);
-                      }}
-                      onSelectTag={(tag) => setSearchQuery(tag)}
+                      onShareBill={handleShareBill}
+                      onOpenMicroSurvey={handleOpenMicroSurvey}
+                      onSelectTag={setSearchQuery}
                       personalMatchReason={rec?.reason}
                       personalMatchScore={rec?.score}
                     />

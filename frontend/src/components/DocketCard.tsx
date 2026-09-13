@@ -32,7 +32,9 @@ interface DocketCardProps {
   personalMatchScore?: number;
 }
 
-export const DocketCard: React.FC<DocketCardProps> = ({
+// ⚡ Bolt: Wrapped DocketCard in React.memo to prevent unnecessary re-renders
+// when the parent filters or interacts with other components in the large list.
+export const DocketCard: React.FC<DocketCardProps> = React.memo(({
   bill,
   onViewReceipt,
   onViewPerspectives,
@@ -251,5 +253,5 @@ export const DocketCard: React.FC<DocketCardProps> = ({
       </div>
     </article>
   );
-};
+});
 
