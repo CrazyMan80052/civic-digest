@@ -477,7 +477,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
                   type="checkbox"
                   checked={notifyWard}
                   onChange={(e) => setNotifyWard(e.target.checked)}
-                  className="rounded text-[#2D6A4F] focus:ring-[#2D6A4F]"
+                  className="rounded text-[#2D6A4F] focus:ring-[#2D6A4F] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
                 />
                 <span>Alert me when bills affect my specific ward/neighborhood</span>
               </label>
@@ -488,7 +488,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
                   type="checkbox"
                   checked={autoSwitchCity}
                   onChange={(e) => setAutoSwitchCity(e.target.checked)}
-                  className="rounded text-[#2D6A4F] focus:ring-[#2D6A4F]"
+                  className="rounded text-[#2D6A4F] focus:ring-[#2D6A4F] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
                 />
                 <span>Auto-switch active city view to matched address</span>
               </label>
