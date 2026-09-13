@@ -422,8 +422,9 @@ export const BotModerationStudio: React.FC<BotModerationStudioProps> = ({
                 {isRollCallOpen && (
                   <div className="p-3 bg-gray-900/80 rounded-xl border border-gray-800 space-y-2 text-xs">
                     <div>
-                      <label className="block text-gray-400 mb-1">Council Floor Action</label>
+                      <label htmlFor="floor-action" className="block text-gray-400 mb-1">Council Floor Action</label>
                       <select
+                        id="floor-action"
                         value={rollCallAction}
                         onChange={(e) => setRollCallAction(e.target.value)}
                         className="w-full bg-gray-800 text-white p-2 rounded-lg border border-gray-700 text-xs"
@@ -434,8 +435,9 @@ export const BotModerationStudio: React.FC<BotModerationStudioProps> = ({
                       </select>
                     </div>
                     <div>
-                      <label className="block text-gray-400 mb-1">Recorded Ayes (comma-separated)</label>
+                      <label htmlFor="recorded-ayes" className="block text-gray-400 mb-1">Recorded Ayes (comma-separated)</label>
                       <input
+                        id="recorded-ayes"
                         type="text"
                         value={rollCallAyes}
                         onChange={(e) => setRollCallAyes(e.target.value)}
@@ -443,8 +445,9 @@ export const BotModerationStudio: React.FC<BotModerationStudioProps> = ({
                       />
                     </div>
                     <div>
-                      <label className="block text-gray-400 mb-1">Audit Verification Notes</label>
+                      <label htmlFor="audit-notes" className="block text-gray-400 mb-1">Audit Verification Notes</label>
                       <input
+                        id="audit-notes"
                         type="text"
                         value={rollCallNotes}
                         onChange={(e) => setRollCallNotes(e.target.value)}
@@ -467,7 +470,9 @@ export const BotModerationStudio: React.FC<BotModerationStudioProps> = ({
               <div className="mt-auto pt-4 border-t border-gray-800 flex flex-wrap items-center justify-between gap-3">
                 {showRejectInput ? (
                   <div className="flex-1 flex items-center gap-2">
+                    <label htmlFor="reject-reason" className="sr-only">Reject Reason</label>
                     <input
+                      id="reject-reason"
                       type="text"
                       value={rejectReason}
                       onChange={(e) => setRejectReason(e.target.value)}
