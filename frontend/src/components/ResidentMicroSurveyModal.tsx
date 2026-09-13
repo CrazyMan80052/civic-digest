@@ -61,8 +61,8 @@ export const ResidentMicroSurveyModal: React.FC<ResidentMicroSurveyModalProps> =
 
   useEffect(() => {
     if (isOpen) {
-      // setSubmittedResult(null);
-      // setActiveTab('vote');
+      setSubmittedResult(null);
+      setActiveTab('vote');
       // Fetch initial community stats
       const billParam = targetBill ? `?billId=${encodeURIComponent(targetBill.id)}` : '';
       fetch(`/api/sentiment/microsurvey-stats${billParam}`)

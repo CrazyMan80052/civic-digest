@@ -446,34 +446,31 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label htmlFor="full-name-input" className="block text-[11px] font-semibold text-[#1A1A1A]/70 mb-1">Your Name / Display Name</label>
+                <label className="block text-[11px] font-semibold text-[#1A1A1A]/70 mb-1">Your Name / Display Name</label>
                 <input
-                  id="full-name-input"
                   type="text"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="e.g. Maria Gonzalez"
-                  className="w-full px-3 py-2 bg-[#F4F1EA]/50 border border-[#1A1A1A]/20 rounded text-xs text-[#1A1A1A] focus:outline-none focus:border-[#2D6A4F] focus-visible:ring-2 focus-visible:ring-[#2D6A4F]"
+                  className="w-full px-3 py-2 bg-[#F4F1EA]/50 border border-[#1A1A1A]/20 rounded text-xs text-[#1A1A1A] focus:outline-none focus:border-[#2D6A4F]"
                 />
               </div>
 
               <div>
-                <label htmlFor="email-input" className="block text-[11px] font-semibold text-[#1A1A1A]/70 mb-1">Email for Hearing Alerts (Optional)</label>
+                <label className="block text-[11px] font-semibold text-[#1A1A1A]/70 mb-1">Email for Hearing Alerts (Optional)</label>
                 <input
-                  id="email-input"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="e.g. maria@example.com"
-                  className="w-full px-3 py-2 bg-[#F4F1EA]/50 border border-[#1A1A1A]/20 rounded text-xs text-[#1A1A1A] focus:outline-none focus:border-[#2D6A4F] focus-visible:ring-2 focus-visible:ring-[#2D6A4F]"
+                  className="w-full px-3 py-2 bg-[#F4F1EA]/50 border border-[#1A1A1A]/20 rounded text-xs text-[#1A1A1A] focus:outline-none focus:border-[#2D6A4F]"
                 />
               </div>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 pt-2">
-              <label htmlFor="notify-ward-checkbox" className="flex items-center gap-2 cursor-pointer text-xs text-[#1A1A1A]">
+              <label className="flex items-center gap-2 cursor-pointer text-xs text-[#1A1A1A]">
                 <input
-                  id="notify-ward-checkbox"
                   type="checkbox"
                   checked={notifyWard}
                   onChange={(e) => setNotifyWard(e.target.checked)}
@@ -482,9 +479,8 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
                 <span>Alert me when bills affect my specific ward/neighborhood</span>
               </label>
 
-              <label htmlFor="auto-switch-checkbox" className="flex items-center gap-2 cursor-pointer text-xs text-[#1A1A1A]">
+              <label className="flex items-center gap-2 cursor-pointer text-xs text-[#1A1A1A]">
                 <input
-                  id="auto-switch-checkbox"
                   type="checkbox"
                   checked={autoSwitchCity}
                   onChange={(e) => setAutoSwitchCity(e.target.checked)}
