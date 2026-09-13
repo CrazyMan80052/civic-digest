@@ -1,0 +1,3 @@
+# Treat Jules persistent memory files as union-mergeable (append-only journals)
+.Jules/*.md merge=union
+.jules/*.md merge=union

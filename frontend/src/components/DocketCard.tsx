@@ -255,3 +255,5 @@ export const DocketCard: React.FC<DocketCardProps> = React.memo(({
   );
 });
 
+DocketCard.displayName = 'DocketCard';
+
