@@ -6,9 +6,9 @@ and pairs ingested dockets with balanced media coverage.
 
 import logging
 import re
-import defusedxml.ElementTree as ET
 from urllib.parse import urlparse
 
+import defusedxml.ElementTree as ET
 import httpx
 
 from .schemas import DocketContextThread, EnrichedCivicMatter, NewsArticleContext
