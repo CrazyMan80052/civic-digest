@@ -224,8 +224,9 @@ export const DatabaseStatusModal: React.FC<DatabaseStatusModalProps> = ({
                       <span>DATABASE_URL=postgresql://user:pass@host:5432/civicdigest?sslmode=require</span>
                       <button
                         onClick={() => copyToClipboard('DATABASE_URL=postgresql://user:password@hostname:5432/civicdigest?sslmode=require', 'env')}
-                        className="text-[#aaa] hover:text-white"
-                      >
+
+                        aria-label="Copy environment variable to clipboard"
+                        className="text-[#aaa] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2D6A4F] rounded-sm p-0.5">
                         {copiedSection === 'env' ? <CheckCircle2 className="w-3.5 h-3.5 text-[#2D6A4F]" /> : <Copy className="w-3.5 h-3.5" />}
                       </button>
                     </div>

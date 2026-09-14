@@ -24,3 +24,6 @@
 ## 2026-09-09 - Explicit Form Label Binding
 **Learning:** Found inputs in `UserProfileModal.tsx` relying on implicit wrapping for labels instead of explicit `htmlFor` and `id` bindings. This degrades screen reader experience and click target areas.
 **Action:** Ensure all `<label>` elements use `htmlFor` explicitly linked to the `id` of their corresponding form control for better a11y.
+## 2024-03-24 - Accessibility and Focus Management for Utility Icon Buttons
+**Learning:** Icon-only buttons used for utility functions (like "Copy to clipboard") frequently miss accessibility requirements when placed inside complex instructional modal layouts. Without `aria-label` screen reader users receive no context, and without proper `focus-visible` states, keyboard navigation is unclear against the modal's background styling.
+**Action:** Always ensure that every icon-only button—especially utility buttons in helper modals (e.g. copying connection strings)—includes an explicit, descriptive `aria-label` and has a `focus-visible` styling (like `focus-visible:ring-2`) matching the application's design system pattern.
