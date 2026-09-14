@@ -24,3 +24,6 @@
 ## 2026-09-09 - Explicit Form Label Binding
 **Learning:** Found inputs in `UserProfileModal.tsx` relying on implicit wrapping for labels instead of explicit `htmlFor` and `id` bindings. This degrades screen reader experience and click target areas.
 **Action:** Ensure all `<label>` elements use `htmlFor` explicitly linked to the `id` of their corresponding form control for better a11y.
+## 2024-09-14 - Add ARIA attributes to all tabbed and paginated elements
+**Learning:** Tabs that are rendered or generated conditionally/dynamically (like the "Instagram Carousel" and "Newsroom Webhook") often miss ARIA attributes (`type="button"`, `role="tab"`, `aria-selected`) and `focus-visible` classes that are present on statically rendered sibling tabs. Pagination buttons (like the Instagram slide index buttons) often lack semantic meaning without `aria-label` and visual focus indicators.
+**Action:** Always ensure that all interactive elements in a list or group (whether statically or dynamically rendered) consistently apply standard accessibility attributes (`type`, `role`, `aria-*`) and focus visibility classes (`focus-visible:ring-2`).

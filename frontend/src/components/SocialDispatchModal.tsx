@@ -431,8 +431,11 @@ export const SocialDispatchModal: React.FC<SocialDispatchModalProps> = ({
             </button>
 
             <button
+              type="button"
+              role="tab"
+              aria-selected={activePlatform === 'instagram'}
               onClick={() => setActivePlatform('instagram')}
-              className={`px-3 py-1.5 transition-colors border ${
+              className={`px-3 py-1.5 transition-colors border focus-visible:ring-2 focus-visible:ring-[#1A1A1A] focus:outline-none ${
                 activePlatform === 'instagram'
                   ? 'bg-[#1A1A1A] text-white border-[#1A1A1A]'
                   : 'bg-[#F2F0EA] text-[#555] border-transparent hover:border-[#1A1A1A]/20'
@@ -442,8 +445,11 @@ export const SocialDispatchModal: React.FC<SocialDispatchModalProps> = ({
             </button>
 
             <button
+              type="button"
+              role="tab"
+              aria-selected={activePlatform === 'webhook'}
               onClick={() => setActivePlatform('webhook')}
-              className={`px-3 py-1.5 transition-colors border flex items-center gap-1 ${
+              className={`px-3 py-1.5 transition-colors border flex items-center gap-1 focus-visible:ring-2 focus-visible:ring-[#1A1A1A] focus:outline-none ${
                 activePlatform === 'webhook'
                   ? 'bg-[#1A1A1A] text-white border-[#1A1A1A]'
                   : 'bg-[#F2F0EA] text-[#555] border-transparent hover:border-[#1A1A1A]/20'
@@ -517,8 +523,10 @@ export const SocialDispatchModal: React.FC<SocialDispatchModalProps> = ({
                   {postContent.instagramSlides.map((_, idx) => (
                     <button
                       key={idx}
+                      type="button"
+                      aria-label={`Go to slide ${idx + 1}`}
                       onClick={() => setActiveSlide(idx)}
-                      className={`w-6 h-6 flex items-center justify-center font-bold border transition-colors ${
+                      className={`w-6 h-6 flex items-center justify-center font-bold border transition-colors focus-visible:ring-2 focus-visible:ring-[#1A1A1A] focus:outline-none ${
                         activeSlide === idx
                           ? 'bg-[#1A1A1A] text-white border-[#1A1A1A]'
                           : 'bg-[#F2F0EA] text-[#555] border-[#1A1A1A]/20 hover:border-[#1A1A1A]'
@@ -578,14 +586,18 @@ export const SocialDispatchModal: React.FC<SocialDispatchModalProps> = ({
 
                   <div className="flex items-center gap-2 pt-2">
                     <button
+                      type="button"
+                      aria-label="Previous slide"
                       onClick={() => setActiveSlide((prev) => (prev > 0 ? prev - 1 : 3))}
-                      className="flex-1 bg-[#F2F0EA] hover:bg-[#1A1A1A] hover:text-white border border-[#1A1A1A]/30 text-xs font-bold uppercase py-1.5 transition-colors font-mono"
+                      className="flex-1 bg-[#F2F0EA] hover:bg-[#1A1A1A] hover:text-white border border-[#1A1A1A]/30 text-xs font-bold uppercase py-1.5 transition-colors font-mono focus-visible:ring-2 focus-visible:ring-[#1A1A1A] focus:outline-none"
                     >
                       ← Prev Slide
                     </button>
                     <button
+                      type="button"
+                      aria-label="Next slide"
                       onClick={() => setActiveSlide((prev) => (prev < 3 ? prev + 1 : 0))}
-                      className="flex-1 bg-[#1A1A1A] hover:bg-[#333] text-white text-xs font-bold uppercase py-1.5 transition-colors font-mono"
+                      className="flex-1 bg-[#1A1A1A] hover:bg-[#333] text-white text-xs font-bold uppercase py-1.5 transition-colors font-mono focus-visible:ring-2 focus-visible:ring-[#1A1A1A] focus:outline-none"
                     >
                       Next Slide →
                     </button>
