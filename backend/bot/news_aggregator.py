@@ -6,7 +6,7 @@ and pairs ingested dockets with balanced media coverage.
 
 import logging
 import re
-import xml.etree.ElementTree as ET
+import defusedxml.ElementTree as ET
 from urllib.parse import urlparse
 
 import httpx
