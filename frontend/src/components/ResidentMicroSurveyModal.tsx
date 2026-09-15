@@ -179,16 +179,22 @@ export const ResidentMicroSurveyModal: React.FC<ResidentMicroSurveyModalProps> =
 
         {/* Tab Toggle */}
         <div className="bg-[#E5E2D9] px-6 py-2 flex items-center justify-between border-b border-[#1A1A1A]/15 text-xs font-mono font-bold uppercase">
-          <div className="flex gap-2">
+          <div className="flex gap-2" role="tablist">
             <button
+              type="button"
+              role="tab"
+              aria-selected={activeTab === 'vote'}
               onClick={() => setActiveTab('vote')}
-              className={`px-3 py-1 transition-colors ${activeTab === 'vote' ? 'bg-[#1A1A1A] text-white' : 'text-[#666] hover:text-[#1A1A1A]'}`}
+              className={`px-3 py-1 transition-colors focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#1A1A1A] ${activeTab === 'vote' ? 'bg-[#1A1A1A] text-white' : 'text-[#666] hover:text-[#1A1A1A]'}`}
             >
               Cast Constituent Vote
             </button>
             <button
+              type="button"
+              role="tab"
+              aria-selected={activeTab === 'community_pulse'}
               onClick={() => setActiveTab('community_pulse')}
-              className={`px-3 py-1 transition-colors ${activeTab === 'community_pulse' ? 'bg-[#1A1A1A] text-white' : 'text-[#666] hover:text-[#1A1A1A]'}`}
+              className={`px-3 py-1 transition-colors focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#1A1A1A] ${activeTab === 'community_pulse' ? 'bg-[#1A1A1A] text-white' : 'text-[#666] hover:text-[#1A1A1A]'}`}
             >
               Community Pulse {aggregates?.totalVotes ? `(${aggregates.totalVotes})` : ''}
             </button>

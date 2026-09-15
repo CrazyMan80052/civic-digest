@@ -24,3 +24,7 @@
 ## 2026-09-09 - Explicit Form Label Binding
 **Learning:** Found inputs in `UserProfileModal.tsx` relying on implicit wrapping for labels instead of explicit `htmlFor` and `id` bindings. This degrades screen reader experience and click target areas.
 **Action:** Ensure all `<label>` elements use `htmlFor` explicitly linked to the `id` of their corresponding form control for better a11y.
+
+## 2026-09-15 - Accessible Custom Tabs
+**Learning:** Found custom tab implementations (like those using `activeTab`) lacking explicit ARIA roles and state bindings, which hinders screen reader comprehension of the tabbed interface structure.
+**Action:** Always wrap custom tabs with `role="tablist"` and ensure individual tab buttons use `role="tab"` and `aria-selected={activeTab === 'key'}` to communicate their state effectively.
