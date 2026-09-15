@@ -87,10 +87,14 @@ export const PolicyIntelPlatform: React.FC<PolicyIntelPlatformProps> = ({
     }
   }, [selectedBill, stats]);
 
-  const filteredBills = bills.filter((b) => {
-    if (filterCategory !== 'all' && b.category !== filterCategory) return false;
-    return true;
-  });
+  // Optimization: Memoize the filtered bills array to prevent unnecessary re-filtering (O(N)) on every re-render
+  // This reduces main thread blocking when other state variables (like selectedBill or stats) change.
+  const filteredBills = React.useMemo(() => {
+    return bills.filter((b) => {
+      if (filterCategory !== 'all' && b.category !== filterCategory) return false;
+      return true;
+    });
+  }, [bills, filterCategory]);
 
   return (
     <div className="space-y-8 animate-in fade-in duration-200">
