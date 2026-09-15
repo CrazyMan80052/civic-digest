@@ -1,0 +1,10 @@
+$ next dev
+▲ Next.js 16.3.4 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.0.2:3000
+✓ Ready in 560ms
+✓ Running next.config.ts took 46ms
+
+○ Compiling / ...
+ GET / 200 in 5.3s (next.js: 4.7s, application-code: 596ms)
+ GET /api/sentiment/microsurvey-stats?billId=ocd-bill%2F2026-oh-dublin-ord-01-26 200 in 643ms (next.js: 604ms, application-code: 38ms)
