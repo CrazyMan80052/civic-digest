@@ -24,3 +24,7 @@
 ## 2026-09-09 - Explicit Form Label Binding
 **Learning:** Found inputs in `UserProfileModal.tsx` relying on implicit wrapping for labels instead of explicit `htmlFor` and `id` bindings. This degrades screen reader experience and click target areas.
 **Action:** Ensure all `<label>` elements use `htmlFor` explicitly linked to the `id` of their corresponding form control for better a11y.
+
+## 2026-09-16 - Custom Tablist Accessibility Consistency
+**Learning:** When expanding an existing custom tablist, it's easy to forget to add the required accessibility attributes (like `role="tab"` and `aria-selected`) to new buttons, resulting in partial screen reader support.
+**Action:** Always verify that every interactive child element within a `role="tablist"` has `role="tab"`, `aria-selected`, and `type="button"` attributes consistently applied.
