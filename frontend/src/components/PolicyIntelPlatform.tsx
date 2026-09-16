@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   FileText,
   Printer,
@@ -87,10 +87,13 @@ export const PolicyIntelPlatform: React.FC<PolicyIntelPlatformProps> = ({
     }
   }, [selectedBill, stats]);
 
-  const filteredBills = bills.filter((b) => {
-    if (filterCategory !== 'all' && b.category !== filterCategory) return false;
-    return true;
-  });
+  // ⚡ Bolt: Memoized filteredBills to prevent re-calculating the list on every render
+  const filteredBills = useMemo(() => {
+    return bills.filter((b) => {
+      if (filterCategory !== 'all' && b.category !== filterCategory) return false;
+      return true;
+    });
+  }, [bills, filterCategory]);
 
   return (
     <div className="space-y-8 animate-in fade-in duration-200">
