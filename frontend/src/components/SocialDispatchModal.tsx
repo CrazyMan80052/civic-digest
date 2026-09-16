@@ -431,6 +431,9 @@ export const SocialDispatchModal: React.FC<SocialDispatchModalProps> = ({
             </button>
 
             <button
+              type="button"
+              role="tab"
+              aria-selected={activePlatform === 'instagram'}
               onClick={() => setActivePlatform('instagram')}
               className={`px-3 py-1.5 transition-colors border ${
                 activePlatform === 'instagram'
@@ -442,6 +445,9 @@ export const SocialDispatchModal: React.FC<SocialDispatchModalProps> = ({
             </button>
 
             <button
+              type="button"
+              role="tab"
+              aria-selected={activePlatform === 'webhook'}
               onClick={() => setActivePlatform('webhook')}
               className={`px-3 py-1.5 transition-colors border flex items-center gap-1 ${
                 activePlatform === 'webhook'
