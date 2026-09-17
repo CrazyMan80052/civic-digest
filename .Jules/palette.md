@@ -24,3 +24,6 @@
 ## 2026-09-09 - Explicit Form Label Binding
 **Learning:** Found inputs in `UserProfileModal.tsx` relying on implicit wrapping for labels instead of explicit `htmlFor` and `id` bindings. This degrades screen reader experience and click target areas.
 **Action:** Ensure all `<label>` elements use `htmlFor` explicitly linked to the `id` of their corresponding form control for better a11y.
+## 2024-05-15 - ARIA Tab Patterns
+**Learning:** Found custom tab interfaces (`ResidentMicroSurveyModal.tsx` and `BotModerationStudio.tsx`) missing structural ARIA roles, rendering them opaque to screen readers.
+**Action:** When building custom tab lists, always implement `role="tablist"` on the container, `role="tab"` and `aria-selected` on the buttons, and structurally link them to `role="tabpanel"` elements using `aria-controls`, `id`, and `aria-labelledby`.

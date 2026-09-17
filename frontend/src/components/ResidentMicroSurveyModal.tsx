@@ -179,16 +179,26 @@ export const ResidentMicroSurveyModal: React.FC<ResidentMicroSurveyModalProps> =
 
         {/* Tab Toggle */}
         <div className="bg-[#E5E2D9] px-6 py-2 flex items-center justify-between border-b border-[#1A1A1A]/15 text-xs font-mono font-bold uppercase">
-          <div className="flex gap-2">
+          <div className="flex gap-2" role="tablist" aria-label="Micro-Survey Tabs">
             <button
+              type="button"
+              role="tab"
+              id="tab-vote"
+              aria-controls="panel-vote"
+              aria-selected={activeTab === 'vote'}
               onClick={() => setActiveTab('vote')}
-              className={`px-3 py-1 transition-colors ${activeTab === 'vote' ? 'bg-[#1A1A1A] text-white' : 'text-[#666] hover:text-[#1A1A1A]'}`}
+              className={`px-3 py-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A] focus-visible:ring-offset-1 ${activeTab === 'vote' ? 'bg-[#1A1A1A] text-white' : 'text-[#666] hover:text-[#1A1A1A]'}`}
             >
               Cast Constituent Vote
             </button>
             <button
+              type="button"
+              role="tab"
+              id="tab-community_pulse"
+              aria-controls="panel-community_pulse"
+              aria-selected={activeTab === 'community_pulse'}
               onClick={() => setActiveTab('community_pulse')}
-              className={`px-3 py-1 transition-colors ${activeTab === 'community_pulse' ? 'bg-[#1A1A1A] text-white' : 'text-[#666] hover:text-[#1A1A1A]'}`}
+              className={`px-3 py-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A] focus-visible:ring-offset-1 ${activeTab === 'community_pulse' ? 'bg-[#1A1A1A] text-white' : 'text-[#666] hover:text-[#1A1A1A]'}`}
             >
               Community Pulse {aggregates?.totalVotes ? `(${aggregates.totalVotes})` : ''}
             </button>
@@ -227,7 +237,7 @@ export const ResidentMicroSurveyModal: React.FC<ResidentMicroSurveyModalProps> =
         <div className="p-6 overflow-y-auto space-y-5 flex-1">
           
           {activeTab === 'vote' && (
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form id="panel-vote" role="tabpanel" aria-labelledby="tab-vote" onSubmit={handleSubmit} className="space-y-5">
               
               {/* Question 1: Legislative Stance */}
               <div>
@@ -403,7 +413,7 @@ export const ResidentMicroSurveyModal: React.FC<ResidentMicroSurveyModalProps> =
 
           {/* TAB: Community Pulse & Results */}
           {activeTab === 'community_pulse' && aggregates && (
-            <div className="space-y-5">
+            <div id="panel-community_pulse" role="tabpanel" aria-labelledby="tab-community_pulse" className="space-y-5">
               
               {/* Receipt of submission if just submitted */}
               {submittedResult && (
