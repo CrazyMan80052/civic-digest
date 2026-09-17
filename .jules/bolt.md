@@ -1,3 +1,11 @@
 ## 2024-05-18 - DocketCard Re-rendering Optimization
 **Learning:** `DocketCard` is rendered inside a large list (`filteredBills.map`). In the current implementation, every state change in the parent `page.tsx` causes all `DocketCard` components to re-render, creating a performance bottleneck when filtering or interacting with other UI elements. Passing inline arrow functions like `onSelectTag={(tag) => setSearchQuery(tag)}` prevents memoization from working because a new function reference is created on every render.
 **Action:** Used `React.memo` on `DocketCard` and `React.useCallback` for event handlers (`handleShareBill`, `handleOpenMicroSurvey`, `handleOpenReceipt`, `handleOpenPerspectives`) in the parent to maintain referential equality, combined with passing `setSearchQuery` directly, significantly reducing unnecessary list item re-renders.
+
+## 2025-02-12 - MeetingsView Agenda Items Lookup Optimization
+**Learning:** In \`frontend/src/components/MeetingsView.tsx\`, inside the loop mapping over \`currentMeeting.agendaItems\`, there was an \`Array.prototype.find()\` call on the \`BILLS\` array to link bills: \`BILLS.find((b) => b.id === item.billId)\`. Since this array is large, performing this search for every agenda item leads to an O(n*m) time complexity render bottleneck.
+**Action:** Created a \`BILLS_MAP\` hash map using \`new Map(BILLS.map((b) => [b.id, b]))\` outside the component to cache the data, and replaced the nested loop array search with an O(1) hash map lookup: \`BILLS_MAP.get(item.billId)\`, dramatically speeding up the list rendering performance.
+
+## 2025-02-12 - Repository Arrays Lookup Optimization
+**Learning:** In \`frontend/src/db/repository.ts\`, inside \`getJurisdictions\` and \`getBills\`, there were \`Array.prototype.find()\` calls on large \`MOCK_JURISDICTIONS\` and \`MOCK_BILLS\` arrays being executed within loops: \`MOCK_JURISDICTIONS.find((j) => j.id === r.id)\` and \`MOCK_BILLS.find((b) => b.id === r.id)\`. This caused an O(n*m) complexity when resolving database rows to their mock equivalents.
+**Action:** Created \`MOCK_JURISDICTIONS_MAP\` and \`MOCK_BILLS_MAP\` hash maps outside the loops to cache the data, replacing the array searches with O(1) hash map lookups, significantly improving the data access layer performance.

@@ -15,7 +15,11 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { MEETINGS, BILLS } from '../data/mockData';
+
 import { OCDBill } from '../types';
+
+// ⚡ Bolt: Create hash map outside component to prevent O(n*m) lookup during render loop
+const BILLS_MAP = new Map(BILLS.map((b) => [b.id, b]));
 
 interface MeetingsViewProps {
   onSelectBill: (billId: string) => void;
@@ -200,7 +204,7 @@ export const MeetingsView: React.FC<MeetingsViewProps> = ({
               </h4>
 
               {currentMeeting.agendaItems.map((item) => {
-                const linkedBill = BILLS.find((b) => b.id === item.billId);
+                const linkedBill = BILLS_MAP.get(item.billId);
 
                 return (
                   <div
