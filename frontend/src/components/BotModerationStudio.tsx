@@ -380,12 +380,17 @@ export const BotModerationStudio: React.FC<BotModerationStudioProps> = ({
               </div>
 
               {/* Platform Previews & Visual Card Tabs */}
-              <div className="flex items-center gap-2 border-b border-gray-800 pb-2 mb-3">
+              <div className="flex items-center gap-2 border-b border-gray-800 pb-2 mb-3" role="tablist" aria-label="Platform Previews">
                 {(['twitter', 'bluesky', 'mastodon', 'webhook'] as PlatformTab[]).map((tab) => (
                   <button
                     key={tab}
+                    type="button"
+                    role="tab"
+                    id={`tab-${tab}`}
+                    aria-controls={`panel-${tab}`}
+                    aria-selected={activePlatformTab === tab}
                     onClick={() => setActivePlatformTab(tab)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize transition-colors ${
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
                       activePlatformTab === tab
                         ? 'bg-blue-600 text-white'
                         : 'text-gray-400 hover:text-gray-200 hover:bg-gray-800'
@@ -397,7 +402,7 @@ export const BotModerationStudio: React.FC<BotModerationStudioProps> = ({
               </div>
 
               {/* Thread Content */}
-              <div className="space-y-3 mb-4">
+              <div id={`panel-${activePlatformTab}`} role="tabpanel" aria-labelledby={`tab-${activePlatformTab}`} className="space-y-3 mb-4">
                 {selectedPost.thread_content.map((tweet, idx) => (
                   <div key={idx} className="p-3 bg-gray-900 rounded-xl border border-gray-800">
                     <div className="flex items-center justify-between mb-1 text-[11px] text-gray-400">
