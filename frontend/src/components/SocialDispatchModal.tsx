@@ -431,8 +431,11 @@ export const SocialDispatchModal: React.FC<SocialDispatchModalProps> = ({
             </button>
 
             <button
+              type="button"
+              role="tab"
+              aria-selected={activePlatform === 'instagram'}
               onClick={() => setActivePlatform('instagram')}
-              className={`px-3 py-1.5 transition-colors border ${
+              className={`px-3 py-1.5 transition-colors border focus-visible:ring-2 focus-visible:ring-[#1A1A1A] ${
                 activePlatform === 'instagram'
                   ? 'bg-[#1A1A1A] text-white border-[#1A1A1A]'
                   : 'bg-[#F2F0EA] text-[#555] border-transparent hover:border-[#1A1A1A]/20'
@@ -442,8 +445,11 @@ export const SocialDispatchModal: React.FC<SocialDispatchModalProps> = ({
             </button>
 
             <button
+              type="button"
+              role="tab"
+              aria-selected={activePlatform === 'webhook'}
               onClick={() => setActivePlatform('webhook')}
-              className={`px-3 py-1.5 transition-colors border flex items-center gap-1 ${
+              className={`px-3 py-1.5 transition-colors border flex items-center gap-1 focus-visible:ring-2 focus-visible:ring-[#1A1A1A] ${
                 activePlatform === 'webhook'
                   ? 'bg-[#1A1A1A] text-white border-[#1A1A1A]'
                   : 'bg-[#F2F0EA] text-[#555] border-transparent hover:border-[#1A1A1A]/20'
