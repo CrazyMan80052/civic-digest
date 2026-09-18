@@ -24,3 +24,6 @@
 ## 2026-09-09 - Explicit Form Label Binding
 **Learning:** Found inputs in `UserProfileModal.tsx` relying on implicit wrapping for labels instead of explicit `htmlFor` and `id` bindings. This degrades screen reader experience and click target areas.
 **Action:** Ensure all `<label>` elements use `htmlFor` explicitly linked to the `id` of their corresponding form control for better a11y.
+## 2024-09-17 - [Social Dispatch Modal Accessibility Consistency]
+**Learning:** Found that tab groups in `SocialDispatchModal` were partially missing `role="tab"`, `aria-selected` attributes, and keyboard focus states on newer tabs compared to older ones. This is a common pattern when lists or groups grow over time.
+**Action:** When adding or updating a group of interactive elements, always verify that the accessibility properties (`role`, `aria-*`, focus states) are consistent across all sibling elements in the group, not just the newly added ones.
