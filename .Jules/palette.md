@@ -24,3 +24,6 @@
 ## 2026-09-09 - Explicit Form Label Binding
 **Learning:** Found inputs in `UserProfileModal.tsx` relying on implicit wrapping for labels instead of explicit `htmlFor` and `id` bindings. This degrades screen reader experience and click target areas.
 **Action:** Ensure all `<label>` elements use `htmlFor` explicitly linked to the `id` of their corresponding form control for better a11y.
+## 2024-09-19 - Loading State Feedback for Async Actions
+**Learning:** Found that long-running operations like `handleSave` in `UserProfileModal.tsx` did not provide visual feedback, allowing users to rapidly click multiple times while saving.
+**Action:** Always add loading states (e.g., `isSaving`) to `async` interactions and show a visual indicator (like a spinner and updated text) while disabling the button to prevent multiple submissions.

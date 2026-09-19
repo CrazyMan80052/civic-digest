@@ -96,6 +96,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
   const [notifyWard, setNotifyWard] = useState<boolean>(currentProfile?.notifyOnWardHearings ?? true);
   const [autoSwitchCity, setAutoSwitchCity] = useState<boolean>(true);
   const [addressError, setAddressError] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
 
   // Address Geocoding Handler
   const handleLookupAddress = async (presetAddr?: string) => {
@@ -143,7 +144,8 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    setIsSaving(true);
     const jurId = geocodedResult?.jurisdiction?.id || jurisdictions[0].id;
     const divId = geocodedResult?.division?.id || jurisdictions[0].divisions[0].id;
 
@@ -173,22 +175,28 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
       updatedAt: new Date().toISOString(),
     };
 
-    // Save to server
-    fetch('/api/profile/save', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(profile),
-    }).catch(console.warn);
-
-    // Save to local storage for instant reloads
     try {
-      localStorage.setItem('civicdigest_user_profile', JSON.stringify(profile));
+      // Save to server
+      await fetch('/api/profile/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(profile),
+      });
+
+      // Save to local storage for instant reloads
+      try {
+        localStorage.setItem('civicdigest_user_profile', JSON.stringify(profile));
+      } catch (e) {
+        console.warn(e);
+      }
+
+      onSaveProfile(profile, autoSwitchCity);
+      onClose();
     } catch (e) {
       console.warn(e);
+    } finally {
+      setIsSaving(false);
     }
-
-    onSaveProfile(profile, autoSwitchCity);
-    onClose();
   };
 
   // Accessible keyboard Escape handling and focus return
@@ -282,28 +290,32 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
               <button
                 type="button"
                 onClick={() => handleLookupAddress('5600 Fleet Ave, Cleveland, OH 44105')}
-                className="px-2 py-0.5 bg-[#F4F1EA] hover:bg-[#EAE5D9] border border-[#1A1A1A]/10 rounded text-[11px] text-[#1A1A1A] transition-colors"
+                aria-label="Try sample address for Cleveland, Ward 12, Slavic Village"
+                className="px-2 py-0.5 bg-[#F4F1EA] hover:bg-[#EAE5D9] border border-[#1A1A1A]/10 rounded text-[11px] text-[#1A1A1A] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
               >
                 Cleveland (Ward 12 - Slavic Village)
               </button>
               <button
                 type="button"
                 onClick={() => handleLookupAddress('1900 W 25th St, Cleveland, OH 44113')}
-                className="px-2 py-0.5 bg-[#F4F1EA] hover:bg-[#EAE5D9] border border-[#1A1A1A]/10 rounded text-[11px] text-[#1A1A1A] transition-colors"
+                aria-label="Try sample address for Cleveland, Ward 3, Ohio City"
+                className="px-2 py-0.5 bg-[#F4F1EA] hover:bg-[#EAE5D9] border border-[#1A1A1A]/10 rounded text-[11px] text-[#1A1A1A] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
               >
                 Cleveland (Ward 3 - Ohio City)
               </button>
               <button
                 type="button"
                 onClick={() => handleLookupAddress('915 I St, Sacramento, CA 95814')}
-                className="px-2 py-0.5 bg-[#F4F1EA] hover:bg-[#EAE5D9] border border-[#1A1A1A]/10 rounded text-[11px] text-[#1A1A1A] transition-colors"
+                aria-label="Try sample address for Sacramento, District 4"
+                className="px-2 py-0.5 bg-[#F4F1EA] hover:bg-[#EAE5D9] border border-[#1A1A1A]/10 rounded text-[11px] text-[#1A1A1A] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
               >
                 Sacramento (District 4)
               </button>
               <button
                 type="button"
                 onClick={() => handleLookupAddress('301 W 2nd St, Austin, TX 78701')}
-                className="px-2 py-0.5 bg-[#F4F1EA] hover:bg-[#EAE5D9] border border-[#1A1A1A]/10 rounded text-[11px] text-[#1A1A1A] transition-colors"
+                aria-label="Try sample address for Austin, District 9"
+                className="px-2 py-0.5 bg-[#F4F1EA] hover:bg-[#EAE5D9] border border-[#1A1A1A]/10 rounded text-[11px] text-[#1A1A1A] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
               >
                 Austin (District 9)
               </button>
@@ -515,10 +527,20 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
             <button
               type="button"
               onClick={handleSave}
-              className="px-5 py-2 bg-[#2D6A4F] text-white text-xs font-semibold rounded hover:bg-[#2D6A4F]/90 transition-all shadow-sm flex items-center gap-1.5"
+              disabled={isSaving}
+              className="px-5 py-2 bg-[#2D6A4F] text-white text-xs font-semibold rounded hover:bg-[#2D6A4F]/90 transition-all shadow-sm flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
             >
-              <Sparkles className="w-3.5 h-3.5 text-white" />
-              Save Profile &amp; Personalize Feed
+              {isSaving ? (
+                <>
+                  <Loader2 className="w-3.5 h-3.5 text-white animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-3.5 h-3.5 text-white" />
+                  Save Profile &amp; Personalize Feed
+                </>
+              )}
             </button>
           </div>
         </div>
