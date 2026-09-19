@@ -1,3 +1,6 @@
 ## 2024-05-18 - DocketCard Re-rendering Optimization
 **Learning:** `DocketCard` is rendered inside a large list (`filteredBills.map`). In the current implementation, every state change in the parent `page.tsx` causes all `DocketCard` components to re-render, creating a performance bottleneck when filtering or interacting with other UI elements. Passing inline arrow functions like `onSelectTag={(tag) => setSearchQuery(tag)}` prevents memoization from working because a new function reference is created on every render.
 **Action:** Used `React.memo` on `DocketCard` and `React.useCallback` for event handlers (`handleShareBill`, `handleOpenMicroSurvey`, `handleOpenReceipt`, `handleOpenPerspectives`) in the parent to maintain referential equality, combined with passing `setSearchQuery` directly, significantly reducing unnecessary list item re-renders.
+## 2026-09-19 - Pipeline N+1 Query Resolution
+**Learning:** In the scraping pipeline (`backend/scrapers/pipeline.py`), doing individual database queries inside a loop while checking for duplicate IDs results in severe N+1 performance bottlenecks.
+**Action:** When validating a bulk of items, fetch all relevant existing items at once using `.in_()` operator to populate a dictionary or set for an O(1) in-memory check to drastically speed up processing.
