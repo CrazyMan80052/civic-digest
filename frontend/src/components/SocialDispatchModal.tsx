@@ -377,6 +377,8 @@ export const SocialDispatchModal: React.FC<SocialDispatchModalProps> = ({
             <button
               type="button"
               role="tab"
+              id="tab-twitter"
+              aria-controls="panel-text"
               aria-selected={activePlatform === 'twitter'}
               onClick={() => setActivePlatform('twitter')}
               className={`px-3 py-1.5 transition-colors border focus-visible:ring-2 focus-visible:ring-[#1A1A1A] ${
@@ -391,6 +393,8 @@ export const SocialDispatchModal: React.FC<SocialDispatchModalProps> = ({
             <button
               type="button"
               role="tab"
+              id="tab-bluesky"
+              aria-controls="panel-text"
               aria-selected={activePlatform === 'bluesky'}
               onClick={() => setActivePlatform('bluesky')}
               className={`px-3 py-1.5 transition-colors border focus-visible:ring-2 focus-visible:ring-[#1A1A1A] ${
@@ -405,6 +409,8 @@ export const SocialDispatchModal: React.FC<SocialDispatchModalProps> = ({
             <button
               type="button"
               role="tab"
+              id="tab-threads"
+              aria-controls="panel-text"
               aria-selected={activePlatform === 'threads'}
               onClick={() => setActivePlatform('threads')}
               className={`px-3 py-1.5 transition-colors border focus-visible:ring-2 focus-visible:ring-[#1A1A1A] ${
@@ -419,6 +425,8 @@ export const SocialDispatchModal: React.FC<SocialDispatchModalProps> = ({
             <button
               type="button"
               role="tab"
+              id="tab-linkedin"
+              aria-controls="panel-text"
               aria-selected={activePlatform === 'linkedin'}
               onClick={() => setActivePlatform('linkedin')}
               className={`px-3 py-1.5 transition-colors border focus-visible:ring-2 focus-visible:ring-[#1A1A1A] ${
@@ -431,8 +439,13 @@ export const SocialDispatchModal: React.FC<SocialDispatchModalProps> = ({
             </button>
 
             <button
+              type="button"
+              role="tab"
+              id="tab-instagram"
+              aria-controls="panel-instagram"
+              aria-selected={activePlatform === 'instagram'}
               onClick={() => setActivePlatform('instagram')}
-              className={`px-3 py-1.5 transition-colors border ${
+              className={`px-3 py-1.5 transition-colors border focus-visible:ring-2 focus-visible:ring-[#1A1A1A] ${
                 activePlatform === 'instagram'
                   ? 'bg-[#1A1A1A] text-white border-[#1A1A1A]'
                   : 'bg-[#F2F0EA] text-[#555] border-transparent hover:border-[#1A1A1A]/20'
@@ -442,21 +455,26 @@ export const SocialDispatchModal: React.FC<SocialDispatchModalProps> = ({
             </button>
 
             <button
+              type="button"
+              role="tab"
+              id="tab-webhook"
+              aria-controls="panel-webhook"
+              aria-selected={activePlatform === 'webhook'}
               onClick={() => setActivePlatform('webhook')}
-              className={`px-3 py-1.5 transition-colors border flex items-center gap-1 ${
+              className={`px-3 py-1.5 transition-colors border flex items-center gap-1 focus-visible:ring-2 focus-visible:ring-[#1A1A1A] ${
                 activePlatform === 'webhook'
                   ? 'bg-[#1A1A1A] text-white border-[#1A1A1A]'
                   : 'bg-[#F2F0EA] text-[#555] border-transparent hover:border-[#1A1A1A]/20'
               }`}
             >
-              <Radio className="w-3 h-3 text-[#E63946]" />
+              <Radio className="w-3 h-3 text-[#E63946]" aria-hidden="true" />
               <span>Newsroom Webhook</span>
             </button>
           </div>
 
           {/* Platform Specific Content Area */}
           {activePlatform !== 'instagram' && activePlatform !== 'webhook' && (
-            <div className="space-y-2">
+            <div id="panel-text" role="tabpanel" aria-labelledby={`tab-${activePlatform}`} className="space-y-2">
               <div className="flex items-center justify-between text-xs">
                 <span className="font-bold uppercase tracking-wider text-[10px] text-[#777] font-mono">
                   {activePlatform.toUpperCase()} Draft
@@ -508,7 +526,7 @@ export const SocialDispatchModal: React.FC<SocialDispatchModalProps> = ({
 
           {/* Instagram Carousel Slide Studio */}
           {activePlatform === 'instagram' && (
-            <div className="space-y-4">
+            <div id="panel-instagram" role="tabpanel" aria-labelledby="tab-instagram" className="space-y-4">
               <div className="flex items-center justify-between text-xs pb-1 border-b border-[#1A1A1A]/10">
                 <span className="font-bold uppercase tracking-wider text-[10px] text-[#777] font-mono">
                   Instagram 4-Slide Civic Storyboard
@@ -597,7 +615,7 @@ export const SocialDispatchModal: React.FC<SocialDispatchModalProps> = ({
 
           {/* Newsroom Webhook Dispatcher */}
           {activePlatform === 'webhook' && (
-            <div className="space-y-3 bg-[#F2F0EA] p-4 border border-[#1A1A1A]/15 text-xs font-mono">
+            <div id="panel-webhook" role="tabpanel" aria-labelledby="tab-webhook" className="space-y-3 bg-[#F2F0EA] p-4 border border-[#1A1A1A]/15 text-xs font-mono">
               <div>
                 <label htmlFor="webhook-url" className="font-bold uppercase tracking-wider text-[10px] text-[#777] block mb-1">
                   Target Webhook Endpoint (Discord / Slack / Zapier / Make):
