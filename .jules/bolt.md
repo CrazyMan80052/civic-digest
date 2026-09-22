@@ -1,3 +1,7 @@
 ## 2024-05-18 - DocketCard Re-rendering Optimization
 **Learning:** `DocketCard` is rendered inside a large list (`filteredBills.map`). In the current implementation, every state change in the parent `page.tsx` causes all `DocketCard` components to re-render, creating a performance bottleneck when filtering or interacting with other UI elements. Passing inline arrow functions like `onSelectTag={(tag) => setSearchQuery(tag)}` prevents memoization from working because a new function reference is created on every render.
 **Action:** Used `React.memo` on `DocketCard` and `React.useCallback` for event handlers (`handleShareBill`, `handleOpenMicroSurvey`, `handleOpenReceipt`, `handleOpenPerspectives`) in the parent to maintain referential equality, combined with passing `setSearchQuery` directly, significantly reducing unnecessary list item re-renders.
+
+## 2026-09-22 - Scraper Pipeline N+1 Query Optimization
+**Learning:** The ingestion pipeline in `backend/scrapers/pipeline.py` was executing a separate `db.query()` inside a loop for every scraped bill to check if it already existed in the database. This N+1 query pattern creates a significant performance bottleneck when processing large batches of scraped dockets.
+**Action:** Replaced the loop-based queries with a single batch fetch using `Bill.id.in_(normalized_ids)` and stored the results in a set (`existing_id_set`) for O(1) lookups during the loop, reducing database queries from O(N) to O(1) for duplication checks.

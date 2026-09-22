@@ -73,9 +73,14 @@ class IngestionPipeline:
                 db = SessionLocal()
                 try:
                     persisted_count = 0
+
+                    # ⚡ Bolt: Fetch all existing bill IDs in a single query to prevent N+1 queries
+                    normalized_ids = [n["id"] for n in normalized_list]
+                    existing_bills = db.query(Bill.id).filter(Bill.id.in_(normalized_ids)).all()
+                    existing_id_set = {b[0] for b in existing_bills}
+
                     for normalized in normalized_list:
-                        existing = db.query(Bill).filter(Bill.id == normalized["id"]).first()
-                        if existing:
+                        if normalized["id"] in existing_id_set:
                             stats["skipped_duplicates"] += 1
                             continue
 
