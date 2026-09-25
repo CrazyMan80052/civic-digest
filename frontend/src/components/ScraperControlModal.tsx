@@ -348,7 +348,7 @@ export const ScraperControlModal: React.FC<ScraperControlModalProps> = ({
                       <a
                         href={bill.receipt.officialUrl}
                         target="_blank"
-                        rel="noreferrer"
+                        rel="noopener noreferrer"
                         className="text-[#1A1A1A] hover:underline flex items-center gap-1"
                       >
                         <span>Clerk Ref: {bill.receipt.clerkMatterId}</span>
