@@ -73,9 +73,17 @@ class IngestionPipeline:
                 db = SessionLocal()
                 try:
                     persisted_count = 0
+
+                    # ⚡ Bolt Optimization: Fix N+1 query problem by batch fetching existing IDs
+                    # Instead of querying the database once per normalized bill inside the loop,
+                    # we fetch all existing IDs that match our current batch in a single query
+                    # and cache them in an O(1) lookup set. This significantly reduces DB roundtrips.
+                    normalized_ids = [n["id"] for n in normalized_list]
+                    existing_records = db.query(Bill.id).filter(Bill.id.in_(normalized_ids)).all()
+                    existing_ids_set = {r[0] for r in existing_records}
+
                     for normalized in normalized_list:
-                        existing = db.query(Bill).filter(Bill.id == normalized["id"]).first()
-                        if existing:
+                        if normalized["id"] in existing_ids_set:
                             stats["skipped_duplicates"] += 1
                             continue
 
