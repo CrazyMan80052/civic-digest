@@ -113,7 +113,7 @@ export const AlertsModal: React.FC<AlertsModalProps> = ({ isOpen, onClose }) => 
                 aria-valuemax={2500}
                 aria-valuenow={radiusMeters}
                 onChange={(e) => setRadiusMeters(parseInt(e.target.value))}
-                className="w-full accent-[#1A1A1A]"
+                className="w-full accent-[#1A1A1A] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
               />
             </div>
           </div>
@@ -179,7 +179,7 @@ export const AlertsModal: React.FC<AlertsModalProps> = ({ isOpen, onClose }) => 
               aria-valuemax={5000000}
               aria-valuenow={fiscalThreshold}
               onChange={(e) => setFiscalThreshold(parseInt(e.target.value))}
-              className="w-full accent-[#1A1A1A]"
+              className="w-full accent-[#1A1A1A] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
             />
           </div>
 

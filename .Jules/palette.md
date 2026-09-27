@@ -24,3 +24,6 @@
 ## 2026-09-09 - Explicit Form Label Binding
 **Learning:** Found inputs in `UserProfileModal.tsx` relying on implicit wrapping for labels instead of explicit `htmlFor` and `id` bindings. This degrades screen reader experience and click target areas.
 **Action:** Ensure all `<label>` elements use `htmlFor` explicitly linked to the `id` of their corresponding form control for better a11y.
+## 2024-05-19 - Accessible Range Inputs in Modals
+**Learning:** Custom range inputs (`<input type="range">`) often lack proper focus states in Tailwind applications, especially when combined with custom accent colors. Furthermore, without explicit ARIA labels and value constraints (`aria-valuemin`, `aria-valuemax`, `aria-valuenow`), they remain opaque to screen readers because visual indicators (like adjacent labels or dynamic text updates) aren't directly associated.
+**Action:** When implementing or refactoring range inputs, always ensure they are accompanied by: `aria-label`, `aria-valuemin`, `aria-valuemax`, and `aria-valuenow` attributes. To support robust keyboard navigation, consistently apply `focus:outline-none focus-visible:ring-2 focus-visible:ring-[ACCENT_COLOR]` to match the application's design system focus indicators.
