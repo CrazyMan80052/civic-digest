@@ -18,12 +18,12 @@ import {
   Code2,
   Table
 } from 'lucide-react';
+import { useModalKeyboard } from '../lib/useModalKeyboard';
 
 interface DatabaseStatusModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
-import { useModalKeyboard } from '../lib/useModalKeyboard';
 
 interface DbHealthResponse {
   connected: boolean;
@@ -174,9 +174,10 @@ export const DatabaseStatusModal: React.FC<DatabaseStatusModalProps> = ({
                     Runtime Connection State:
                   </span>
                   <button
+                    type="button"
                     onClick={fetchHealth}
                     disabled={isLoading}
-                    className="text-[11px] font-bold font-mono text-[#1A1A1A] hover:underline flex items-center gap-1"
+                    className="text-[11px] font-bold font-mono text-[#1A1A1A] hover:underline flex items-center gap-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A] rounded-sm px-1"
                   >
                     <RefreshCw className={`w-3 h-3 ${isLoading ? 'animate-spin' : ''}`} />
                     <span>Check Connection</span>
@@ -223,8 +224,10 @@ export const DatabaseStatusModal: React.FC<DatabaseStatusModalProps> = ({
                     <div className="mt-1.5 flex items-center justify-between bg-[#1A1A1A] text-[#FDFDFC] p-2 font-mono text-[10px]">
                       <span>DATABASE_URL=postgresql://user:pass@host:5432/civicdigest?sslmode=require</span>
                       <button
+                        type="button"
+                        aria-label="Copy connection string"
                         onClick={() => copyToClipboard('DATABASE_URL=postgresql://user:password@hostname:5432/civicdigest?sslmode=require', 'env')}
-                        className="text-[#aaa] hover:text-white"
+                        className="text-[#aaa] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm px-1"
                       >
                         {copiedSection === 'env' ? <CheckCircle2 className="w-3.5 h-3.5 text-[#2D6A4F]" /> : <Copy className="w-3.5 h-3.5" />}
                       </button>
@@ -318,8 +321,9 @@ class Bill(Base):
             Repository layer: <strong className="text-[#1A1A1A]">CivicRepository</strong> (TypeScript + SQL)
           </span>
           <button
+            type="button"
             onClick={onClose}
-            className="bg-[#1A1A1A] hover:bg-[#333] text-white px-4 py-1.5 font-bold uppercase tracking-wider transition-colors"
+            className="bg-[#1A1A1A] hover:bg-[#333] text-white px-4 py-1.5 font-bold uppercase tracking-wider transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
           >
             Close
           </button>
