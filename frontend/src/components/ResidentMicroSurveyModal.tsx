@@ -314,7 +314,12 @@ export const ResidentMicroSurveyModal: React.FC<ResidentMicroSurveyModalProps> =
                   step="10"
                   value={costImpact}
                   onChange={(e) => setCostImpact(Number(e.target.value))}
-                  className="w-full accent-[#1A1A1A] cursor-pointer"
+                  aria-label="Estimated monthly household impact in dollars"
+                  aria-valuemin={-200}
+                  aria-valuemax={200}
+                  aria-valuenow={costImpact}
+                  aria-valuetext={costImpact < 0 ? `-$${Math.abs(costImpact)}/mo (Savings)` : costImpact > 0 ? `+$${costImpact}/mo (Increased Cost)` : '$0 (Neutral Impact)'}
+                  className="w-full accent-[#1A1A1A] cursor-pointer focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
                 />
                 <div className="flex justify-between text-[10px] font-mono text-[#777]">
                   <span>-$200/mo (High Savings)</span>
@@ -340,7 +345,12 @@ export const ResidentMicroSurveyModal: React.FC<ResidentMicroSurveyModalProps> =
                   step="1"
                   value={priorityRating}
                   onChange={(e) => setPriorityRating(Number(e.target.value))}
-                  className="w-full accent-[#2D6A4F] cursor-pointer"
+                  aria-label="Neighborhood urgency priority rating from 1 to 10"
+                  aria-valuemin={1}
+                  aria-valuemax={10}
+                  aria-valuenow={priorityRating}
+                  aria-valuetext={`${priorityRating} out of 10`}
+                  className="w-full accent-[#2D6A4F] cursor-pointer focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#2D6A4F]"
                 />
               </div>
 
@@ -377,7 +387,12 @@ export const ResidentMicroSurveyModal: React.FC<ResidentMicroSurveyModalProps> =
                     step="0.1"
                     value={epsilon}
                     onChange={(e) => setEpsilon(Number(e.target.value))}
-                    className="w-24 accent-[#2D6A4F]"
+                    aria-label="Privacy loss parameter epsilon"
+                    aria-valuemin={0.2}
+                    aria-valuemax={2.0}
+                    aria-valuenow={epsilon}
+                    aria-valuetext={`${epsilon.toFixed(1)} epsilon`}
+                    className="w-24 accent-[#2D6A4F] focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#2D6A4F]"
                   />
                   <span className="font-bold text-[#1A1A1A]">{epsilon.toFixed(1)}</span>
                 </div>

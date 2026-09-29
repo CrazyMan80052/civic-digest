@@ -24,3 +24,7 @@
 ## 2026-09-09 - Explicit Form Label Binding
 **Learning:** Found inputs in `UserProfileModal.tsx` relying on implicit wrapping for labels instead of explicit `htmlFor` and `id` bindings. This degrades screen reader experience and click target areas.
 **Action:** Ensure all `<label>` elements use `htmlFor` explicitly linked to the `id` of their corresponding form control for better a11y.
+
+## 2024-05-24 - Add accessibility attributes to range inputs
+**Learning:** Custom range inputs (`<input type="range">`) often lack required `aria-label`, `aria-valuemin`, `aria-valuemax`, and `aria-valuenow` attributes for screen reader accessibility, as well as `focus-visible` classes for keyboard navigation.
+**Action:** Always ensure range inputs include these ARIA attributes and focus styles when implementing them.
