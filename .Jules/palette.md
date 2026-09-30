@@ -24,3 +24,6 @@
 ## 2026-09-09 - Explicit Form Label Binding
 **Learning:** Found inputs in `UserProfileModal.tsx` relying on implicit wrapping for labels instead of explicit `htmlFor` and `id` bindings. This degrades screen reader experience and click target areas.
 **Action:** Ensure all `<label>` elements use `htmlFor` explicitly linked to the `id` of their corresponding form control for better a11y.
+## 2024-10-24 - Range Input Accessibility
+**Learning:** Found `<input type="range">` slider elements lacking keyboard focus visibility (`focus-visible:ring-2`) and screen reader support (`aria-label`, `aria-valuemin`, `aria-valuemax`, `aria-valuenow`). This degrades the experience for keyboard and screen reader users navigating forms.
+**Action:** Always ensure custom range inputs include necessary ARIA attributes for screen reader accessibility and `focus-visible` styling (`focus:outline-hidden focus-visible:ring-2`) to maintain clear focus states during keyboard navigation.
