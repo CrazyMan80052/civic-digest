@@ -129,7 +129,9 @@ export const DatabaseStatusModal: React.FC<DatabaseStatusModalProps> = ({
           <button
             type="button"
             role="tab"
+            id="tab-status"
             aria-selected={activeTab === 'status'}
+            aria-controls="panel-status"
             onClick={() => setActiveTab('status')}
             className={`px-3 py-1.5 border-t border-x border-[#1A1A1A] transition-colors focus-visible:ring-2 focus-visible:ring-[#1A1A1A] ${
               activeTab === 'status' ? 'bg-[#FDFDFC] text-[#1A1A1A]' : 'bg-[#E5E2D9] text-[#525252] hover:text-[#1A1A1A]'
@@ -140,7 +142,9 @@ export const DatabaseStatusModal: React.FC<DatabaseStatusModalProps> = ({
           <button
             type="button"
             role="tab"
+            id="tab-schema"
             aria-selected={activeTab === 'schema'}
+            aria-controls="panel-schema"
             onClick={() => setActiveTab('schema')}
             className={`px-3 py-1.5 border-t border-x border-[#1A1A1A] transition-colors focus-visible:ring-2 focus-visible:ring-[#1A1A1A] ${
               activeTab === 'schema' ? 'bg-[#FDFDFC] text-[#1A1A1A]' : 'bg-[#E5E2D9] text-[#525252] hover:text-[#1A1A1A]'
@@ -151,7 +155,9 @@ export const DatabaseStatusModal: React.FC<DatabaseStatusModalProps> = ({
           <button
             type="button"
             role="tab"
+            id="tab-fastapi"
             aria-selected={activeTab === 'fastapi'}
+            aria-controls="panel-fastapi"
             onClick={() => setActiveTab('fastapi')}
             className={`px-3 py-1.5 border-t border-x border-[#1A1A1A] transition-colors focus-visible:ring-2 focus-visible:ring-[#1A1A1A] ${
               activeTab === 'fastapi' ? 'bg-[#FDFDFC] text-[#1A1A1A]' : 'bg-[#E5E2D9] text-[#525252] hover:text-[#1A1A1A]'
@@ -165,8 +171,13 @@ export const DatabaseStatusModal: React.FC<DatabaseStatusModalProps> = ({
         <div className="p-6 overflow-y-auto space-y-4 text-xs font-sans text-[#1A1A1A]">
           
           {/* TAB 1: STATUS */}
-          {activeTab === 'status' && (
-            <div className="space-y-4">
+          <div
+            id="panel-status"
+            role="tabpanel"
+            aria-labelledby="tab-status"
+            hidden={activeTab !== 'status'}
+            className="space-y-4"
+          >
               {/* Current Status Box */}
               <div className="bg-[#F2F0EA] border border-[#1A1A1A]/20 p-4 space-y-2">
                 <div className="flex items-center justify-between">
@@ -233,11 +244,15 @@ export const DatabaseStatusModal: React.FC<DatabaseStatusModalProps> = ({
                 </ol>
               </div>
             </div>
-          )}
 
           {/* TAB 2: SCHEMA */}
-          {activeTab === 'schema' && (
-            <div className="space-y-3">
+          <div
+            id="panel-schema"
+            role="tabpanel"
+            aria-labelledby="tab-schema"
+            hidden={activeTab !== 'schema'}
+            className="space-y-3"
+          >
               <div className="flex items-center justify-between">
                 <span className="font-bold uppercase tracking-wider text-[10px] text-[#777] font-mono">
                   Tables Defined in src/db/schema.sql
@@ -278,11 +293,15 @@ export const DatabaseStatusModal: React.FC<DatabaseStatusModalProps> = ({
                 Schema file location: <code className="bg-[#F2F0EA] px-1 py-0.5 text-[#1A1A1A]">/src/db/schema.sql</code>
               </p>
             </div>
-          )}
 
           {/* TAB 3: FASTAPI MODELS */}
-          {activeTab === 'fastapi' && (
-            <div className="space-y-3">
+          <div
+            id="panel-fastapi"
+            role="tabpanel"
+            aria-labelledby="tab-fastapi"
+            hidden={activeTab !== 'fastapi'}
+            className="space-y-3"
+          >
               <span className="font-bold uppercase tracking-wider text-[10px] text-[#777] font-mono block">
                 Python FastAPI SQLAlchemy Models Created at /backend/models.py
               </span>
@@ -308,7 +327,6 @@ class Bill(Base):
                 Ready to plug directly into your Python FastAPI service with Uvicorn, Celery scraping queues, or asyncpg connection pooling.
               </p>
             </div>
-          )}
 
         </div>
 

@@ -24,3 +24,6 @@
 ## 2026-09-09 - Explicit Form Label Binding
 **Learning:** Found inputs in `UserProfileModal.tsx` relying on implicit wrapping for labels instead of explicit `htmlFor` and `id` bindings. This degrades screen reader experience and click target areas.
 **Action:** Ensure all `<label>` elements use `htmlFor` explicitly linked to the `id` of their corresponding form control for better a11y.
+## 2024-10-24 - Accessible Tabs with conditionally hidden content
+**Learning:** For custom tab components in this app (like `DatabaseStatusModal.tsx`), we found that fully unmounting the inactive tab panels with conditional rendering breaks accessibility expectations, because screen readers rely on parsing all `role="tabpanel"` elements linked to a `tablist` to correctly state the number of available tabs and support structural navigation.
+**Action:** Instead of conditionally returning panels based on state (`{activeTab === 'foo' && <div/>}`), always render all panels unconditionally but apply the standard HTML `hidden` attribute conditionally: `<div role="tabpanel" hidden={activeTab !== 'foo'}>`. Ensure that the parent container doesn't force a display block/grid that would override `display: none` applied by `hidden`.
