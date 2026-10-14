@@ -27,3 +27,6 @@
 ## 2024-10-24 - Range Input Accessibility
 **Learning:** Found `<input type="range">` slider elements lacking keyboard focus visibility (`focus-visible:ring-2`) and screen reader support (`aria-label`, `aria-valuemin`, `aria-valuemax`, `aria-valuenow`). This degrades the experience for keyboard and screen reader users navigating forms.
 **Action:** Always ensure custom range inputs include necessary ARIA attributes for screen reader accessibility and `focus-visible` styling (`focus:outline-hidden focus-visible:ring-2`) to maintain clear focus states during keyboard navigation.
+## 2024-09-19 - Loading State Feedback for Async Actions
+**Learning:** Found that long-running operations like `handleSave` in `UserProfileModal.tsx` did not provide visual feedback, allowing users to rapidly click multiple times while saving.
+**Action:** Always add loading states (e.g., `isSaving`) to `async` interactions and show a visual indicator (like a spinner and updated text) while disabling the button to prevent multiple submissions.
