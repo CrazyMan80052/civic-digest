@@ -11,7 +11,8 @@ import {
   Sliders, 
   TrendingUp, 
   Send, 
-  CheckCircle2
+  CheckCircle2,
+  RefreshCw
 } from 'lucide-react';
 import { 
   BarChart, 
@@ -50,6 +51,7 @@ export const SentimentHub: React.FC<SentimentHubProps> = ({
   const [savingsDelta, setSavingsDelta] = useState<number>(-150);
   const [primaryConcern, setPrimaryConcern] = useState<string>('Roads & Infrastructure');
   const [submitted, setSubmitted] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const wardKeys = Object.keys(WARD_METRICS);
   const currentWardData = WARD_METRICS[selectedWardId] || WARD_METRICS[wardKeys[0]];
@@ -95,6 +97,7 @@ export const SentimentHub: React.FC<SentimentHubProps> = ({
 
   const handleSurveySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
     try {
       const wardNumberMatch = formWard.match(/ward:(\d+)/);
       const wardNumber = wardNumberMatch ? parseInt(wardNumberMatch[1], 10) : 12;
@@ -117,6 +120,8 @@ export const SentimentHub: React.FC<SentimentHubProps> = ({
       });
     } catch (err) {
       console.warn('Micro-survey submission fallback:', err);
+    } finally {
+      setIsSubmitting(false);
     }
     setSubmitted(true);
     setTimeout(() => setSubmitted(false), 5000);
@@ -398,10 +403,20 @@ export const SentimentHub: React.FC<SentimentHubProps> = ({
 
                 <button
                   type="submit"
-                  className="w-full bg-[#1A1A1A] hover:bg-[#333] text-[#FDFDFC] font-bold uppercase tracking-wider py-2.5 px-4 flex items-center justify-center gap-2 transition-colors focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
+                  disabled={isSubmitting}
+                  className="w-full bg-[#1A1A1A] hover:bg-[#333] text-[#FDFDFC] font-bold uppercase tracking-wider py-2.5 px-4 flex items-center justify-center gap-2 transition-colors disabled:opacity-50 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
                 >
-                  <Send className="w-3.5 h-3.5" aria-hidden="true" />
-                  <span>Submit Zero-Knowledge Pulse</span>
+                  {isSubmitting ? (
+                    <>
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />
+                      <span>Submitting...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-3.5 h-3.5" aria-hidden="true" />
+                      <span>Submit Zero-Knowledge Pulse</span>
+                    </>
+                  )}
                 </button>
               </form>
             )}
