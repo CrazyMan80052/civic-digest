@@ -7,6 +7,10 @@ import { getDbPool, queryDb } from './client';
 import { BILLS as MOCK_BILLS, JURISDICTIONS as MOCK_JURISDICTIONS } from '../data/mockData';
 import { OCDBill, OCDJurisdiction } from '../types';
 
+// ⚡ Bolt: Cache Maps outside function scope for static data to avoid recreation overhead
+const MOCK_JURISDICTIONS_MAP = new Map(MOCK_JURISDICTIONS.map((j) => [j.id, j]));
+const MOCK_BILLS_MAP = new Map(MOCK_BILLS.map((b) => [b.id, b]));
+
 /**
  * Data Access Layer (DAL) for CivicDigest.
  * Prioritizes PostgreSQL if DATABASE_URL is configured, else falls back to in-memory OCD-ID mock store.
@@ -41,7 +45,7 @@ export class CivicRepository {
       }
 
       return rows.map((r) => {
-        const mockMatch = MOCK_JURISDICTIONS.find((j) => j.id === r.id);
+        const mockMatch = MOCK_JURISDICTIONS_MAP.get(r.id);
         return {
           id: r.id,
           name: r.name,
@@ -116,7 +120,7 @@ export class CivicRepository {
       }
 
       return rows.map((r) => {
-        const mockBill = MOCK_BILLS.find((b) => b.id === r.id);
+        const mockBill = MOCK_BILLS_MAP.get(r.id);
         return {
           id: r.id,
           jurisdictionId: r.jurisdictionId,
