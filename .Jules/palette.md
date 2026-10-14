@@ -27,3 +27,6 @@
 ## 2024-05-18 - Missing Accessibility Attributes on Range Inputs
 **Learning:** Custom range inputs (`<input type="range">`) in this application's components often lack `aria-label`, `aria-valuemin`, `aria-valuemax`, and `aria-valuenow` attributes, making them opaque to screen readers. They also sometimes miss proper `focus-visible` styling for keyboard navigation.
 **Action:** When implementing or modifying range sliders, always include proper ARIA value attributes and a descriptive `aria-label`, and ensure `focus-visible:ring-2` is applied for keyboard accessibility.
+## 2024-09-19 - Loading State Feedback for Async Actions
+**Learning:** Found that long-running operations like `handleSave` in `UserProfileModal.tsx` did not provide visual feedback, allowing users to rapidly click multiple times while saving.
+**Action:** Always add loading states (e.g., `isSaving`) to `async` interactions and show a visual indicator (like a spinner and updated text) while disabling the button to prevent multiple submissions.
