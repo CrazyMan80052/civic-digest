@@ -5,3 +5,6 @@
 ## 2024-05-18 - SQLAlchemy N+1 Query in Pipeline
 **Learning:** `IngestionPipeline` iteratively queried the DB for every new normalized bill item within a loop (`db.query(Bill).filter...first()`). This created a serious N+1 performance bottleneck when checking for duplicates, scaling linearly with the number of dockets returned from the remote APIs.
 **Action:** Used `in_` clause on `Bill.id` to fetch all IDs matching the batch of normalized items in a single query, converted the result to a Python set, and performed an O(1) in-memory lookup within the `for` loop, eliminating the N+1 problem.
+## 2025-02-12 - Repository Arrays Lookup Optimization
+**Learning:** In `frontend/src/db/repository.ts`, inside `getJurisdictions` and `getBills`, there were `Array.prototype.find()` calls on large `MOCK_JURISDICTIONS` and `MOCK_BILLS` arrays being executed within loops: `MOCK_JURISDICTIONS.find((j) => j.id === r.id)` and `MOCK_BILLS.find((b) => b.id === r.id)`. This caused an O(n*m) complexity when resolving database rows to their mock equivalents.
+**Action:** Created `MOCK_JURISDICTIONS_MAP` and `MOCK_BILLS_MAP` hash maps in the module scope (outside the function definitions) to cache the static data without recreation overhead, replacing the array searches with O(1) hash map lookups and significantly improving the data access layer performance.
