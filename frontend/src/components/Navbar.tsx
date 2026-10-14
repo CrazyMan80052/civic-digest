@@ -110,6 +110,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 Civic Digest
               </button>
             </h1>
+            <Link href="/elections" className="mt-2 inline-flex text-xs font-bold uppercase tracking-widest text-[#2D6A4F] underline decoration-[#2D6A4F]/40 underline-offset-4 hover:text-[#1A1A1A]">Election guide</Link>
             <p className="text-[11px] sm:text-xs font-bold uppercase tracking-[0.2em] text-[#555] mt-0.5">
               Local Governance &amp; Policy Journal • {selectedJurisdiction.name} Bureau
             </p>
@@ -328,7 +329,6 @@ export const Navbar: React.FC<NavbarProps> = ({
             aria-label="Civic Digest Primary Sections"
             className="flex items-center gap-4 sm:gap-8 overflow-x-auto scrollbar-none text-xs font-bold uppercase tracking-widest"
           >
-            <Link href="/elections" className="pb-1.5 whitespace-nowrap border-b-2 border-transparent text-[#1A1A1A] opacity-70 transition-all hover:opacity-100 hover:border-[#1A1A1A]/30">Elections</Link>
             <button
               type="button"
               role="tab"
