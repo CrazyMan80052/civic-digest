@@ -4,6 +4,7 @@
  */
 
 import React from 'react';
+import Link from 'next/link';
 import { 
   Building2, 
   Newspaper, 
@@ -109,6 +110,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 Civic Digest
               </button>
             </h1>
+            <Link href="/elections" className="mt-2 inline-flex text-xs font-bold uppercase tracking-widest text-[#2D6A4F] underline decoration-[#2D6A4F]/40 underline-offset-4 hover:text-[#1A1A1A]">Election guide</Link>
             <p className="text-[11px] sm:text-xs font-bold uppercase tracking-[0.2em] text-[#555] mt-0.5">
               Local Governance &amp; Policy Journal • {selectedJurisdiction.name} Bureau
             </p>
