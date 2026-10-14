@@ -4,3 +4,7 @@
 ## 2026-09-19 - Pipeline N+1 Query Resolution
 **Learning:** In the scraping pipeline (`backend/scrapers/pipeline.py`), doing individual database queries inside a loop while checking for duplicate IDs results in severe N+1 performance bottlenecks.
 **Action:** When validating a bulk of items, fetch all relevant existing items at once using `.in_()` operator to populate a dictionary or set for an O(1) in-memory check to drastically speed up processing.
+
+## 2025-02-12 - Repository Arrays Lookup Optimization
+**Learning:** In `frontend/src/db/repository.ts`, inside `getJurisdictions` and `getBills`, there were `Array.prototype.find()` calls on large `MOCK_JURISDICTIONS` and `MOCK_BILLS` arrays being executed within loops: `MOCK_JURISDICTIONS.find((j) => j.id === r.id)` and `MOCK_BILLS.find((b) => b.id === r.id)`. This caused an O(n*m) complexity when resolving database rows to their mock equivalents.
+**Action:** Created `MOCK_JURISDICTIONS_MAP` and `MOCK_BILLS_MAP` hash maps in the module scope (outside the function definitions) to cache the static data without recreation overhead, replacing the array searches with O(1) hash map lookups and significantly improving the data access layer performance.
