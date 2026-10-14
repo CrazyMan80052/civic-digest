@@ -27,3 +27,6 @@
 ## 2024-05-19 - Accessible Range Inputs in Modals
 **Learning:** Custom range inputs (`<input type="range">`) often lack proper focus states in Tailwind applications, especially when combined with custom accent colors. Furthermore, without explicit ARIA labels and value constraints (`aria-valuemin`, `aria-valuemax`, `aria-valuenow`), they remain opaque to screen readers because visual indicators (like adjacent labels or dynamic text updates) aren't directly associated.
 **Action:** When implementing or refactoring range inputs, always ensure they are accompanied by: `aria-label`, `aria-valuemin`, `aria-valuemax`, and `aria-valuenow` attributes. To support robust keyboard navigation, consistently apply `focus:outline-none focus-visible:ring-2 focus-visible:ring-[ACCENT_COLOR]` to match the application's design system focus indicators.
+## 2024-09-19 - Loading State Feedback for Async Actions
+**Learning:** Found that long-running operations like `handleSave` in `UserProfileModal.tsx` did not provide visual feedback, allowing users to rapidly click multiple times while saving.
+**Action:** Always add loading states (e.g., `isSaving`) to `async` interactions and show a visual indicator (like a spinner and updated text) while disabling the button to prevent multiple submissions.
