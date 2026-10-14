@@ -27,3 +27,6 @@
 ## 2026-10-01 - Range Input Accessibility
 **Learning:** Native `<input type="range">` elements require visible focus indicators for keyboard users to navigate smoothly. Avoid explicitly defining `aria-valuemin`, `aria-valuemax`, and `aria-valuenow` for these inputs, as screen readers can natively infer these values from the standard `min`, `max`, and `value` attributes. Also, use `focus:outline-none` in Tailwind instead of hallucinating classes like `focus:outline-hidden` to ensure native outlines are correctly overridden before applying custom focus rings.
 **Action:** When styling range inputs, always apply a custom focus ring (e.g., `focus:outline-none focus-visible:ring-2 focus-visible:ring-[color]`) and an `aria-label`. Exclude redundant ARIA value attributes if the native attributes (`min`, `max`, `value`) are already present.
+## 2024-09-19 - Loading State Feedback for Async Actions
+**Learning:** Found that long-running operations like `handleSave` in `UserProfileModal.tsx` did not provide visual feedback, allowing users to rapidly click multiple times while saving.
+**Action:** Always add loading states (e.g., `isSaving`) to `async` interactions and show a visual indicator (like a spinner and updated text) while disabling the button to prevent multiple submissions.
