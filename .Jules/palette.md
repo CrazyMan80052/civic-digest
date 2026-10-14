@@ -24,6 +24,10 @@
 ## 2026-09-09 - Explicit Form Label Binding
 **Learning:** Found inputs in `UserProfileModal.tsx` relying on implicit wrapping for labels instead of explicit `htmlFor` and `id` bindings. This degrades screen reader experience and click target areas.
 **Action:** Ensure all `<label>` elements use `htmlFor` explicitly linked to the `id` of their corresponding form control for better a11y.
+
+## 2024-09-12 - Complete Tab Interface Accessibility
+**Learning:** Found tab interfaces in `SocialDispatchModal.tsx` that partially implemented ARIA attributes but missed structural properties (`role="tabpanel"`, `aria-controls`) and keyboard focus indicators for some tabs.
+**Action:** When implementing custom tab interfaces, always wrap the tab buttons in a container with `role='tablist'` and ensure individual tab buttons include `type='button'`, `role='tab'`, `aria-selected`, and `aria-controls` attributes. Link them to respective content panels using `id`, `role='tabpanel'`, and `aria-labelledby` to accurately communicate state and structure to screen readers.
 ## 2024-10-24 - Accessibility Standards for Custom Tabs
 **Learning:** The `ResidentMicroSurveyModal` component previously implemented custom tabs using basic buttons inside a div and relied on React conditional unmounting to switch views. This approach violates standard WCAG guidelines for screen readers, as they require explicit `role='tablist'` structures to parse the relationship between tab controls and their panels, compute total tabs, and correctly announce the state. Conditional unmounting removes non-active panels from the DOM, breaking `aria-controls` associations for screen readers.
 **Action:** Use native HTML `hidden={boolean}` attribute for non-active `tabpanel` elements instead of conditional unmounting in React, which preserves the DOM structure so screen readers can interpret hidden tab panels safely. Always wrap custom tab buttons in a `role='tablist'` div and assign the buttons `role='tab'`, `aria-selected`, and `aria-controls`. Link them to the respective `role='tabpanel'` components with corresponding `id` and `aria-labelledby` properties.
