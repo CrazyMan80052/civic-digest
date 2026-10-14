@@ -27,3 +27,6 @@
 ## 2024-10-24 - Accessible Tabs with conditionally hidden content
 **Learning:** For custom tab components in this app (like `DatabaseStatusModal.tsx`), we found that fully unmounting the inactive tab panels with conditional rendering breaks accessibility expectations, because screen readers rely on parsing all `role="tabpanel"` elements linked to a `tablist` to correctly state the number of available tabs and support structural navigation.
 **Action:** Instead of conditionally returning panels based on state (`{activeTab === 'foo' && <div/>}`), always render all panels unconditionally but apply the standard HTML `hidden` attribute conditionally: `<div role="tabpanel" hidden={activeTab !== 'foo'}>`. Ensure that the parent container doesn't force a display block/grid that would override `display: none` applied by `hidden`.
+## 2024-09-19 - Loading State Feedback for Async Actions
+**Learning:** Found that long-running operations like `handleSave` in `UserProfileModal.tsx` did not provide visual feedback, allowing users to rapidly click multiple times while saving.
+**Action:** Always add loading states (e.g., `isSaving`) to `async` interactions and show a visual indicator (like a spinner and updated text) while disabling the button to prevent multiple submissions.
