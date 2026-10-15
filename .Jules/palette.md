@@ -34,3 +34,6 @@
 ## 2024-09-19 - Loading State Feedback for Async Actions
 **Learning:** Found that long-running operations like `handleSave` in `UserProfileModal.tsx` did not provide visual feedback, allowing users to rapidly click multiple times while saving.
 **Action:** Always add loading states (e.g., `isSaving`) to `async` interactions and show a visual indicator (like a spinner and updated text) while disabling the button to prevent multiple submissions.
+## 2024-11-20 - Custom Range Input Accessibility
+**Learning:** Found custom range inputs (`<input type="range">`) lacking ARIA attributes and keyboard focus styling in `ResidentMicroSurveyModal.tsx`.
+**Action:** Custom range inputs must include `aria-label`, `aria-valuemin`, `aria-valuemax`, and `aria-valuenow` attributes for screen reader accessibility, in addition to explicit `focus-visible` styling for keyboard navigation.
